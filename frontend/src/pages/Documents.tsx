@@ -68,8 +68,8 @@ const Documents: React.FC = () => {
     setSelectedDoc(doc);
   };
 
-  const handleDownload = async (doc: ClinicalDocument) => {
-    await documentsService.download(doc.id);
+  const handleDownload = (doc: ClinicalDocument) => {
+    documentsService.download(doc.id);
   };
 
   const canView = (doc: ClinicalDocument) => {
@@ -80,9 +80,9 @@ const Documents: React.FC = () => {
   return (
     <Layout>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-        <h1 style={{ color: '#2c3e50' }}>Documentos Clínicos</h1>
+        <h1 style={{ color: '#2c3e50' }}>Documentos Clínicosxx</h1>
         <button onClick={() => setShowUpload(!showUpload)} style={uploadBtnStyle}>
-          {showUpload ? 'Cancelar' : 'Novo Documento'}
+          {showUpload ? 'Cancelar' : 'Novo Documentoxxxx'}
         </button>
       </div>
 

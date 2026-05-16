@@ -84,7 +84,7 @@ const Calendar: React.FC = () => {
           <button onClick={goToToday} style={todayBtnStyle}>Hoje</button>
           <button onClick={goToNextDay} style={navBtnStyle}>▶</button>
         </div>
-        <h1 style={{ color: '#2c3e50' }}>Calendário</h1>
+        <h1 style={{ color: '#2c3e50' }}>Calendárioxxx</h1>
         <div style={{ display: 'flex', gap: '10px' }}>
           <button onClick={() => setViewMode('day')} style={viewBtnStyle(viewMode === 'day')}>
             Dia

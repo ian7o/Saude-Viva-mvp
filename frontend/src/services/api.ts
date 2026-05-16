@@ -29,7 +29,9 @@ export const appointmentsService = {
     return response.data;
   },
   getByRange: async (startDate: string, endDate: string) => {
-    const response = await api.get('/appointments/range', { params: { startDate, endDate } });
+    const response = await api.get('/appointments/range', {
+      params: { startDate, endDate },
+    });
     return response.data;
   },
 };
@@ -45,28 +47,18 @@ export const documentsService = {
     });
     return response.data;
   },
-  download: async (id: number) => {
+  download: (id: number) => {
     const token = localStorage.getItem('token');
-    const response = await api.get(`/documents/${id}/download`, {
-      responseType: 'blob',
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-    });
-    const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
-    link.href = url;
+    link.href = `http://localhost:4000/api/documents/${id}/download?token=${token}`;
     link.setAttribute('download', '');
     document.body.appendChild(link);
     link.click();
     link.remove();
-    window.URL.revokeObjectURL(url);
   },
   view: (id: number) => {
     const token = localStorage.getItem('token');
     return `http://localhost:4000/api/documents/${id}/view?token=${token}`;
-  },
-  delete: async (id: number) => {
-    const response = await api.delete(`/documents/${id}`);
-    return response.data;
   },
 };
 
