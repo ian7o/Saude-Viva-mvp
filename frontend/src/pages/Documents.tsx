@@ -68,8 +68,8 @@ const Documents: React.FC = () => {
     setSelectedDoc(doc);
   };
 
-  const handleDownload = (doc: ClinicalDocument) => {
-    window.open(documentsService.download(doc.id), '_blank');
+  const handleDownload = async (doc: ClinicalDocument) => {
+    await documentsService.download(doc.id);
   };
 
   const canView = (doc: ClinicalDocument) => {

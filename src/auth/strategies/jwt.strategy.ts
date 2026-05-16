@@ -4,6 +4,13 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { UsersRepository } from 'src/users/users.repository';
 
+const extractJwtFromQueryOrHeader = (req: any) => {
+  if (req.query?.token) {
+    return req.query.token;
+  }
+  return ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+};
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -11,7 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private readonly usersRepository: UsersRepository,
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: extractJwtFromQueryOrHeader,
       ignoreExpiration: false,
       secretOrKey:
         configService.get<string>('JWT_SECRET') || 'saudeviva-secret-key',

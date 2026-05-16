@@ -45,11 +45,24 @@ export const documentsService = {
     });
     return response.data;
   },
-  download: (id: number) => {
-    return `http://localhost:4000/api/documents/${id}/download`;
+  download: async (id: number) => {
+    const token = localStorage.getItem('token');
+    const response = await api.get(`/documents/${id}/download`, {
+      responseType: 'blob',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', '');
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
   },
   view: (id: number) => {
-    return `http://localhost:4000/api/documents/${id}/view`;
+    const token = localStorage.getItem('token');
+    return `http://localhost:4000/api/documents/${id}/view?token=${token}`;
   },
   delete: async (id: number) => {
     const response = await api.delete(`/documents/${id}`);

@@ -1,4 +1,5 @@
 import { IsString, IsOptional, IsNumber } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateDocumentDto {
@@ -23,10 +24,12 @@ export class CreateDocumentDto {
   @ApiProperty({ example: 1, description: 'Patient ID' })
   @IsNumber()
   @IsOptional()
+  @Type(() => Number)
   patientId?: number;
 
   @ApiProperty({ example: 1, description: 'Appointment ID' })
   @IsNumber()
   @IsOptional()
+  @Type(() => Number)
   appointmentId?: number;
 }

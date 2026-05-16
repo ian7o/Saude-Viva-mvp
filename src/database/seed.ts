@@ -15,39 +15,60 @@ export async function seed(dataSource: DataSource) {
 
   const hashedPassword = await bcrypt.hash('admin123', 10);
 
-  const user = userRepo.create({
-    email: 'admin@saudeviva.com',
-    name: 'Dr. Admin',
-    password: hashedPassword,
-    age: 35,
-    sex: 'male',
-  });
-  await userRepo.save(user);
 
-  const doctor = doctorRepo.create({
-    name: 'Dr. Admin',
-    email: 'admin@saudeviva.com',
-    password: hashedPassword,
-    specialty: 'General Medicine',
+  let user = await userRepo.findOne({
+    where: { email: 'admin@saudeviva.com' },
   });
-  await doctorRepo.save(doctor);
+  if (!user) {
+    user = userRepo.create({
+      email: 'admin@saudeviva.com',
+      name: 'Dr. Admin',
+      password: hashedPassword,
+      age: 35,
+      sex: 'male',
+    });
+    await userRepo.save(user);
+  }
 
-  const user2 = userRepo.create({
-    email: 'admin@saudevivax.com',
-    name: 'Dr. gui',
-    password: hashedPassword,
-    age: 35,
-    sex: 'male',
+  let user2 = await userRepo.findOne({
+    where: { email: 'admin@saudevivax.com' },
   });
-  await userRepo.save(user2);
+  if (!user2) {
+    user2 = userRepo.create({
+      email: 'admin@saudevivax.com',
+      name: 'Dr. gui',
+      password: hashedPassword,
+      age: 35,
+      sex: 'male',
+    });
+    await userRepo.save(user2);
+  }
 
-  const doctor2 = doctorRepo.create({
-    name: 'Dr. gui',
-    email: 'admin@saudevivax.com',
-    password: hashedPassword,
-    specialty: 'General Medicinez',
+  let doctor = await doctorRepo.findOne({
+    where: { email: 'admin@saudeviva.com' },
   });
-  await doctorRepo.save(doctor2);
+  if (!doctor) {
+    doctor = doctorRepo.create({
+      name: 'Dr. Admin',
+      email: 'admin@saudeviva.com',
+      password: hashedPassword,
+      specialty: 'General Medicine',
+    });
+    await doctorRepo.save(doctor);
+  }
+
+  let doctor2 = await doctorRepo.findOne({
+    where: { email: 'admin@saudevivax.com' },
+  });
+  if (!doctor2) {
+    doctor2 = doctorRepo.create({
+      name: 'Dr. gui',
+      email: 'admin@saudevivax.com',
+      password: hashedPassword,
+      specialty: 'General Medicinez',
+    });
+    await doctorRepo.save(doctor2);
+  }
 
   const patient1 = patientRepo.create({
     name: 'John Doe',

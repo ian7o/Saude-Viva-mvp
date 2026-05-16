@@ -73,6 +73,7 @@ export class DocumentsController {
 
   @Get(':id/download')
   @ApiOperation({ summary: 'Download document' })
+  @UseGuards(AuthGuard('jwt'))
   async download(@Param('id') id: number, @Res() res: Response) {
     const document = await this.documentsService.findById(id);
     res.download(document.path, document.originalName);
@@ -80,6 +81,7 @@ export class DocumentsController {
 
   @Get(':id/view')
   @ApiOperation({ summary: 'View document' })
+  @UseGuards(AuthGuard('jwt'))
   async view(@Param('id') id: number, @Res() res: Response) {
     const document = await this.documentsService.findById(id);
     res.sendFile(document.path, { root: '.' });
