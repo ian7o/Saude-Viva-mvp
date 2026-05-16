@@ -32,6 +32,23 @@ export async function seed(dataSource: DataSource) {
   });
   await doctorRepo.save(doctor);
 
+  const user2 = userRepo.create({
+    email: 'admin@saudevivax.com',
+    name: 'Dr. gui',
+    password: hashedPassword,
+    age: 35,
+    sex: 'male',
+  });
+  await userRepo.save(user2);
+
+  const doctor2 = doctorRepo.create({
+    name: 'Dr. gui',
+    email: 'admin@saudevivax.com',
+    password: hashedPassword,
+    specialty: 'General Medicinez',
+  });
+  await doctorRepo.save(doctor2);
+
   const patient1 = patientRepo.create({
     name: 'John Doe',
     birthDate: new Date('1985-06-15'),
