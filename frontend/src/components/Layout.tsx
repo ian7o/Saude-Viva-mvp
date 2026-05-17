@@ -16,7 +16,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <h2 style={{ marginBottom: '30px' }}>Saude Viva</h2>
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <NavLink to="/dashboard" style={navLinkStyle}>Dashboard</NavLink>
-          <NavLink to="/calendar" style={navLinkStyle}>Calendárioxxx</NavLink>
+          <NavLink to="/calendar" style={navLinkStyle}>Calendário</NavLink>
           <NavLink to="/documents" style={navLinkStyle}>Documentos</NavLink>
         </nav>
         <button onClick={handleLogout} style={{ marginTop: 'auto', ...logoutBtnStyle }}>

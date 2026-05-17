@@ -15,7 +15,6 @@ export async function seed(dataSource: DataSource) {
 
   const hashedPassword = await bcrypt.hash('admin123', 10);
 
-
   let user = await userRepo.findOne({
     where: { email: 'admin@saudeviva.com' },
   });

@@ -51,6 +51,7 @@ export const documentsService = {
     const token = localStorage.getItem('token');
     const link = document.createElement('a');
     link.href = `http://localhost:4000/api/documents/${id}/download?token=${token}`;
+//   http://localhost:4000/api/documents/2/download/?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiYWRtaW5Ac2F1ZGV2aXZhLmNvbSIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3Nzg5NzI1NDIsImV4cCI6MTc3OTA1ODk0Mn0.cmkDZ8pUKeAfRKiGgL0rCCAKISH8MNTp4MEX6ZtJ4kY
     link.setAttribute('download', '');
     document.body.appendChild(link);
     link.click();

@@ -80,9 +80,9 @@ const Documents: React.FC = () => {
   return (
     <Layout>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-        <h1 style={{ color: '#2c3e50' }}>Documentos Clínicosxx</h1>
+        <h1 style={{ color: '#2c3e50' }}>Documentos Clínicos</h1>
         <button onClick={() => setShowUpload(!showUpload)} style={uploadBtnStyle}>
-          {showUpload ? 'Cancelar' : 'Novo Documentoxxxx'}
+          {showUpload ? 'Cancelar' : 'Novo Documento'}
         </button>
       </div>
 
