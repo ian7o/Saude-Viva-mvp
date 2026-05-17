@@ -7,34 +7,34 @@ import {
   Body,
   Param,
   UseGuards,
-} from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
-import { PatientsService } from './patients.service';
-import { CreatePatientDto } from './dto/create-patient.dto';
-import { UpdatePatientDto } from './dto/update-patient.dto';
+} from "@nestjs/common";
+import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
+import { AuthGuard } from "@nestjs/passport";
+import { PatientsService } from "./patients.service";
+import { CreatePatientDto } from "./dto/create-patient.dto";
+import { UpdatePatientDto } from "./dto/update-patient.dto";
 
-@ApiTags('patients')
-@Controller('patients')
+@ApiTags("patients")
+@Controller("patients")
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard("jwt"))
 export class PatientsController {
   constructor(private readonly patientsService: PatientsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all patients' })
+  @ApiOperation({ summary: "Get all patients" })
   findAll() {
     return this.patientsService.findAll();
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Get patient by ID' })
-  findOne(@Param('id') id: number) {
+  @Get(":id")
+  @ApiOperation({ summary: "Get patient by ID" })
+  findOne(@Param("id") id: number) {
     return this.patientsService.findById(id);
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create patient' })
+  @ApiOperation({ summary: "Create patient" })
   create(@Body() createDto: CreatePatientDto) {
     const data = {
       ...createDto,
@@ -45,9 +45,9 @@ export class PatientsController {
     return this.patientsService.create(data);
   }
 
-  @Put(':id')
-  @ApiOperation({ summary: 'Update patient' })
-  update(@Param('id') id: number, @Body() updateDto: UpdatePatientDto) {
+  @Put(":id")
+  @ApiOperation({ summary: "Update patient" })
+  update(@Param("id") id: number, @Body() updateDto: UpdatePatientDto) {
     const data = {
       ...updateDto,
       birthDate: updateDto.birthDate
@@ -57,9 +57,9 @@ export class PatientsController {
     return this.patientsService.update(id, data);
   }
 
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete patient' })
-  delete(@Param('id') id: number) {
+  @Delete(":id")
+  @ApiOperation({ summary: "Delete patient" })
+  delete(@Param("id") id: number) {
     return this.patientsService.delete(id);
   }
 }

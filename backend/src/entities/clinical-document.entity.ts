@@ -6,12 +6,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
-} from 'typeorm';
-import { Doctor } from './doctor.entity';
-import { Patient } from './patient.entity';
-import { Appointment } from './appointment.entity';
+} from "typeorm";
+import { Doctor } from "./doctor.entity";
+import { Patient } from "./patient.entity";
+import { Appointment } from "./appointment.entity";
 
-@Entity('clinical_documents')
+@Entity("clinical_documents")
 export class ClinicalDocument {
   @PrimaryGeneratedColumn()
   id: number;
@@ -34,21 +34,21 @@ export class ClinicalDocument {
   @Column({ nullable: true })
   location: string;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   uploadDate: Date;
 
   @Column({ nullable: true })
   path: string;
 
   @ManyToOne(() => Doctor, (doctor) => doctor.documents, { nullable: true })
-  @JoinColumn({ name: 'doctorId' })
+  @JoinColumn({ name: "doctorId" })
   doctor: Doctor;
 
   @Column({ nullable: true })
   doctorId: number;
 
   @ManyToOne(() => Patient, (patient) => patient.documents, { nullable: true })
-  @JoinColumn({ name: 'patientId' })
+  @JoinColumn({ name: "patientId" })
   patient: Patient;
 
   @Column({ nullable: true })
@@ -57,7 +57,7 @@ export class ClinicalDocument {
   @ManyToOne(() => Appointment, (appointment) => appointment.documents, {
     nullable: true,
   })
-  @JoinColumn({ name: 'appointmentId' })
+  @JoinColumn({ name: "appointmentId" })
   appointment: Appointment;
 
   @Column({ nullable: true })

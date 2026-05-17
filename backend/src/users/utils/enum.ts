@@ -1,5 +1,5 @@
 export enum EuserStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  PENDING = 'PENDING',
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+  PENDING = "PENDING",
 }

@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
-import { UpdateUserReqDto } from './dto/req/update-user-req-dto';
-import { CreateUserReqDto } from './dto/req/create-user-req-dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { User } from "./entities/user.entity";
+import { UpdateUserReqDto } from "./dto/req/update-user-req-dto";
+import { CreateUserReqDto } from "./dto/req/create-user-req-dto";
 
 @Injectable()
 export class UsersRepository {
@@ -15,7 +15,7 @@ export class UsersRepository {
   async create(createUserDto: CreateUserReqDto): Promise<User> {
     const user = this.userRepository.create({
       ...createUserDto,
-      status: 'ACTIVE',
+      status: "ACTIVE",
     });
     return await this.userRepository.save(user);
   }
@@ -23,7 +23,7 @@ export class UsersRepository {
   async findById(id: number): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException("User not found");
     }
     return user;
   }

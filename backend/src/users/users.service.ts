@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { UsersRepository } from './users.repository';
-import { CreateUserReqDto } from './dto/req/create-user-req-dto';
-import { UpdateUserReqDto } from './dto/req/update-user-req-dto';
+import { Injectable } from "@nestjs/common";
+import { UsersRepository } from "./users.repository";
+import { CreateUserReqDto } from "./dto/req/create-user-req-dto";
+import { UpdateUserReqDto } from "./dto/req/update-user-req-dto";
 
 @Injectable()
 export class UsersService {
@@ -25,6 +25,6 @@ export class UsersService {
 
   async removeById(id: number) {
     await this.usersRepository.delete(id);
-    return { message: 'User removed successfully' };
+    return { message: "User removed successfully" };
   }
 }

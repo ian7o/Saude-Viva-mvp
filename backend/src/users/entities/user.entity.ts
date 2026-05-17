@@ -4,9 +4,9 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-} from 'typeorm';
+} from "typeorm";
 
-@Entity('users')
+@Entity("users")
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -26,7 +26,7 @@ export class User {
   @Column({ nullable: true })
   sex: string;
 
-  @Column({ default: 'ACTIVE' })
+  @Column({ default: "ACTIVE" })
   status: string;
 
   @CreateDateColumn()

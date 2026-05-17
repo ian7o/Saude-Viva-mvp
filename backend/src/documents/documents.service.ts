@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { ClinicalDocument } from 'src/entities/clinical-document.entity';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { ClinicalDocument } from "src/entities/clinical-document.entity";
 
 @Injectable()
 export class DocumentsService {
@@ -14,34 +14,34 @@ export class DocumentsService {
     const whereCondition = doctorId ? { doctorId } : {};
     return await this.documentRepository.find({
       where: whereCondition,
-      relations: ['patient', 'doctor', 'appointment'],
-      order: { uploadDate: 'DESC' },
+      relations: ["patient", "doctor", "appointment"],
+      order: { uploadDate: "DESC" },
     });
   }
 
   async findByDoctor(doctorId: number): Promise<ClinicalDocument[]> {
     return await this.documentRepository.find({
       where: { doctorId },
-      relations: ['patient', 'doctor', 'appointment'],
-      order: { uploadDate: 'DESC' },
+      relations: ["patient", "doctor", "appointment"],
+      order: { uploadDate: "DESC" },
     });
   }
 
   async findByPatient(patientId: number): Promise<ClinicalDocument[]> {
     return await this.documentRepository.find({
       where: { patientId },
-      relations: ['patient', 'doctor', 'appointment'],
-      order: { uploadDate: 'DESC' },
+      relations: ["patient", "doctor", "appointment"],
+      order: { uploadDate: "DESC" },
     });
   }
 
   async findById(id: number): Promise<ClinicalDocument> {
     const document = await this.documentRepository.findOne({
       where: { id },
-      relations: ['patient', 'doctor', 'appointment'],
+      relations: ["patient", "doctor", "appointment"],
     });
     if (!document) {
-      throw new NotFoundException('Document not found');
+      throw new NotFoundException("Document not found");
     }
     return document;
   }

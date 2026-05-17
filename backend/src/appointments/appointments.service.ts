@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between } from 'typeorm';
-import { Appointment } from 'src/entities/appointment.entity';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository, Between } from "typeorm";
+import { Appointment } from "src/entities/appointment.entity";
 
 @Injectable()
 export class AppointmentsService {
@@ -12,16 +12,16 @@ export class AppointmentsService {
 
   async findAll(): Promise<Appointment[]> {
     return await this.appointmentRepository.find({
-      relations: ['patient', 'doctor'],
-      order: { date: 'ASC' },
+      relations: ["patient", "doctor"],
+      order: { date: "ASC" },
     });
   }
 
   async findByDoctor(doctorId: number): Promise<Appointment[]> {
     return await this.appointmentRepository.find({
       where: { doctorId },
-      relations: ['patient', 'doctor'],
-      order: { date: 'ASC' },
+      relations: ["patient", "doctor"],
+      order: { date: "ASC" },
     });
   }
 
@@ -35,8 +35,8 @@ export class AppointmentsService {
         doctorId,
         date: Between(startDate, endDate),
       },
-      relations: ['patient', 'doctor'],
-      order: { date: 'ASC' },
+      relations: ["patient", "doctor"],
+      order: { date: "ASC" },
     });
   }
 
@@ -55,18 +55,18 @@ export class AppointmentsService {
         doctorId,
         date: Between(startOfDay, endOfDay),
       },
-      relations: ['patient', 'doctor'],
-      order: { date: 'ASC' },
+      relations: ["patient", "doctor"],
+      order: { date: "ASC" },
     });
   }
 
   async findById(id: number): Promise<Appointment> {
     const appointment = await this.appointmentRepository.findOne({
       where: { id },
-      relations: ['patient', 'doctor'],
+      relations: ["patient", "doctor"],
     });
     if (!appointment) {
-      throw new NotFoundException('Appointment not found');
+      throw new NotFoundException("Appointment not found");
     }
     return appointment;
   }

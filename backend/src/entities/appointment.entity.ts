@@ -7,12 +7,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
-} from 'typeorm';
-import { Doctor } from './doctor.entity';
-import { Patient } from './patient.entity';
-import { ClinicalDocument } from './clinical-document.entity';
+} from "typeorm";
+import { Doctor } from "./doctor.entity";
+import { Patient } from "./patient.entity";
+import { ClinicalDocument } from "./clinical-document.entity";
 
-@Entity('appointments')
+@Entity("appointments")
 export class Appointment {
   @PrimaryGeneratedColumn()
   id: number;
@@ -23,18 +23,18 @@ export class Appointment {
   @Column({ nullable: true })
   specialty: string;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: "timestamp" })
   date: Date;
 
   @ManyToOne(() => Doctor, (doctor) => doctor.appointments)
-  @JoinColumn({ name: 'doctorId' })
+  @JoinColumn({ name: "doctorId" })
   doctor: Doctor;
 
   @Column()
   doctorId: number;
 
   @ManyToOne(() => Patient, (patient) => patient.appointments)
-  @JoinColumn({ name: 'patientId' })
+  @JoinColumn({ name: "patientId" })
   patient: Patient;
 
   @Column()

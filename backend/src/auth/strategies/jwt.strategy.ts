@@ -1,10 +1,10 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { ConfigService } from '@nestjs/config';
-import { UsersRepository } from 'src/users/users.repository';
+import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { PassportStrategy } from "@nestjs/passport";
+import { ExtractJwt, Strategy } from "passport-jwt";
+import { ConfigService } from "@nestjs/config";
+import { UsersRepository } from "src/users/users.repository";
 
-const extractJwtFromQueryOrHeader = (req: any) => {
+const extractJwtFromQueryOrHeader = (req: { query?: { token?: string } }) => {
   if (req.query?.token) {
     return req.query.token;
   }
@@ -21,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: extractJwtFromQueryOrHeader,
       ignoreExpiration: false,
       secretOrKey:
-        configService.get<string>('JWT_SECRET') || 'saudeviva-secret-key',
+        configService.get<string>("JWT_SECRET") || "saudeviva-secret-key",
     });
   }
 

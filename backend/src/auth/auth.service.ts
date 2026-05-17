@@ -1,7 +1,7 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcryptjs';
-import { UsersRepository } from 'src/users/users.repository';
+import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import * as bcrypt from "bcryptjs";
+import { UsersRepository } from "src/users/users.repository";
 
 interface ValidatedUser {
   id: number;
@@ -38,9 +38,9 @@ export class AuthService {
   async login(email: string, password: string) {
     const user = await this.validateUser(email, password);
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException("Invalid credentials");
     }
-    const payload = { sub: user.id, email: user.email, role: 'doctor' };
+    const payload = { sub: user.id, email: user.email, role: "doctor" };
     return {
       access_token: this.jwtService.sign(payload),
       user: {
@@ -54,7 +54,7 @@ export class AuthService {
   async register(email: string, password: string, name: string) {
     const existingUser = await this.usersRepository.findByEmail(email);
     if (existingUser) {
-      throw new UnauthorizedException('User already exists');
+      throw new UnauthorizedException("User already exists");
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await this.usersRepository.create({
@@ -62,7 +62,7 @@ export class AuthService {
       name,
       password: hashedPassword,
       age: 0,
-      sex: 'male',
+      sex: "male",
     });
     const result = {
       id: user.id,
@@ -72,7 +72,7 @@ export class AuthService {
       sex: user.sex,
       status: user.status,
     };
-    const payload = { sub: result.id, email: result.email, role: 'doctor' };
+    const payload = { sub: result.id, email: result.email, role: "doctor" };
     return {
       access_token: this.jwtService.sign(payload),
       user: result,

@@ -5,11 +5,11 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
-} from 'typeorm';
-import { Appointment } from './appointment.entity';
-import { ClinicalDocument } from './clinical-document.entity';
+} from "typeorm";
+import { Appointment } from "./appointment.entity";
+import { ClinicalDocument } from "./clinical-document.entity";
 
-@Entity('patients')
+@Entity("patients")
 export class Patient {
   @PrimaryGeneratedColumn()
   id: number;
@@ -17,7 +17,7 @@ export class Patient {
   @Column()
   name: string;
 
-  @Column({ type: 'date', nullable: true })
+  @Column({ type: "date", nullable: true })
   birthDate: Date;
 
   @Column({ nullable: true })

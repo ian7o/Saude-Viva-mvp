@@ -5,8 +5,8 @@ import {
   HttpStatus,
   Logger,
   HttpException,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
+} from "@nestjs/common";
+import { Request, Response } from "express";
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -44,7 +44,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       this.sendError(
         host,
         HttpStatus.INTERNAL_SERVER_ERROR,
-        'Internal server error',
+        "Internal server error",
       );
     }
   }

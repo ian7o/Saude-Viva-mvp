@@ -1,22 +1,22 @@
-import { IsEmail, IsNotEmpty, Max, Min } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty, Max, Min } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateUserReqDto {
   @ApiProperty({
-    example: 'user@example.com',
-    description: 'User email address',
+    example: "user@example.com",
+    description: "User email address",
   })
   @IsNotEmpty()
   @IsEmail()
   email: string;
 
-  @ApiProperty({ example: 'John Doe', description: 'User name' })
+  @ApiProperty({ example: "John Doe", description: "User name" })
   @IsNotEmpty()
   name: string;
 
   @ApiProperty({
     example: 25,
-    description: 'User age',
+    description: "User age",
     minimum: 12,
     maximum: 100,
   })
@@ -26,14 +26,14 @@ export class CreateUserReqDto {
   age: number;
 
   @ApiProperty({
-    example: 'male',
-    description: 'User sex',
-    enum: ['male', 'female', 'other'],
+    example: "male",
+    description: "User sex",
+    enum: ["male", "female", "other"],
   })
   @IsNotEmpty()
   sex: string;
 
-  @ApiProperty({ example: 'password123', description: 'User password' })
+  @ApiProperty({ example: "password123", description: "User password" })
   @IsNotEmpty()
   password: string;
 }

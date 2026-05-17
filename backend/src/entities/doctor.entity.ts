@@ -5,11 +5,11 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
-} from 'typeorm';
-import { Appointment } from './appointment.entity';
-import { ClinicalDocument } from './clinical-document.entity';
+} from "typeorm";
+import { Appointment } from "./appointment.entity";
+import { ClinicalDocument } from "./clinical-document.entity";
 
-@Entity('doctors')
+@Entity("doctors")
 export class Doctor {
   @PrimaryGeneratedColumn()
   id: number;
