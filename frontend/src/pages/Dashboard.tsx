@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { appointmentsService } from '../services/api';
+import { appointmentsService, documentsService } from '../services/api';
 import type { Appointment } from '../types';
 import Layout from '../components/Layout';
 
 const Dashboard: React.FC = () => {
   const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([]);
-  const [user] = useState(() => {
-    const userStr = localStorage.getItem('user');
-    return userStr ? JSON.parse(userStr) : null;
-  });
+  const [documentsCount, setDocumentsCount] = useState(0);
+  const [userName, setUserName] = useState('Dr. Admin');
 
-  useEffect(() => {
-    loadTodayAppointments();
-  }, []);
+  const loadDocumentsCount = async () => {
+    try {
+      const data = await documentsService.getAll();
+      setDocumentsCount(data.length);
+    } catch (error) {
+      console.error('Error loading documents:', error);
+    }
+  };
 
   const loadTodayAppointments = async () => {
     try {
@@ -23,38 +26,85 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Bom dia';
+    if (hour < 18) return 'Boa tarde';
+    return 'Boa noite';
+  };
+
+  useEffect(() => {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      const userData = JSON.parse(userStr);
+      if (userData?.name) {
+        setUserName(userData.name.split(' ')[0]);
+      }
+    }
+    loadTodayAppointments();
+    loadDocumentsCount();
+  }, []);
+
   return (
     <Layout>
-      <h1 style={{ color: '#2c3e50', marginBottom: '30px' }}>
-        Bem-vindo, {user?.name || 'Doctor'}
-      </h1>
+      <div style={headerStyle}>
+        <div>
+          <h1 style={greetingStyle}>{getGreeting()}, {userName}!</h1>
+          <p style={subtitleStyle}>Aqui está o resumo do seu dia</p>
+        </div>
+        <div style={dateDisplayStyle}>
+          <span style={dateIconStyle}>📅</span>
+          <span>{new Date().toLocaleDateString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
+        </div>
+      </div>
       
       <div style={statsGridStyle}>
         <div style={statCardStyle}>
-          <h3 style={{ color: '#7f8c8d', marginBottom: '10px' }}>Consultas de Hoje</h3>
-          <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#3498db' }}>
-            {todayAppointments.length}
-          </p>
+          <div style={statIconStyle}>📅</div>
+          <div>
+            <h3 style={statLabelStyle}>Consultas de Hoje</h3>
+            <p style={statValueStyle}>{todayAppointments.length}</p>
+          </div>
+        </div>
+        <div style={statCardStyle}>
+          <div style={statIconStyle}>👥</div>
+          <div>
+            <h3 style={statLabelStyle}>Pacientes Atendidos</h3>
+            <p style={statValueStyle}>0</p>
+          </div>
+        </div>
+        <div style={statCardStyle}>
+          <div style={statIconStyle}>📄</div>
+          <div>
+            <h3 style={statLabelStyle}>Documentos</h3>
+            <p style={statValueStyle}>{documentsCount}</p>
+          </div>
         </div>
       </div>
 
-      <div style={{ marginTop: '30px' }}>
-        <h2 style={{ color: '#2c3e50', marginBottom: '20px' }}>Próximas Consultas</h2>
+      <div style={sectionStyle}>
+        <h2 style={sectionTitleStyle}>Próximas Consultas</h2>
         {todayAppointments.length === 0 ? (
-          <p style={{ color: '#7f8c8d' }}>Nenhuma consulta agendada para hoje.</p>
+          <div style={emptyStateStyle}>
+            <span style={emptyIconStyle}>📭</span>
+            <p>Nenhuma consulta agendada para hoje</p>
+          </div>
         ) : (
           <div style={listStyle}>
             {todayAppointments.map((apt) => (
               <div key={apt.id} style={itemStyle}>
-                <div>
-                  <strong>{apt.patient?.name || 'Paciente'}</strong>
-                  <p style={{ color: '#7f8c8d', margin: '5px 0' }}>{apt.description}</p>
+                <div style={itemLeftStyle}>
+                  <div style={patientAvatarStyle}>{apt.patient?.name?.[0] || 'P'}</div>
+                  <div>
+                    <strong style={patientNameStyle}>{apt.patient?.name || 'Paciente'}</strong>
+                    <p style={descriptionStyle}>{apt.description}</p>
+                  </div>
                 </div>
-                <div style={{ textAlign: 'right' }}>
+                <div style={itemRightStyle}>
                   <span style={timeStyle}>
                     {new Date(apt.date).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })}
                   </span>
-                  <span style={specialtyStyle}>{apt.specialty}</span>
+                  <span style={specialtyTagStyle}>{apt.specialty}</span>
                 </div>
               </div>
             ))}
@@ -65,46 +115,185 @@ const Dashboard: React.FC = () => {
   );
 };
 
+const headerStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '32px',
+  paddingBottom: '24px',
+  borderBottom: '1px solid #e2e8f0',
+};
+
+const greetingStyle: React.CSSProperties = {
+  color: '#1e293b',
+  fontSize: '32px',
+  fontWeight: 700,
+  margin: 0,
+};
+
+const subtitleStyle: React.CSSProperties = {
+  color: '#64748b',
+  fontSize: '15px',
+  margin: '8px 0 0 0',
+};
+
+const dateDisplayStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '10px',
+  padding: '12px 20px',
+  background: 'white',
+  borderRadius: '12px',
+  border: '1px solid #e2e8f0',
+  color: '#475569',
+  fontSize: '14px',
+  fontWeight: 500,
+};
+
+const dateIconStyle: React.CSSProperties = {
+  fontSize: '18px',
+};
+
 const statsGridStyle: React.CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
   gap: '20px',
+  marginBottom: '32px',
 };
 
 const statCardStyle: React.CSSProperties = {
   background: 'white',
-  padding: '25px',
-  borderRadius: '10px',
-  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+  padding: '24px',
+  borderRadius: '16px',
+  boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '20px',
+  border: '1px solid #e2e8f0',
+  transition: 'all 0.2s ease',
+};
+
+const statIconStyle: React.CSSProperties = {
+  fontSize: '32px',
+  width: '56px',
+  height: '56px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: 'linear-gradient(135deg, #e0f2fe, #bae6fd)',
+  borderRadius: '14px',
+};
+
+const statLabelStyle: React.CSSProperties = {
+  color: '#64748b',
+  marginBottom: '4px',
+  fontSize: '13px',
+  fontWeight: 500,
+};
+
+const statValueStyle: React.CSSProperties = {
+  fontSize: '32px',
+  fontWeight: 700,
+  color: '#1e293b',
+  margin: 0,
+};
+
+const sectionStyle: React.CSSProperties = {
+  marginTop: '32px',
+};
+
+const sectionTitleStyle: React.CSSProperties = {
+  color: '#1e293b',
+  fontSize: '20px',
+  fontWeight: 600,
+  marginBottom: '20px',
+};
+
+const emptyStateStyle: React.CSSProperties = {
+  textAlign: 'center',
+  padding: '50px 40px',
+  color: '#94a3b8',
+  background: 'white',
+  borderRadius: '12px',
+  border: '2px dashed #e2e8f0',
+};
+
+const emptyIconStyle: React.CSSProperties = {
+  fontSize: '40px',
+  display: 'block',
+  marginBottom: '12px',
 };
 
 const listStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
-  gap: '15px',
+  gap: '12px',
 };
 
 const itemStyle: React.CSSProperties = {
   background: 'white',
-  padding: '20px',
-  borderRadius: '10px',
-  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+  padding: '20px 24px',
+  borderRadius: '14px',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
+  border: '1px solid #e2e8f0',
+  transition: 'all 0.2s ease',
+};
+
+const itemLeftStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '16px',
+};
+
+const patientAvatarStyle: React.CSSProperties = {
+  width: '48px',
+  height: '48px',
+  borderRadius: '12px',
+  background: 'linear-gradient(135deg, #3498db, #2980b9)',
+  color: 'white',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: '18px',
+  fontWeight: 600,
+};
+
+const patientNameStyle: React.CSSProperties = {
+  color: '#1e293b',
+  fontSize: '15px',
+  fontWeight: 600,
+  display: 'block',
+};
+
+const descriptionStyle: React.CSSProperties = {
+  color: '#64748b',
+  margin: '4px 0 0 0',
+  fontSize: '13px',
+};
+
+const itemRightStyle: React.CSSProperties = {
+  textAlign: 'right',
 };
 
 const timeStyle: React.CSSProperties = {
   display: 'block',
   fontSize: '18px',
-  fontWeight: 'bold',
-  color: '#2c3e50',
+  fontWeight: 700,
+  color: '#1e293b',
 };
 
-const specialtyStyle: React.CSSProperties = {
-  display: 'block',
-  color: '#7f8c8d',
-  fontSize: '14px',
+const specialtyTagStyle: React.CSSProperties = {
+  display: 'inline-block',
+  marginTop: '6px',
+  padding: '4px 12px',
+  background: 'linear-gradient(135deg, #e0f2fe, #bae6fd)',
+  color: '#0284c7',
+  borderRadius: '20px',
+  fontSize: '12px',
+  fontWeight: 500,
 };
 
 export default Dashboard;

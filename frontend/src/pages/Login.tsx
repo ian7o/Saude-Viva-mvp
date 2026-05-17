@@ -22,37 +22,45 @@ const Login: React.FC = () => {
 
   return (
     <div style={containerStyle}>
-      <div style={cardStyle}>
-        <h1 style={{ textAlign: 'center', marginBottom: '30px', color: '#2c3e50' }}>
-          Saude Viva
-        </h1>
-        <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#7f8c8d' }}>
-          Login
-        </h2>
-        {error && <div style={errorStyle}>{error}</div>}
-        <form onSubmit={handleSubmit}>
-          <div style={formGroupStyle}>
-            <label>Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={inputStyle}
-              required
-            />
-          </div>
-          <div style={formGroupStyle}>
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={inputStyle}
-              required
-            />
-          </div>
-          <button type="submit" style={buttonStyle}>Login</button>
-        </form>
+      <div style={loginBoxStyle}>
+        <div style={logoSectionStyle}>
+          <div style={logoIconStyle}>+</div>
+          <h1 style={logoTitleStyle}>Saude Viva</h1>
+          <p style={logoSubtitleStyle}>Gestão Clínica</p>
+        </div>
+        
+        <div style={formSectionStyle}>
+          <h2 style={formTitleStyle}>Entrar</h2>
+          <p style={formSubtitleStyle}>Aceda à sua conta</p>
+          
+          {error && <div style={errorStyle}>{error}</div>}
+          
+          <form onSubmit={handleSubmit}>
+            <div style={formGroupStyle}>
+              <label style={labelStyle}>Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                style={inputStyle}
+                required
+              />
+            </div>
+            <div style={formGroupStyle}>
+              <label style={labelStyle}>Palavra-passe</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                style={inputStyle}
+                required
+              />
+            </div>
+            <button type="submit" style={buttonStyle}>Entrar</button>
+          </form>
+          
+          <p style={hintStyle}>Default: admin@saudeviva.com / admin123</p>
+        </div>
       </div>
     </div>
   );
@@ -63,48 +71,128 @@ const containerStyle: React.CSSProperties = {
   justifyContent: 'center',
   alignItems: 'center',
   minHeight: '100vh',
-  background: '#ecf0f1',
+  background: 'linear-gradient(135deg, #0d2137 0%, #1a3a5c 50%, #0d2137 100%)',
+  padding: '20px',
 };
 
-const cardStyle: React.CSSProperties = {
+const loginBoxStyle: React.CSSProperties = {
   background: 'white',
-  padding: '40px',
-  borderRadius: '10px',
-  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-  width: '400px',
+  borderRadius: '24px',
+  boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+  width: '100%',
+  maxWidth: '440px',
+  overflow: 'hidden',
+};
+
+const logoSectionStyle: React.CSSProperties = {
+  background: 'linear-gradient(135deg, #1a3a5c 0%, #0d2137 100%)',
+  padding: '40px 40px 30px',
+  textAlign: 'center',
+};
+
+const logoIconStyle: React.CSSProperties = {
+  width: '60px',
+  height: '60px',
+  background: 'linear-gradient(135deg, #3498db, #2980b9)',
+  borderRadius: '16px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: '28px',
+  fontWeight: 'bold',
+  color: 'white',
+  margin: '0 auto 16px',
+};
+
+const logoTitleStyle: React.CSSProperties = {
+  color: 'white',
+  fontSize: '24px',
+  fontWeight: 700,
+  margin: 0,
+  letterSpacing: '0.5px',
+};
+
+const logoSubtitleStyle: React.CSSProperties = {
+  color: 'rgba(255,255,255,0.6)',
+  fontSize: '13px',
+  margin: '8px 0 0 0',
+  textTransform: 'uppercase',
+  letterSpacing: '1px',
+};
+
+const formSectionStyle: React.CSSProperties = {
+  padding: '36px 40px 40px',
+};
+
+const formTitleStyle: React.CSSProperties = {
+  color: '#1e293b',
+  fontSize: '22px',
+  fontWeight: 700,
+  margin: '0 0 8px 0',
+  textAlign: 'center',
+};
+
+const formSubtitleStyle: React.CSSProperties = {
+  color: '#64748b',
+  fontSize: '14px',
+  margin: '0 0 28px 0',
+  textAlign: 'center',
 };
 
 const formGroupStyle: React.CSSProperties = {
   marginBottom: '20px',
 };
 
+const labelStyle: React.CSSProperties = {
+  display: 'block',
+  color: '#475569',
+  fontSize: '13px',
+  fontWeight: 600,
+  marginBottom: '8px',
+};
+
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  padding: '12px',
-  marginTop: '5px',
-  border: '1px solid #ddd',
-  borderRadius: '5px',
-  fontSize: '14px',
+  padding: '14px 16px',
+  border: '1px solid #e2e8f0',
+  borderRadius: '12px',
+  fontSize: '15px',
+  color: '#334155',
+  background: '#f8fafc',
+  transition: 'all 0.2s ease',
+  boxSizing: 'border-box',
 };
 
 const buttonStyle: React.CSSProperties = {
   width: '100%',
-  padding: '12px',
-  background: '#3498db',
+  padding: '16px',
+  background: 'linear-gradient(135deg, #3498db, #2980b9)',
   color: 'white',
   border: 'none',
-  borderRadius: '5px',
+  borderRadius: '12px',
   fontSize: '16px',
+  fontWeight: 600,
   cursor: 'pointer',
-  marginTop: '10px',
+  marginTop: '8px',
+  boxShadow: '0 4px 12px rgba(52, 152, 219, 0.3)',
+  transition: 'all 0.2s ease',
 };
 
 const errorStyle: React.CSSProperties = {
-  color: '#e74c3c',
-  marginBottom: '15px',
-  padding: '10px',
-  background: '#fadbd8',
-  borderRadius: '5px',
+  color: '#dc2626',
+  marginBottom: '20px',
+  padding: '14px 16px',
+  background: '#fef2f2',
+  borderRadius: '10px',
+  fontSize: '14px',
+  border: '1px solid #fecaca',
+};
+
+const hintStyle: React.CSSProperties = {
+  color: '#94a3b8',
+  fontSize: '12px',
+  textAlign: 'center',
+  marginTop: '20px',
 };
 
 export default Login;

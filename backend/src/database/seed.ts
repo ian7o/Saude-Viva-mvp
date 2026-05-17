@@ -21,7 +21,7 @@ export async function seed(dataSource: DataSource) {
   if (!user) {
     user = userRepo.create({
       email: "admin@saudeviva.com",
-      name: "Dr. Admin",
+      name: "Dr. gui",
       password: hashedPassword,
       age: 35,
       sex: "male",
@@ -35,7 +35,7 @@ export async function seed(dataSource: DataSource) {
   if (!user2) {
     user2 = userRepo.create({
       email: "admin@saudevivax.com",
-      name: "Dr. gui",
+      name: "Dr. nair",
       password: hashedPassword,
       age: 35,
       sex: "male",

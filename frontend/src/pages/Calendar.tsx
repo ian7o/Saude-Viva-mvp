@@ -174,17 +174,22 @@ const Calendar: React.FC = () => {
 
   return (
     <Layout>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <button onClick={goToPreviousDay} style={navBtnStyle}>◀</button>
-          <button onClick={goToToday} style={todayBtnStyle}>Hoje</button>
-          <button onClick={goToNextDay} style={navBtnStyle}>▶</button>
+      <div style={headerStyle}>
+        <div style={headerLeftStyle}>
+          <h1 style={pageTitleStyle}>Calendário</h1>
+          <p style={pageSubtitleStyle}>Gerencie suas consultas e horários</p>
         </div>
-        <h1 style={{ color: '#2c3e50' }}>Calendário</h1>
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div style={headerRightStyle}>
+          <div style={navControlsStyle}>
+            <button onClick={goToPreviousDay} style={navBtnStyle}>◀</button>
+            <button onClick={goToToday} style={todayBtnStyle}>Hoje</button>
+            <button onClick={goToNextDay} style={navBtnStyle}>▶</button>
+          </div>
+          <div style={viewToggleStyle}>
+            <button onClick={() => setViewMode('day')} style={viewBtnStyle(viewMode === 'day')}>Dia</button>
+            <button onClick={() => setViewMode('week')} style={viewBtnStyle(viewMode === 'week')}>Semana</button>
+          </div>
           <button onClick={() => setShowAddModal(true)} style={addBtnStyle}>+ Nova Consulta</button>
-          <button onClick={() => setViewMode('day')} style={viewBtnStyle(viewMode === 'day')}>Dia</button>
-          <button onClick={() => setViewMode('week')} style={viewBtnStyle(viewMode === 'week')}>Semana</button>
         </div>
       </div>
 
@@ -320,123 +325,145 @@ const Calendar: React.FC = () => {
 
 const viewBtnStyle = (active: boolean): React.CSSProperties => ({
   padding: '10px 20px',
-  background: active ? '#3498db' : 'white',
-  color: active ? 'white' : '#3498db',
-  border: '1px solid #3498db',
-  borderRadius: '5px',
+  background: active ? '#3498db' : '#f8fafc',
+  color: active ? 'white' : '#64748b',
+  border: `1px solid ${active ? '#3498db' : '#e2e8f0'}`,
+  borderRadius: '8px',
   cursor: 'pointer',
+  fontWeight: 500,
+  fontSize: '13px',
+  transition: 'all 0.2s ease',
 });
 
 const emptyStyle: React.CSSProperties = {
   textAlign: 'center',
-  padding: '40px',
-  color: '#7f8c8d',
+  padding: '60px 40px',
+  color: '#94a3b8',
   background: 'white',
-  borderRadius: '10px',
+  borderRadius: '12px',
+  border: '2px dashed #e2e8f0',
+  fontSize: '15px',
 };
 
 const dayViewStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
-  gap: '15px',
+  gap: '16px',
 };
 
 const appointmentCardStyle: React.CSSProperties = {
   display: 'flex',
   background: 'white',
-  borderRadius: '10px',
+  borderRadius: '12px',
   overflow: 'hidden',
-  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
   cursor: 'pointer',
+  border: '1px solid #e2e8f0',
+  transition: 'all 0.2s ease',
 };
 
 const timeBlockStyle: React.CSSProperties = {
-  background: '#3498db',
+  background: 'linear-gradient(135deg, #3498db, #2980b9)',
   color: 'white',
-  padding: '20px',
+  padding: '24px 20px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  minWidth: '100px',
-  fontWeight: 'bold',
+  minWidth: '120px',
+  fontWeight: 600,
+  fontSize: '15px',
 };
 
 const detailsStyle: React.CSSProperties = {
-  padding: '20px',
+  padding: '20px 24px',
   flex: 1,
 };
 
 const specialtyTagStyle: React.CSSProperties = {
   display: 'inline-block',
-  background: '#ecf0f1',
-  color: '#7f8c8d',
-  padding: '5px 10px',
-  borderRadius: '15px',
+  background: 'linear-gradient(135deg, #e0f2fe, #bae6fd)',
+  color: '#0284c7',
+  padding: '6px 12px',
+  borderRadius: '20px',
   fontSize: '12px',
+  fontWeight: 500,
   marginTop: '10px',
 };
 
 const weekGridStyle: React.CSSProperties = {
   display: 'grid',
   gridTemplateColumns: 'repeat(7, 1fr)',
-  gap: '10px',
+  gap: '12px',
 };
 
 const dayColumnStyle = (isToday: boolean, isWeekend: boolean): React.CSSProperties => ({
-  background: isToday ? '#e8f4fd' : (isWeekend ? '#fef9e7' : 'white'),
-  borderRadius: '10px',
+  background: isToday ? '#eff6ff' : (isWeekend ? '#fffbeb' : 'white'),
+  borderRadius: '12px',
   overflow: 'hidden',
-  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+  border: `1px solid ${isToday ? '#bfdbfe' : (isWeekend ? '#fef3c7' : '#e2e8f0')}`,
 });
 
 const dayHeaderStyle = (isToday: boolean, isWeekend: boolean): React.CSSProperties => ({
-  background: isToday ? '#3498db' : (isWeekend ? '#f39c12' : '#ecf0f1'),
-  color: isToday ? 'white' : (isWeekend ? 'white' : '#2c3e50'),
-  padding: '10px',
+  background: isToday ? 'linear-gradient(135deg, #3498db, #2980b9)' : (isWeekend ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'linear-gradient(135deg, #f1f5f9, #e2e8f0)'),
+  color: 'white',
+  padding: '14px 10px',
   textAlign: 'center',
-  fontWeight: 'bold',
+  fontWeight: 600,
+  fontSize: '13px',
 });
 
 const dayContentStyle: React.CSSProperties = {
-  padding: '10px',
-  minHeight: '200px',
+  padding: '12px',
+  minHeight: '180px',
 };
 
 const weekAppointmentStyle: React.CSSProperties = {
-  background: '#3498db',
+  background: 'linear-gradient(135deg, #3498db, #2980b9)',
   color: 'white',
-  padding: '8px',
-  borderRadius: '5px',
+  padding: '10px',
+  borderRadius: '8px',
   marginBottom: '8px',
   fontSize: '12px',
-  cursor: 'pointer',
+  boxShadow: '0 2px 4px rgba(52, 152, 219, 0.3)',
 };
 
 const navBtnStyle: React.CSSProperties = {
-  padding: '8px 12px',
-  background: '#ecf0f1',
-  border: 'none',
-  borderRadius: '5px',
+  padding: '10px 14px',
+  background: 'white',
+  border: '1px solid #e2e8f0',
+  borderRadius: '8px',
   cursor: 'pointer',
+  color: '#64748b',
+  fontSize: '14px',
+  transition: 'all 0.2s ease',
 };
 
 const todayBtnStyle: React.CSSProperties = {
-  padding: '8px 16px',
-  background: '#3498db',
+  padding: '10px 18px',
+  background: 'linear-gradient(135deg, #3498db, #2980b9)',
   color: 'white',
   border: 'none',
-  borderRadius: '5px',
+  borderRadius: '8px',
   cursor: 'pointer',
+  fontWeight: 500,
+  fontSize: '13px',
+  boxShadow: '0 2px 8px rgba(52, 152, 219, 0.3)',
 };
 
 const addBtnStyle: React.CSSProperties = {
-  padding: '10px 20px',
-  background: '#27ae60',
+  padding: '12px 24px',
+  background: 'linear-gradient(135deg, #27ae60, #1e8449)',
   color: 'white',
   border: 'none',
-  borderRadius: '5px',
+  borderRadius: '10px',
   cursor: 'pointer',
-  fontWeight: 'bold',
+  fontWeight: 600,
+  fontSize: '14px',
+  boxShadow: '0 4px 12px rgba(39, 174, 96, 0.3)',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
 };
 
 const modalOverlayStyle: React.CSSProperties = {
@@ -445,7 +472,8 @@ const modalOverlayStyle: React.CSSProperties = {
   left: 0,
   right: 0,
   bottom: 0,
-  background: 'rgba(0,0,0,0.5)',
+  background: 'rgba(15, 23, 42, 0.6)',
+  backdropFilter: 'blur(4px)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -454,66 +482,131 @@ const modalOverlayStyle: React.CSSProperties = {
 
 const modalContentStyle: React.CSSProperties = {
   background: 'white',
-  padding: '30px',
-  borderRadius: '10px',
-  maxWidth: '400px',
+  padding: '32px',
+  borderRadius: '16px',
+  maxWidth: '480px',
   width: '90%',
+  boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
 };
 
 const formGroupStyle: React.CSSProperties = {
-  marginBottom: '15px',
+  marginBottom: '20px',
 };
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  padding: '10px',
-  marginTop: '5px',
-  border: '1px solid #ddd',
-  borderRadius: '5px',
+  padding: '12px 14px',
+  marginTop: '8px',
+  border: '1px solid #e2e8f0',
+  borderRadius: '10px',
   fontSize: '14px',
+  color: '#334155',
+  background: '#f8fafc',
+  transition: 'all 0.2s ease',
 };
 
 const submitBtnStyle: React.CSSProperties = {
-  padding: '10px 20px',
-  background: '#27ae60',
+  padding: '12px 24px',
+  background: 'linear-gradient(135deg, #27ae60, #1e8449)',
   color: 'white',
   border: 'none',
-  borderRadius: '5px',
+  borderRadius: '10px',
   cursor: 'pointer',
+  fontWeight: 600,
+  fontSize: '14px',
+  boxShadow: '0 4px 12px rgba(39, 174, 96, 0.3)',
 };
 
 const cancelBtnStyle: React.CSSProperties = {
-  padding: '10px 20px',
-  background: '#95a5a6',
-  color: 'white',
-  border: 'none',
-  borderRadius: '5px',
+  padding: '12px 24px',
+  background: '#f1f5f9',
+  color: '#64748b',
+  border: '1px solid #e2e8f0',
+  borderRadius: '10px',
   cursor: 'pointer',
+  fontWeight: 500,
+  fontSize: '14px',
 };
 
 const addSmallBtnStyle: React.CSSProperties = {
-  padding: '10px 15px',
-  background: '#3498db',
+  padding: '12px 16px',
+  background: 'linear-gradient(135deg, #3498db, #2980b9)',
   color: 'white',
   border: 'none',
-  borderRadius: '5px',
+  borderRadius: '10px',
   cursor: 'pointer',
+  fontSize: '16px',
+  fontWeight: 600,
 };
 
 const deleteBtnStyle: React.CSSProperties = {
-  padding: '10px 20px',
-  background: '#e74c3c',
+  padding: '12px 24px',
+  background: 'linear-gradient(135deg, #e74c3c, #c0392b)',
   color: 'white',
   border: 'none',
-  borderRadius: '5px',
+  borderRadius: '10px',
   cursor: 'pointer',
+  fontWeight: 600,
+  fontSize: '14px',
+  boxShadow: '0 4px 12px rgba(231, 76, 60, 0.3)',
 };
 
 const detailRowStyle: React.CSSProperties = {
-  marginBottom: '12px',
-  padding: '10px',
-  background: '#f8f9fa',
-  borderRadius: '5px',
+  marginBottom: '14px',
+  padding: '14px 16px',
+  background: '#f8fafc',
+  borderRadius: '10px',
+  border: '1px solid #e2e8f0',
+  fontSize: '14px',
+};
+
+// Header styles
+const headerStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '32px',
+  paddingBottom: '24px',
+  borderBottom: '1px solid #e2e8f0',
+};
+
+const headerLeftStyle: React.CSSProperties = {};
+
+const pageTitleStyle: React.CSSProperties = {
+  color: '#1e293b',
+  fontSize: '28px',
+  fontWeight: 700,
+  margin: 0,
+};
+
+const pageSubtitleStyle: React.CSSProperties = {
+  color: '#64748b',
+  fontSize: '14px',
+  margin: '4px 0 0 0',
+};
+
+const headerRightStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '16px',
+};
+
+const navControlsStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  padding: '6px',
+  background: 'white',
+  borderRadius: '10px',
+  border: '1px solid #e2e8f0',
+};
+
+const viewToggleStyle: React.CSSProperties = {
+  display: 'flex',
+  gap: '4px',
+  padding: '4px',
+  background: '#f1f5f9',
+  borderRadius: '10px',
 };
 
 export default Calendar;

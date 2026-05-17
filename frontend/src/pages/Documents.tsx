@@ -92,10 +92,13 @@ const Documents: React.FC = () => {
 
   return (
     <Layout>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-        <h1 style={{ color: '#2c3e50' }}>Documentos Clínicos</h1>
+      <div style={headerStyle}>
+        <div style={headerLeftStyle}>
+          <h1 style={pageTitleStyle}>Documentos Clínicos</h1>
+          <p style={pageSubtitleStyle}>Gerencie arquivos e documentos dos pacientes</p>
+        </div>
         <button onClick={() => setShowUpload(!showUpload)} style={uploadBtnStyle}>
-          {showUpload ? 'Cancelar' : 'Novo Documento'}
+          {showUpload ? '✕ Cancelar' : '+ Novo Documento'}
         </button>
       </div>
 
@@ -103,7 +106,7 @@ const Documents: React.FC = () => {
         <div style={uploadFormStyle}>
           <h3 style={{ marginBottom: '20px' }}>Carregar Documento</h3>
           <form onSubmit={handleUpload}>
-            <div style={formGridStyle}>
+            <div style={formColumnStyle}>
               <div style={formGroupStyle}>
                 <label>Arquivo</label>
                 <input type="file" ref={fileInputRef} required style={inputStyle} />
@@ -218,76 +221,101 @@ const Documents: React.FC = () => {
 
 const uploadBtnStyle: React.CSSProperties = {
   padding: '12px 24px',
-  background: '#3498db',
+  background: 'linear-gradient(135deg, #3498db, #2980b9)',
   color: 'white',
   border: 'none',
-  borderRadius: '5px',
+  borderRadius: '10px',
   cursor: 'pointer',
   fontSize: '14px',
+  fontWeight: 600,
+  boxShadow: '0 4px 12px rgba(52, 152, 219, 0.3)',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
 };
 
 const uploadFormStyle: React.CSSProperties = {
   background: 'white',
-  padding: '25px',
-  borderRadius: '10px',
+  padding: '28px',
+  borderRadius: '16px',
   marginBottom: '30px',
-  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+  boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+  border: '1px solid #e2e8f0',
 };
 
 const formGridStyle: React.CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
   gap: '20px',
+};
+
+const formColumnStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '16px',
 };
 
 const formGroupStyle: React.CSSProperties = {};
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
-  padding: '10px',
-  marginTop: '5px',
-  border: '1px solid #ddd',
-  borderRadius: '5px',
+  padding: '12px 14px',
+  marginTop: '8px',
+  border: '1px solid #e2e8f0',
+  borderRadius: '10px',
   fontSize: '14px',
+  color: '#334155',
+  background: '#f8fafc',
+  transition: 'all 0.2s ease',
 };
 
 const submitBtnStyle: React.CSSProperties = {
   marginTop: '20px',
-  padding: '12px 24px',
-  background: '#27ae60',
+  padding: '14px 28px',
+  background: 'linear-gradient(135deg, #27ae60, #1e8449)',
   color: 'white',
   border: 'none',
-  borderRadius: '5px',
+  borderRadius: '10px',
   cursor: 'pointer',
+  fontWeight: 600,
+  fontSize: '14px',
+  boxShadow: '0 4px 12px rgba(39, 174, 96, 0.3)',
 };
 
 const emptyStyle: React.CSSProperties = {
   textAlign: 'center',
-  padding: '40px',
-  color: '#7f8c8d',
+  padding: '60px 40px',
+  color: '#94a3b8',
   background: 'white',
-  borderRadius: '10px',
+  borderRadius: '12px',
+  border: '2px dashed #e2e8f0',
+  fontSize: '15px',
 };
 
 const gridStyle: React.CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
   gap: '20px',
 };
 
 const docCardStyle: React.CSSProperties = {
   background: 'white',
-  padding: '20px',
-  borderRadius: '10px',
-  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+  padding: '24px',
+  borderRadius: '14px',
+  boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
   display: 'flex',
   flexDirection: 'column',
-  gap: '15px',
+  gap: '16px',
+  border: '1px solid #e2e8f0',
+  transition: 'all 0.2s ease',
 };
 
 const docIconStyle: React.CSSProperties = {
-  fontSize: '40px',
+  fontSize: '36px',
   textAlign: 'center',
+  padding: '12px',
+  background: 'linear-gradient(135deg, #e0f2fe, #bae6fd)',
+  borderRadius: '12px',
 };
 
 const docInfoStyle: React.CSSProperties = {
@@ -297,42 +325,47 @@ const docInfoStyle: React.CSSProperties = {
 const docMetaStyle: React.CSSProperties = {
   display: 'flex',
   justifyContent: 'space-between',
-  color: '#7f8c8d',
-  fontSize: '12px',
-  marginTop: '10px',
+  color: '#64748b',
+  fontSize: '13px',
+  marginTop: '12px',
+  paddingTop: '12px',
+  borderTop: '1px solid #f1f5f9',
 };
 
 const patientStyle: React.CSSProperties = {
   color: '#3498db',
   fontSize: '14px',
   marginTop: '10px',
+  fontWeight: 500,
 };
 
 const docActionsStyle: React.CSSProperties = {
   display: 'flex',
-  gap: '10px',
+  gap: '8px',
 };
 
 const smallBtnStyle: React.CSSProperties = {
   flex: 1,
-  padding: '8px',
-  background: '#3498db',
+  padding: '10px 14px',
+  background: 'linear-gradient(135deg, #3498db, #2980b9)',
   color: 'white',
   border: 'none',
-  borderRadius: '5px',
+  borderRadius: '8px',
   cursor: 'pointer',
   fontSize: '12px',
+  fontWeight: 500,
 };
 
 const smallDeleteBtnStyle: React.CSSProperties = {
   flex: 1,
-  padding: '8px',
-  background: '#e74c3c',
+  padding: '10px 14px',
+  background: 'linear-gradient(135deg, #e74c3c, #c0392b)',
   color: 'white',
   border: 'none',
-  borderRadius: '5px',
+  borderRadius: '8px',
   cursor: 'pointer',
   fontSize: '12px',
+  fontWeight: 500,
 };
 
 const modalOverlayStyle: React.CSSProperties = {
@@ -341,7 +374,8 @@ const modalOverlayStyle: React.CSSProperties = {
   left: 0,
   right: 0,
   bottom: 0,
-  background: 'rgba(0,0,0,0.5)',
+  background: 'rgba(15, 23, 42, 0.6)',
+  backdropFilter: 'blur(4px)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -350,21 +384,49 @@ const modalOverlayStyle: React.CSSProperties = {
 
 const modalContentStyle: React.CSSProperties = {
   background: 'white',
-  padding: '30px',
-  borderRadius: '10px',
-  maxWidth: '500px',
+  padding: '32px',
+  borderRadius: '16px',
+  maxWidth: '520px',
   width: '90%',
+  boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
 };
 
 const actionBtnStyle = (color: string): React.CSSProperties => ({
-  padding: '10px 20px',
+  padding: '12px 24px',
   background: color,
   color: 'white',
   border: 'none',
-  borderRadius: '5px',
+  borderRadius: '10px',
   cursor: 'pointer',
   textDecoration: 'none',
   display: 'inline-block',
+  fontWeight: 500,
+  fontSize: '14px',
 });
+
+// Header styles
+const headerStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '32px',
+  paddingBottom: '24px',
+  borderBottom: '1px solid #e2e8f0',
+};
+
+const headerLeftStyle: React.CSSProperties = {};
+
+const pageTitleStyle: React.CSSProperties = {
+  color: '#1e293b',
+  fontSize: '28px',
+  fontWeight: 700,
+  margin: 0,
+};
+
+const pageSubtitleStyle: React.CSSProperties = {
+  color: '#64748b',
+  fontSize: '14px',
+  margin: '4px 0 0 0',
+};
 
 export default Documents;
