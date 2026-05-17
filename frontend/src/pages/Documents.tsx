@@ -72,6 +72,19 @@ const Documents: React.FC = () => {
     documentsService.download(doc.id);
   };
 
+  const handleDelete = async (doc: ClinicalDocument) => {
+    if (!window.confirm(`Tem certeza que deseja eliminar o documento "${doc.originalName}"?`)) {
+      return;
+    }
+    try {
+      await documentsService.delete(doc.id);
+      setSelectedDoc(null);
+      loadDocuments();
+    } catch (error) {
+      console.error('Error deleting document:', error);
+    }
+  };
+
   const canView = (doc: ClinicalDocument) => {
     const type = doc.mimetype.toLowerCase();
     return type.includes('pdf') || type.includes('image') || type.startsWith('text/');
@@ -193,6 +206,7 @@ const Documents: React.FC = () => {
                   <button onClick={() => handleView(doc)} style={smallBtnStyle}>Ver</button>
                 )}
                 <button onClick={() => handleDownload(doc)} style={smallBtnStyle}>Baixar</button>
+                <button onClick={() => handleDelete(doc)} style={smallDeleteBtnStyle}>Eliminar</button>
               </div>
             </div>
           ))}
@@ -303,6 +317,17 @@ const smallBtnStyle: React.CSSProperties = {
   flex: 1,
   padding: '8px',
   background: '#3498db',
+  color: 'white',
+  border: 'none',
+  borderRadius: '5px',
+  cursor: 'pointer',
+  fontSize: '12px',
+};
+
+const smallDeleteBtnStyle: React.CSSProperties = {
+  flex: 1,
+  padding: '8px',
+  background: '#e74c3c',
   color: 'white',
   border: 'none',
   borderRadius: '5px',

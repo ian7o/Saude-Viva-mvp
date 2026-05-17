@@ -61,6 +61,10 @@ export const documentsService = {
     const token = localStorage.getItem('token');
     return `http://localhost:4000/api/documents/${id}/view?token=${token}`;
   },
+  delete: async (id: number) => {
+    const response = await api.delete(`/documents/${id}`);
+    return response.data;
+  },
 };
 
 export const patientsService = {
