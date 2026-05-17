@@ -7,6 +7,7 @@ import { DoctorsModule } from "src/doctors/doctors.module";
 import { AppointmentsModule } from "src/appointments/appointments.module";
 import { PatientsModule } from "src/patients/patients.module";
 import { DocumentsModule } from "src/documents/documents.module";
+import { MessagesModule } from "src/messages/messages.module";
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { DocumentsModule } from "src/documents/documents.module";
     AppointmentsModule,
     PatientsModule,
     DocumentsModule,
+    MessagesModule,
   ],
 })
 export class AppModule {}

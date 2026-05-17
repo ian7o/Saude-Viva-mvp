@@ -1,9 +1,11 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const { theme, toggleTheme, colors } = useTheme();
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -23,17 +25,21 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
         
         <nav style={navStyle}>
-          <NavLink to="/dashboard" style={({ isActive }) => navLinkStyle(isActive)}>
+          <NavLink to="/dashboard" style={({ isActive }) => navLinkStyle(isActive, colors)}>
             <span style={navIconStyle}>📊</span>
             Dashboard
           </NavLink>
-          <NavLink to="/calendar" style={({ isActive }) => navLinkStyle(isActive)}>
+          <NavLink to="/calendar" style={({ isActive }) => navLinkStyle(isActive, colors)}>
             <span style={navIconStyle}>📅</span>
             Calendário
           </NavLink>
-          <NavLink to="/documents" style={({ isActive }) => navLinkStyle(isActive)}>
+          <NavLink to="/documents" style={({ isActive }) => navLinkStyle(isActive, colors)}>
             <span style={navIconStyle}>📁</span>
             Documentos
+          </NavLink>
+          <NavLink to="/messages" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+            <span style={navIconStyle}>💬</span>
+            Mensagens
           </NavLink>
         </nav>
 
@@ -51,7 +57,12 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
       </aside>
       
-      <main style={mainStyle}>
+      <main style={{ ...mainStyle, background: colors.background }}>
+        <div style={{ ...themeToggleContainer, background: colors.surface }}>
+          <button onClick={toggleTheme} style={themeToggleStyle(theme)}>
+            {theme === 'dark' ? '☀️' : '🌙'} {theme === 'dark' ? 'Claro' : 'Escuro'}
+          </button>
+        </div>
         {children}
       </main>
     </div>
@@ -119,7 +130,7 @@ const navStyle: React.CSSProperties = {
   gap: '5px',
 };
 
-const navLinkStyle = (isActive: boolean): React.CSSProperties => ({
+const navLinkStyle = (isActive: boolean, colors: any): React.CSSProperties => ({
   display: 'flex',
   alignItems: 'center',
   gap: '12px',
@@ -201,8 +212,31 @@ const mainStyle: React.CSSProperties = {
   flex: 1,
   marginLeft: '260px',
   padding: '30px 40px',
-  background: '#f8fafc',
   minHeight: '100vh',
 };
+
+const themeToggleContainer: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'flex-end',
+  marginBottom: '20px',
+  padding: '10px 16px',
+  borderRadius: '12px',
+};
+
+const themeToggleStyle = (theme: string): React.CSSProperties => ({
+  padding: '10px 18px',
+  background: theme === 'dark' ? 'rgba(52, 152, 219, 0.2)' : '#f1f5f9',
+  color: theme === 'dark' ? '#e2e8f0' : '#334155',
+  border: '1px solid',
+  borderColor: theme === 'dark' ? 'rgba(52, 152, 219, 0.3)' : '#e2e8f0',
+  borderRadius: '10px',
+  cursor: 'pointer',
+  fontSize: '13px',
+  fontWeight: 500,
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  transition: 'all 0.2s ease',
+});
 
 export default Layout;

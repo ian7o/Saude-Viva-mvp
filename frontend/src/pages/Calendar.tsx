@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { appointmentsService, patientsService } from '../services/api';
 import type { Appointment, Patient } from '../types';
 import Layout from '../components/Layout';
+import { useTheme } from '../context/ThemeContext';
+import { getTitleStyles, getCommonStyles } from '../styles/theme';
 
 type ViewMode = 'day' | 'week';
 
@@ -27,6 +29,10 @@ const Calendar: React.FC = () => {
   ]);
   const [newSpecialty, setNewSpecialty] = useState('');
   const [showSpecialtyInput, setShowSpecialtyInput] = useState(false);
+  
+  const { theme, colors } = useTheme();
+  const titleStyles = getTitleStyles(colors);
+  const common = getCommonStyles(colors);
 
   const goToPreviousDay = () => {
     const prev = new Date(currentDate);
@@ -174,20 +180,20 @@ const Calendar: React.FC = () => {
 
   return (
     <Layout>
-      <div style={headerStyle}>
-        <div style={headerLeftStyle}>
-          <h1 style={pageTitleStyle}>Calendário</h1>
-          <p style={pageSubtitleStyle}>Gerencie suas consultas e horários</p>
+      <div style={titleStyles.header}>
+        <div>
+          <h1 style={titleStyles.pageTitle}>Calendário</h1>
+          <p style={titleStyles.pageSubtitle}>Gerencie suas consultas e horários</p>
         </div>
         <div style={headerRightStyle}>
-          <div style={navControlsStyle}>
-            <button onClick={goToPreviousDay} style={navBtnStyle}>◀</button>
+          <div style={{ ...navControlsStyle, background: colors.surface, borderColor: colors.border }}>
+            <button onClick={goToPreviousDay} style={{ ...navBtnStyle, color: colors.textSecondary, borderColor: colors.border, background: colors.surface }}>◀</button>
             <button onClick={goToToday} style={todayBtnStyle}>Hoje</button>
-            <button onClick={goToNextDay} style={navBtnStyle}>▶</button>
+            <button onClick={goToNextDay} style={{ ...navBtnStyle, color: colors.textSecondary, borderColor: colors.border, background: colors.surface }}>▶</button>
           </div>
-          <div style={viewToggleStyle}>
-            <button onClick={() => setViewMode('day')} style={viewBtnStyle(viewMode === 'day')}>Dia</button>
-            <button onClick={() => setViewMode('week')} style={viewBtnStyle(viewMode === 'week')}>Semana</button>
+          <div style={{ ...viewToggleStyle, background: colors.surface }}>
+            <button onClick={() => setViewMode('day')} style={viewBtnStyle(viewMode === 'day', theme)}>Dia</button>
+            <button onClick={() => setViewMode('week')} style={viewBtnStyle(viewMode === 'week', theme)}>Semana</button>
           </div>
           <button onClick={() => setShowAddModal(true)} style={addBtnStyle}>+ Nova Consulta</button>
         </div>
@@ -195,17 +201,17 @@ const Calendar: React.FC = () => {
 
       {showAddModal && (
         <div style={modalOverlayStyle} onClick={() => setShowAddModal(false)}>
-          <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
-            <h3>Nova Consulta</h3>
+          <div style={{ ...modalContentStyle, background: colors.surface }} onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ color: colors.text, marginTop: 0 }}>Nova Consulta</h3>
             <form onSubmit={handleCreateAppointment}>
               <div style={formGroupStyle}>
-                <label>Descrição</label>
-                <input type="text" value={newAppointment.description} onChange={(e) => setNewAppointment({ ...newAppointment, description: e.target.value })} style={inputStyle} required />
+                <label style={{ color: colors.textSecondary }}>Descrição</label>
+                <input type="text" value={newAppointment.description} onChange={(e) => setNewAppointment({ ...newAppointment, description: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} required />
               </div>
               <div style={formGroupStyle}>
-                <label>Especialidade</label>
+                <label style={{ color: colors.textSecondary }}>Especialidade</label>
                 <div style={{ display: 'flex', gap: '10px' }}>
-                  <select value={newAppointment.specialty} onChange={(e) => setNewAppointment({ ...newAppointment, specialty: e.target.value })} style={{ ...inputStyle, flex: 1 }} required>
+                  <select value={newAppointment.specialty} onChange={(e) => setNewAppointment({ ...newAppointment, specialty: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border, flex: 1 }} required>
                     <option value="">Selecione...</option>
                     {specialties.map((s) => (
                       <option key={s} value={s}>{s}</option>
@@ -215,14 +221,14 @@ const Calendar: React.FC = () => {
                 </div>
                 {showSpecialtyInput && (
                   <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                    <input type="text" value={newSpecialty} onChange={(e) => setNewSpecialty(e.target.value)} placeholder="Nova especialidade" style={inputStyle} />
+                    <input type="text" value={newSpecialty} onChange={(e) => setNewSpecialty(e.target.value)} placeholder="Nova especialidade" style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} />
                     <button type="button" onClick={handleAddSpecialty} style={submitBtnStyle}>Adicionar</button>
                   </div>
                 )}
               </div>
               <div style={formGroupStyle}>
-                <label>Paciente</label>
-                <select value={newAppointment.patientId} onChange={(e) => setNewAppointment({ ...newAppointment, patientId: e.target.value })} style={inputStyle} required>
+                <label style={{ color: colors.textSecondary }}>Paciente</label>
+                <select value={newAppointment.patientId} onChange={(e) => setNewAppointment({ ...newAppointment, patientId: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} required>
                   <option value="">Selecione...</option>
                   {patients.map((p) => (
                     <option key={p.id} value={p.id}>{p.name}</option>
@@ -230,16 +236,16 @@ const Calendar: React.FC = () => {
                 </select>
               </div>
               <div style={formGroupStyle}>
-                <label>Data</label>
-                <input type="date" value={newAppointment.date} onChange={(e) => setNewAppointment({ ...newAppointment, date: e.target.value })} style={inputStyle} required />
+                <label style={{ color: colors.textSecondary }}>Data</label>
+                <input type="date" value={newAppointment.date} onChange={(e) => setNewAppointment({ ...newAppointment, date: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} required />
               </div>
               <div style={formGroupStyle}>
-                <label>Hora</label>
-                <input type="time" value={newAppointment.time} onChange={(e) => setNewAppointment({ ...newAppointment, time: e.target.value })} style={inputStyle} required />
+                <label style={{ color: colors.textSecondary }}>Hora</label>
+                <input type="time" value={newAppointment.time} onChange={(e) => setNewAppointment({ ...newAppointment, time: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} required />
               </div>
               <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
                 <button type="submit" style={submitBtnStyle}>Criar</button>
-                <button type="button" onClick={() => setShowAddModal(false)} style={cancelBtnStyle}>Cancelar</button>
+                <button type="button" onClick={() => setShowAddModal(false)} style={{ ...cancelBtnStyle, background: colors.surfaceHover, color: colors.textSecondary, borderColor: colors.border }}>Cancelar</button>
               </div>
             </form>
           </div>
@@ -248,22 +254,22 @@ const Calendar: React.FC = () => {
 
       {selectedAppointment && (
         <div style={modalOverlayStyle} onClick={() => setSelectedAppointment(null)}>
-          <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
-            <h3>Detalhes da Consulta</h3>
+          <div style={{ ...modalContentStyle, background: colors.surface }} onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ color: colors.text, marginTop: 0 }}>Detalhes da Consulta</h3>
             <div style={{ marginTop: '20px' }}>
-              <p style={detailRowStyle}><strong>Descrição:</strong> {selectedAppointment.description}</p>
-              <p style={detailRowStyle}><strong>Especialidade:</strong> {selectedAppointment.specialty}</p>
-              <p style={detailRowStyle}>
+              <p style={{ ...detailRowStyle, color: colors.text, background: colors.surfaceHover, borderColor: colors.border }}><strong>Descrição:</strong> {selectedAppointment.description}</p>
+              <p style={{ ...detailRowStyle, color: colors.text, background: colors.surfaceHover, borderColor: colors.border }}><strong>Especialidade:</strong> {selectedAppointment.specialty}</p>
+              <p style={{ ...detailRowStyle, color: colors.text, background: colors.surfaceHover, borderColor: colors.border }}>
                 <strong>Data:</strong> {new Date(selectedAppointment.date).toLocaleDateString('pt-PT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
-              <p style={detailRowStyle}>
+              <p style={{ ...detailRowStyle, color: colors.text, background: colors.surfaceHover, borderColor: colors.border }}>
                 <strong>Hora:</strong> {new Date(selectedAppointment.date).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })}
               </p>
-              <p style={detailRowStyle}><strong>Paciente:</strong> {selectedAppointment.patient?.name || 'N/A'}</p>
+              <p style={{ ...detailRowStyle, color: colors.text, background: colors.surfaceHover, borderColor: colors.border }}><strong>Paciente:</strong> {selectedAppointment.patient?.name || 'N/A'}</p>
             </div>
             <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
               <button onClick={handleDeleteAppointment} style={deleteBtnStyle}>Eliminar</button>
-              <button onClick={() => setSelectedAppointment(null)} style={cancelBtnStyle}>Fechar</button>
+              <button onClick={() => setSelectedAppointment(null)} style={{ ...cancelBtnStyle, background: colors.surfaceHover, color: colors.textSecondary, borderColor: colors.border }}>Fechar</button>
             </div>
           </div>
         </div>
@@ -271,21 +277,21 @@ const Calendar: React.FC = () => {
 
       {viewMode === 'day' ? (
         <div>
-          <h2 style={{ color: '#7f8c8d', marginBottom: '20px' }}>
+          <h2 style={{ color: colors.textSecondary, marginBottom: '20px' }}>
             {currentDate.toLocaleDateString('pt-PT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </h2>
           {appointments.length === 0 ? (
-            <div style={emptyStyle}>Nenhuma consulta para hoje</div>
+            <div style={{ ...emptyStyle, color: colors.textSecondary, background: colors.surface, borderColor: colors.border }}>Nenhuma consulta para hoje</div>
           ) : (
             <div style={dayViewStyle}>
               {appointments.map((apt) => (
-                <div key={apt.id} style={appointmentCardStyle} onClick={() => setSelectedAppointment(apt)}>
+                <div key={apt.id} style={{ ...appointmentCardStyle, background: colors.surface, borderColor: colors.border }} onClick={() => setSelectedAppointment(apt)}>
                   <div style={timeBlockStyle}>
                     {new Date(apt.date).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })}
                   </div>
-                  <div style={detailsStyle}>
+                  <div style={{ ...detailsStyle, color: colors.text }}>
                     <strong>{apt.patient?.name || 'Paciente'}</strong>
-                    <p>{apt.description}</p>
+                    <p style={{ color: colors.textSecondary }}>{apt.description}</p>
                     <span style={specialtyTagStyle}>{apt.specialty}</span>
                   </div>
                 </div>
@@ -296,16 +302,21 @@ const Calendar: React.FC = () => {
       ) : (
         <div style={weekGridStyle}>
           {getDaysOfWeek().map((day) => (
-            <div key={day.toISOString()} style={dayColumnStyle(isToday(day), isWeekend(day))}>
+            <div key={day.toISOString()} style={dayColumnStyle(isToday(day), isWeekend(day), theme)}>
               <div style={dayHeaderStyle(isToday(day), isWeekend(day))}>
-                <div style={{ fontSize: '12px', textTransform: 'uppercase' }}>
+                <div style={{ fontSize: '12px', textTransform: 'uppercase', color: 'white' }}>
                   {day.toLocaleDateString('pt-PT', { weekday: 'long' })}
                 </div>
-                <div style={{ fontSize: '18px', fontWeight: 'bold' }}>
+                <div style={{ fontSize: '18px', fontWeight: 'bold', color: 'white' }}>
                   {day.getDate()}
                 </div>
               </div>
-              <div style={{ ...dayContentStyle, background: isWeekend(day) ? '#fef9e7' : 'white' }}>
+              <div style={{ 
+                ...dayContentStyle, 
+                background: isWeekend(day) 
+                  ? (theme === 'dark' ? '#1c2a1c' : '#fef9e7') 
+                  : (theme === 'dark' ? '#1e293b' : 'white')
+              }}>
                 {getAppointmentsForDay(day).map((apt) => (
                   <div key={apt.id} style={weekAppointmentStyle} onClick={() => setSelectedAppointment(apt)}>
                     <div style={{ fontWeight: 'bold', fontSize: '12px' }}>
@@ -323,11 +334,11 @@ const Calendar: React.FC = () => {
   );
 };
 
-const viewBtnStyle = (active: boolean): React.CSSProperties => ({
+const viewBtnStyle = (active: boolean, theme: string): React.CSSProperties => ({
   padding: '10px 20px',
-  background: active ? '#3498db' : '#f8fafc',
-  color: active ? 'white' : '#64748b',
-  border: `1px solid ${active ? '#3498db' : '#e2e8f0'}`,
+  background: active ? '#3498db' : (theme === 'dark' ? '#1e293b' : '#f8fafc'),
+  color: active ? 'white' : (theme === 'dark' ? '#cbd5e1' : '#64748b'),
+  border: `1px solid ${active ? '#3498db' : (theme === 'dark' ? '#334155' : '#e2e8f0')}`,
   borderRadius: '8px',
   cursor: 'pointer',
   fontWeight: 500,
@@ -338,10 +349,8 @@ const viewBtnStyle = (active: boolean): React.CSSProperties => ({
 const emptyStyle: React.CSSProperties = {
   textAlign: 'center',
   padding: '60px 40px',
-  color: '#94a3b8',
-  background: 'white',
   borderRadius: '12px',
-  border: '2px dashed #e2e8f0',
+  border: '2px dashed',
   fontSize: '15px',
 };
 
@@ -353,12 +362,11 @@ const dayViewStyle: React.CSSProperties = {
 
 const appointmentCardStyle: React.CSSProperties = {
   display: 'flex',
-  background: 'white',
   borderRadius: '12px',
   overflow: 'hidden',
   boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
   cursor: 'pointer',
-  border: '1px solid #e2e8f0',
+  border: '1px solid',
   transition: 'all 0.2s ease',
 };
 
@@ -396,16 +404,16 @@ const weekGridStyle: React.CSSProperties = {
   gap: '12px',
 };
 
-const dayColumnStyle = (isToday: boolean, isWeekend: boolean): React.CSSProperties => ({
-  background: isToday ? '#eff6ff' : (isWeekend ? '#fffbeb' : 'white'),
+const dayColumnStyle = (isToday: boolean, isWeekend: boolean, theme: string): React.CSSProperties => ({
+  background: isToday ? (theme === 'dark' ? '#1e3a5f' : '#eff6ff') : (isWeekend ? (theme === 'dark' ? '#1c2a1c' : '#fffbeb') : (theme === 'dark' ? '#1e293b' : 'white')),
   borderRadius: '12px',
   overflow: 'hidden',
-  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-  border: `1px solid ${isToday ? '#bfdbfe' : (isWeekend ? '#fef3c7' : '#e2e8f0')}`,
+  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+  border: `1px solid ${isToday ? (theme === 'dark' ? '#3b82f6' : '#bfdbfe') : (isWeekend ? (theme === 'dark' ? '#475569' : '#fef3c7') : (theme === 'dark' ? '#334155' : '#e2e8f0'))}`,
 });
 
 const dayHeaderStyle = (isToday: boolean, isWeekend: boolean): React.CSSProperties => ({
-  background: isToday ? 'linear-gradient(135deg, #3498db, #2980b9)' : (isWeekend ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'linear-gradient(135deg, #f1f5f9, #e2e8f0)'),
+  background: isToday ? 'linear-gradient(135deg, #3498db, #2980b9)' : (isWeekend ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'linear-gradient(135deg, #64748b, #475569)'),
   color: 'white',
   padding: '14px 10px',
   textAlign: 'center',
@@ -431,10 +439,9 @@ const weekAppointmentStyle: React.CSSProperties = {
 const navBtnStyle: React.CSSProperties = {
   padding: '10px 14px',
   background: 'white',
-  border: '1px solid #e2e8f0',
+  border: '1px solid',
   borderRadius: '8px',
   cursor: 'pointer',
-  color: '#64748b',
   fontSize: '14px',
   transition: 'all 0.2s ease',
 };
@@ -481,7 +488,6 @@ const modalOverlayStyle: React.CSSProperties = {
 };
 
 const modalContentStyle: React.CSSProperties = {
-  background: 'white',
   padding: '32px',
   borderRadius: '16px',
   maxWidth: '480px',
@@ -497,11 +503,9 @@ const inputStyle: React.CSSProperties = {
   width: '100%',
   padding: '12px 14px',
   marginTop: '8px',
-  border: '1px solid #e2e8f0',
+  border: '1px solid',
   borderRadius: '10px',
   fontSize: '14px',
-  color: '#334155',
-  background: '#f8fafc',
   transition: 'all 0.2s ease',
 };
 
@@ -519,9 +523,7 @@ const submitBtnStyle: React.CSSProperties = {
 
 const cancelBtnStyle: React.CSSProperties = {
   padding: '12px 24px',
-  background: '#f1f5f9',
-  color: '#64748b',
-  border: '1px solid #e2e8f0',
+  border: '1px solid',
   borderRadius: '10px',
   cursor: 'pointer',
   fontWeight: 500,
@@ -554,35 +556,9 @@ const deleteBtnStyle: React.CSSProperties = {
 const detailRowStyle: React.CSSProperties = {
   marginBottom: '14px',
   padding: '14px 16px',
-  background: '#f8fafc',
   borderRadius: '10px',
-  border: '1px solid #e2e8f0',
+  border: '1px solid',
   fontSize: '14px',
-};
-
-// Header styles
-const headerStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: '32px',
-  paddingBottom: '24px',
-  borderBottom: '1px solid #e2e8f0',
-};
-
-const headerLeftStyle: React.CSSProperties = {};
-
-const pageTitleStyle: React.CSSProperties = {
-  color: '#1e293b',
-  fontSize: '28px',
-  fontWeight: 700,
-  margin: 0,
-};
-
-const pageSubtitleStyle: React.CSSProperties = {
-  color: '#64748b',
-  fontSize: '14px',
-  margin: '4px 0 0 0',
 };
 
 const headerRightStyle: React.CSSProperties = {
@@ -596,16 +572,14 @@ const navControlsStyle: React.CSSProperties = {
   alignItems: 'center',
   gap: '8px',
   padding: '6px',
-  background: 'white',
   borderRadius: '10px',
-  border: '1px solid #e2e8f0',
+  border: '1px solid',
 };
 
 const viewToggleStyle: React.CSSProperties = {
   display: 'flex',
   gap: '4px',
   padding: '4px',
-  background: '#f1f5f9',
   borderRadius: '10px',
 };
 

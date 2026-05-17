@@ -74,4 +74,19 @@ export const patientsService = {
   },
 };
 
+export const messagesService = {
+  getContacts: async () => {
+    const response = await api.get('/messages/contacts');
+    return response.data;
+  },
+  getHistory: async (contactId: number, contactType: string) => {
+    const response = await api.get(`/messages/${contactId}/${contactType}`);
+    return response.data;
+  },
+  send: async (data: { content: string; receiverId: number; receiverType: string }) => {
+    const response = await api.post('/messages', data);
+    return response.data;
+  },
+};
+
 export default api;

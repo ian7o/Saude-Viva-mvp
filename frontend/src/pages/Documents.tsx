@@ -2,8 +2,14 @@ import React, { useEffect, useState, useRef } from 'react';
 import { documentsService, patientsService } from '../services/api';
 import type { ClinicalDocument, Patient } from '../types';
 import Layout from '../components/Layout';
+import { useTheme } from '../context/ThemeContext';
+import { getTitleStyles, getCommonStyles } from '../styles/theme';
 
 const Documents: React.FC = () => {
+  const { colors } = useTheme();
+  const titleStyles = getTitleStyles(colors);
+  const common = getCommonStyles(colors);
+  
   const [documents, setDocuments] = useState<ClinicalDocument[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [showUpload, setShowUpload] = useState(false);
@@ -92,10 +98,10 @@ const Documents: React.FC = () => {
 
   return (
     <Layout>
-      <div style={headerStyle}>
-        <div style={headerLeftStyle}>
-          <h1 style={pageTitleStyle}>Documentos Clínicos</h1>
-          <p style={pageSubtitleStyle}>Gerencie arquivos e documentos dos pacientes</p>
+      <div style={titleStyles.header}>
+        <div>
+          <h1 style={titleStyles.pageTitle}>Documentos Clínicos</h1>
+          <p style={titleStyles.pageSubtitle}>Gerencie arquivos e documentos dos pacientes</p>
         </div>
         <button onClick={() => setShowUpload(!showUpload)} style={uploadBtnStyle}>
           {showUpload ? '✕ Cancelar' : '+ Novo Documento'}
@@ -403,30 +409,5 @@ const actionBtnStyle = (color: string): React.CSSProperties => ({
   fontWeight: 500,
   fontSize: '14px',
 });
-
-// Header styles
-const headerStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: '32px',
-  paddingBottom: '24px',
-  borderBottom: '1px solid #e2e8f0',
-};
-
-const headerLeftStyle: React.CSSProperties = {};
-
-const pageTitleStyle: React.CSSProperties = {
-  color: '#1e293b',
-  fontSize: '28px',
-  fontWeight: 700,
-  margin: 0,
-};
-
-const pageSubtitleStyle: React.CSSProperties = {
-  color: '#64748b',
-  fontSize: '14px',
-  margin: '4px 0 0 0',
-};
 
 export default Documents;

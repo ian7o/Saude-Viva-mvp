@@ -125,14 +125,14 @@ const headerStyle: React.CSSProperties = {
 };
 
 const greetingStyle: React.CSSProperties = {
-  color: '#1e293b',
+  color: '#ffffff',
   fontSize: '32px',
   fontWeight: 700,
   margin: 0,
 };
 
 const subtitleStyle: React.CSSProperties = {
-  color: '#64748b',
+  color: '#fffff',
   fontSize: '15px',
   margin: '8px 0 0 0',
 };
@@ -203,7 +203,7 @@ const sectionStyle: React.CSSProperties = {
 };
 
 const sectionTitleStyle: React.CSSProperties = {
-  color: '#1e293b',
+  color: '#ffffff',
   fontSize: '20px',
   fontWeight: 600,
   marginBottom: '20px',

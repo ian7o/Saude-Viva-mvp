@@ -4,6 +4,7 @@ import { Doctor } from "src/entities/doctor.entity";
 import { Patient } from "src/entities/patient.entity";
 import { Appointment } from "src/entities/appointment.entity";
 import { ClinicalDocument } from "src/entities/clinical-document.entity";
+import { Message } from "src/entities/message.entity";
 import { User } from "src/users/entities/user.entity";
 
 export async function seed(dataSource: DataSource) {
@@ -11,6 +12,7 @@ export async function seed(dataSource: DataSource) {
   const patientRepo = dataSource.getRepository(Patient);
   const appointmentRepo = dataSource.getRepository(Appointment);
   const documentRepo = dataSource.getRepository(ClinicalDocument);
+  const messageRepo = dataSource.getRepository(Message);
   const userRepo = dataSource.getRepository(User);
 
   const hashedPassword = await bcrypt.hash("admin123", 10);
@@ -239,6 +241,56 @@ export async function seed(dataSource: DataSource) {
       patientId: patient4.id,
     }),
   );
+
+  const msg1 = messageRepo.create({
+    content: "Olá Dr., gostaria de saber os resultados das análises.",
+    senderId: patient1.id,
+    senderName: patient1.name,
+    senderType: "patient",
+    receiverId: doctor.id,
+    receiverType: "professional",
+  });
+  await messageRepo.save(msg1);
+
+  const msg2 = messageRepo.create({
+    content: "Olá João, os resultados estão prontos. Pode passar amanhã às 10h.",
+    senderId: doctor.id,
+    senderName: doctor.name,
+    senderType: "professional",
+    receiverId: patient1.id,
+    receiverType: "patient",
+  });
+  await messageRepo.save(msg2);
+
+  const msg3 = messageRepo.create({
+    content: "Dr., preciso remarcar a consulta de amanhã.",
+    senderId: patient2.id,
+    senderName: patient2.name,
+    senderType: "patient",
+    receiverId: doctor.id,
+    receiverType: "professional",
+  });
+  await messageRepo.save(msg3);
+
+  const msg4 = messageRepo.create({
+    content: "Bom dia Dr. Administrador! Tem disponíveis algum horário para reunião esta semana?",
+    senderId: doctor2.id,
+    senderName: doctor2.name,
+    senderType: "professional",
+    receiverId: doctor.id,
+    receiverType: "professional",
+  });
+  await messageRepo.save(msg4);
+
+  const msg5 = messageRepo.create({
+    content: "Olá Dr. Gui, amanhã às 14h está disponível na minha sala.",
+    senderId: doctor.id,
+    senderName: doctor.name,
+    senderType: "professional",
+    receiverId: doctor2.id,
+    receiverType: "professional",
+  });
+  await messageRepo.save(msg5);
 
   console.log("Seed completed successfully!");
 }
