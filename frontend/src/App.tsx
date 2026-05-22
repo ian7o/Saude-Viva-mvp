@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import Calendar from './pages/Calendar';
 import Documents from './pages/Documents';
 import Messages from './pages/Messages';
+import Patients from './pages/Patients';
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('token');
@@ -38,6 +39,14 @@ function App() {
           element={
             <PrivateRoute>
               <Documents />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/patients"
+          element={
+            <PrivateRoute>
+              <Patients />
             </PrivateRoute>
           }
         />

@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  BadRequestException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Patient } from "src/entities/patient.entity";
@@ -17,17 +22,45 @@ export class PatientsService {
   async findById(id: number): Promise<Patient> {
     const patient = await this.patientRepository.findOne({ where: { id } });
     if (!patient) {
-      throw new NotFoundException("Patient not found");
+      throw new NotFoundException("Paciente não encontrado");
     }
     return patient;
   }
 
+  async checkDuplicate(identificationNumber: string): Promise<Patient | null> {
+    return await this.patientRepository.findOne({
+      where: { identificationNumber },
+    });
+  }
+
   async create(data: Partial<Patient>): Promise<Patient> {
+    if (!data.name || !data.name.trim()) {
+      throw new BadRequestException("Nome é obrigatório");
+    }
+    if (!data.identificationNumber || !data.identificationNumber.trim()) {
+      throw new BadRequestException("Número de identificação é obrigatório");
+    }
+
+    const existing = await this.checkDuplicate(data.identificationNumber);
+    if (existing) {
+      throw new ConflictException(
+        "Já existe um paciente com este número de identificação",
+      );
+    }
+
     const patient = this.patientRepository.create(data);
     return await this.patientRepository.save(patient);
   }
 
   async update(id: number, data: Partial<Patient>): Promise<Patient> {
+    if (data.identificationNumber) {
+      const existing = await this.checkDuplicate(data.identificationNumber);
+      if (existing && existing.id !== id) {
+        throw new ConflictException(
+          "Já existe um paciente com este número de identificação",
+        );
+      }
+    }
     await this.patientRepository.update(id, data);
     return await this.findById(id);
   }

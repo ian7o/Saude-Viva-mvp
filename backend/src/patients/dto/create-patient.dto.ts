@@ -2,15 +2,15 @@ import {
   IsString,
   IsOptional,
   IsDateString,
-  IsAlphanumeric,
+  IsNotEmpty,
 } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreatePatientDto {
   @ApiProperty({ example: "John Doe", description: "Patient name" })
   @IsString()
-  @IsOptional()
-  name?: string;
+  @IsNotEmpty()
+  name: string;
 
   @ApiProperty({ example: "1990-01-15", description: "Birth date" })
   @IsDateString()
@@ -18,9 +18,9 @@ export class CreatePatientDto {
   birthDate?: string;
 
   @ApiProperty({ example: "12345678", description: "Identification number" })
-  @IsAlphanumeric()
-  @IsOptional()
-  identificationNumber?: string;
+  @IsString()
+  @IsNotEmpty()
+  identificationNumber: string;
 
   @ApiProperty({ example: "+351912345678", description: "Phone number" })
   @IsString()

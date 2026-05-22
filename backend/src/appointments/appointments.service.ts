@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  BadRequestException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, Between } from "typeorm";
 import { Appointment } from "src/entities/appointment.entity";
@@ -71,13 +76,71 @@ export class AppointmentsService {
     return appointment;
   }
 
+  async checkAvailability(
+    doctorId: number,
+    date: Date,
+    excludeAppointmentId?: number,
+  ): Promise<boolean> {
+    const startWindow = new Date(date.getTime() - 30 * 60 * 1000);
+    const endWindow = new Date(date.getTime() + 30 * 60 * 1000);
+
+    const appointments = await this.appointmentRepository.find({
+      where: {
+        doctorId,
+        date: Between(startWindow, endWindow),
+      },
+    });
+
+    if (appointments.length > 0) {
+      if (excludeAppointmentId === undefined) {
+        return false;
+      }
+      const excludeId = excludeAppointmentId;
+      const hasOtherConflict = appointments.some((apt) => apt.id !== excludeId);
+      if (hasOtherConflict) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   async create(data: Partial<Appointment>): Promise<Appointment> {
+    if (!data.doctorId || !data.date) {
+      throw new BadRequestException("Médico e data são obrigatórios");
+    }
+    const available = await this.checkAvailability(data.doctorId, data.date);
+    if (!available) {
+      throw new ConflictException(
+        "O médico já tem uma consulta agendada neste horário",
+      );
+    }
     const appointment = this.appointmentRepository.create(data);
     return await this.appointmentRepository.save(appointment);
   }
 
-  async update(id: number, data: Partial<Appointment>): Promise<Appointment> {
-    await this.appointmentRepository.update(id, data);
+  async update(
+    id: number,
+    data: Partial<Appointment>,
+    userId?: number,
+  ): Promise<Appointment> {
+    if (data.date || data.doctorId) {
+      const doctorId = data.doctorId || (await this.findById(id)).doctorId;
+      const date = data.date || (await this.findById(id)).date;
+      const available = await this.checkAvailability(doctorId, date, id);
+      if (!available) {
+        throw new ConflictException(
+          "O médico já tem uma consulta agendada neste horário",
+        );
+      }
+    }
+
+    const updateData = {
+      ...data,
+      editedBy: userId,
+      editedAt: new Date(),
+    };
+
+    await this.appointmentRepository.update(id, updateData);
     return await this.findById(id);
   }
 

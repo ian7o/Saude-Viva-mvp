@@ -37,6 +37,10 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <span style={navIconStyle}>📁</span>
             Documentos
           </NavLink>
+          <NavLink to="/patients" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+            <span style={navIconStyle}>👤</span>
+            Pacientes
+          </NavLink>
           <NavLink to="/messages" style={({ isActive }) => navLinkStyle(isActive, colors)}>
             <span style={navIconStyle}>💬</span>
             Mensagens

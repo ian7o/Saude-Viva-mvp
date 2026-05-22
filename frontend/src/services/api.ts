@@ -72,6 +72,14 @@ export const patientsService = {
     const response = await api.get('/patients');
     return response.data;
   },
+  create: async (data: { name: string; identificationNumber: string; birthDate?: string; phone?: string; email?: string }) => {
+    const response = await api.post('/patients', data);
+    return response.data;
+  },
+  delete: async (id: number) => {
+    const response = await api.delete(`/patients/${id}`);
+    return response.data;
+  },
 };
 
 export const messagesService = {

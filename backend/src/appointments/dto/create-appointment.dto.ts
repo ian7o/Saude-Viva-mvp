@@ -4,6 +4,7 @@ import {
   IsNumber,
   IsOptional,
   IsDateString,
+  IsIn,
 } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -38,4 +39,14 @@ export class CreateAppointmentDto {
   @IsNumber()
   @IsNotEmpty()
   patientId: number;
+
+  @ApiProperty({
+    example: "scheduled",
+    description: "Appointment status",
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  @IsIn(["scheduled", "completed", "cancelled", "rescheduled"])
+  status?: string;
 }

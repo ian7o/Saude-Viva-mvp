@@ -26,6 +26,15 @@ export class Appointment {
   @Column({ type: "timestamp" })
   date: Date;
 
+  @Column({ default: "scheduled" })
+  status: string;
+
+  @Column({ nullable: true })
+  editedBy: number;
+
+  @Column({ type: "timestamp", nullable: true })
+  editedAt: Date;
+
   @ManyToOne(() => Doctor, (doctor) => doctor.appointments)
   @JoinColumn({ name: "doctorId" })
   doctor: Doctor;

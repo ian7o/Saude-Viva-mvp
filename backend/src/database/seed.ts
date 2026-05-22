@@ -253,7 +253,8 @@ export async function seed(dataSource: DataSource) {
   await messageRepo.save(msg1);
 
   const msg2 = messageRepo.create({
-    content: "Olá João, os resultados estão prontos. Pode passar amanhã às 10h.",
+    content:
+      "Olá João, os resultados estão prontos. Pode passar amanhã às 10h.",
     senderId: doctor.id,
     senderName: doctor.name,
     senderType: "professional",
@@ -273,7 +274,8 @@ export async function seed(dataSource: DataSource) {
   await messageRepo.save(msg3);
 
   const msg4 = messageRepo.create({
-    content: "Bom dia Dr. Administrador! Tem disponíveis algum horário para reunião esta semana?",
+    content:
+      "Bom dia Dr. Administrador! Tem disponíveis algum horário para reunião esta semana?",
     senderId: doctor2.id,
     senderName: doctor2.name,
     senderType: "professional",

@@ -18,6 +18,9 @@ export interface Appointment {
   description: string;
   specialty: string;
   date: string;
+  status?: string;
+  editedBy?: number;
+  editedAt?: string;
   doctorId: number;
   patientId: number;
   patient?: Patient;

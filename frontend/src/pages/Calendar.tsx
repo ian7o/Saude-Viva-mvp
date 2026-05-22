@@ -3,7 +3,8 @@ import { appointmentsService, patientsService } from '../services/api';
 import type { Appointment, Patient } from '../types';
 import Layout from '../components/Layout';
 import { useTheme } from '../context/ThemeContext';
-import { getTitleStyles, getCommonStyles } from '../styles/theme';
+import { getTitleStyles } from '../styles/theme';
+import api from '../services/api';
 
 type ViewMode = 'day' | 'week';
 
@@ -13,8 +14,11 @@ const Calendar: React.FC = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('day');
   const [currentDate, setCurrentDate] = useState(new Date());
   const [showAddModal, setShowAddModal] = useState(false);
+  const [createError, setCreateError] = useState('');
   const [newAppointment, setNewAppointment] = useState({ description: '', specialty: '', date: '', time: '', patientId: '' });
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [editMode, setEditMode] = useState(false);
+  const [editAppointment, setEditAppointment] = useState({ description: '', specialty: '', date: '', time: '', patientId: '', status: '' });
   const [specialties, setSpecialties] = useState([
     'Medicina Geral',
     'Cardiologia',
@@ -32,7 +36,6 @@ const Calendar: React.FC = () => {
   
   const { theme, colors } = useTheme();
   const titleStyles = getTitleStyles(colors);
-  const common = getCommonStyles(colors);
 
   const goToPreviousDay = () => {
     const prev = new Date(currentDate);
@@ -72,7 +75,7 @@ const Calendar: React.FC = () => {
       }
       setAppointments(data);
     } catch (error) {
-      console.error('Error loading appointments:', error);
+      console.error('Erro ao carregar consultas:', error);
     }
   }, [viewMode, currentDate]);
 
@@ -85,7 +88,7 @@ const Calendar: React.FC = () => {
       const data = await patientsService.getAll();
       setPatients(data);
     } catch (error) {
-      console.error('Error loading patients:', error);
+      console.error('Erro ao carregar pacientes:', error);
     }
   };
 
@@ -128,28 +131,23 @@ const Calendar: React.FC = () => {
 
   const handleCreateAppointment = async (e: React.FormEvent) => {
     e.preventDefault();
+    setCreateError('');
     try {
       const dateTime = new Date(`${newAppointment.date}T${newAppointment.time}`);
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      await fetch('http://localhost:4000/api/appointments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          description: newAppointment.description,
-          specialty: newAppointment.specialty,
-          date: dateTime.toISOString(),
-          doctorId: user.id,
-          patientId: parseInt(newAppointment.patientId)
-        })
+      await api.post('/appointments', {
+        description: newAppointment.description,
+        specialty: newAppointment.specialty,
+        date: dateTime.toISOString(),
+        doctorId: user.id,
+        patientId: parseInt(newAppointment.patientId)
       });
       setShowAddModal(false);
       setNewAppointment({ description: '', specialty: '', date: '', time: '', patientId: '' });
       loadAppointments();
-    } catch (error) {
-      console.error('Error creating appointment:', error);
+    } catch (error: any) {
+      const msg = error.response?.data?.message || 'Erro ao criar consulta';
+      setCreateError(Array.isArray(msg) ? msg.join(', ') : msg);
     }
   };
 
@@ -174,7 +172,49 @@ const Calendar: React.FC = () => {
       setSelectedAppointment(null);
       loadAppointments();
     } catch (error) {
-      console.error('Error deleting appointment:', error);
+      console.error('Erro ao eliminar consulta:', error);
+    }
+  };
+
+  const startEditAppointment = () => {
+    if (!selectedAppointment) return;
+    const d = new Date(selectedAppointment.date);
+    const dateStr = d.toISOString().split('T')[0];
+    const timeStr = d.toTimeString().split(':').slice(0, 2).join(':');
+    setEditAppointment({
+      description: selectedAppointment.description || '',
+      specialty: selectedAppointment.specialty || '',
+      date: dateStr,
+      time: timeStr,
+      patientId: String(selectedAppointment.patientId),
+      status: selectedAppointment.status || 'scheduled',
+    });
+    setEditMode(true);
+    setCreateError('');
+  };
+
+  const handleUpdateAppointment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedAppointment) return;
+    setCreateError('');
+    try {
+      const dateTime = new Date(`${editAppointment.date}T${editAppointment.time}`);
+      const body: any = {
+        description: editAppointment.description,
+        specialty: editAppointment.specialty,
+        patientId: parseInt(editAppointment.patientId),
+        status: editAppointment.status,
+      };
+      if (editAppointment.date && editAppointment.time) {
+        body.date = dateTime.toISOString();
+      }
+      await api.put(`/appointments/${selectedAppointment.id}`, body);
+      setEditMode(false);
+      setSelectedAppointment(null);
+      loadAppointments();
+    } catch (error: any) {
+      const msg = error.response?.data?.message || 'Erro ao atualizar consulta';
+      setCreateError(Array.isArray(msg) ? msg.join(', ') : msg);
     }
   };
 
@@ -200,9 +240,10 @@ const Calendar: React.FC = () => {
       </div>
 
       {showAddModal && (
-        <div style={modalOverlayStyle} onClick={() => setShowAddModal(false)}>
+        <div style={modalOverlayStyle} onClick={() => { setShowAddModal(false); setCreateError(''); }}>
           <div style={{ ...modalContentStyle, background: colors.surface }} onClick={(e) => e.stopPropagation()}>
             <h3 style={{ color: colors.text, marginTop: 0 }}>Nova Consulta</h3>
+            {createError && <div style={errorStyle}>{createError}</div>}
             <form onSubmit={handleCreateAppointment}>
               <div style={formGroupStyle}>
                 <label style={{ color: colors.textSecondary }}>Descrição</label>
@@ -252,7 +293,7 @@ const Calendar: React.FC = () => {
         </div>
       )}
 
-      {selectedAppointment && (
+      {selectedAppointment && !editMode && (
         <div style={modalOverlayStyle} onClick={() => setSelectedAppointment(null)}>
           <div style={{ ...modalContentStyle, background: colors.surface }} onClick={(e) => e.stopPropagation()}>
             <h3 style={{ color: colors.text, marginTop: 0 }}>Detalhes da Consulta</h3>
@@ -266,11 +307,67 @@ const Calendar: React.FC = () => {
                 <strong>Hora:</strong> {new Date(selectedAppointment.date).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })}
               </p>
               <p style={{ ...detailRowStyle, color: colors.text, background: colors.surfaceHover, borderColor: colors.border }}><strong>Paciente:</strong> {selectedAppointment.patient?.name || 'N/A'}</p>
+              <p style={{ ...detailRowStyle, color: colors.text, background: colors.surfaceHover, borderColor: colors.border }}><strong>Estado:</strong> <span style={statusBadgeStyle(selectedAppointment.status || 'scheduled')}>{statusLabel(selectedAppointment.status || 'scheduled')}</span></p>
             </div>
             <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+              <button onClick={() => startEditAppointment()} style={editBtnStyle}>Editar</button>
               <button onClick={handleDeleteAppointment} style={deleteBtnStyle}>Eliminar</button>
               <button onClick={() => setSelectedAppointment(null)} style={{ ...cancelBtnStyle, background: colors.surfaceHover, color: colors.textSecondary, borderColor: colors.border }}>Fechar</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {selectedAppointment && editMode && (
+        <div style={modalOverlayStyle} onClick={() => { setEditMode(false); setSelectedAppointment(null); }}>
+          <div style={{ ...modalContentStyle, background: colors.surface }} onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ color: colors.text, marginTop: 0 }}>Editar Consulta</h3>
+            {createError && <div style={errorStyle}>{createError}</div>}
+            <form onSubmit={handleUpdateAppointment}>
+              <div style={formGroupStyle}>
+                <label style={{ color: colors.textSecondary }}>Descrição</label>
+                <input type="text" value={editAppointment.description} onChange={(e) => setEditAppointment({ ...editAppointment, description: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} />
+              </div>
+              <div style={formGroupStyle}>
+                <label style={{ color: colors.textSecondary }}>Especialidade</label>
+                <select value={editAppointment.specialty} onChange={(e) => setEditAppointment({ ...editAppointment, specialty: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }}>
+                  <option value="">Selecione...</option>
+                  {specialties.map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
+              </div>
+              <div style={formGroupStyle}>
+                <label style={{ color: colors.textSecondary }}>Paciente</label>
+                <select value={editAppointment.patientId} onChange={(e) => setEditAppointment({ ...editAppointment, patientId: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }}>
+                  <option value="">Selecione...</option>
+                  {patients.map((p) => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div style={formGroupStyle}>
+                <label style={{ color: colors.textSecondary }}>Data</label>
+                <input type="date" value={editAppointment.date} onChange={(e) => setEditAppointment({ ...editAppointment, date: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} />
+              </div>
+              <div style={formGroupStyle}>
+                <label style={{ color: colors.textSecondary }}>Hora</label>
+                <input type="time" value={editAppointment.time} onChange={(e) => setEditAppointment({ ...editAppointment, time: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} />
+              </div>
+              <div style={formGroupStyle}>
+                <label style={{ color: colors.textSecondary }}>Estado</label>
+                <select value={editAppointment.status} onChange={(e) => setEditAppointment({ ...editAppointment, status: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }}>
+                  <option value="scheduled">Agendada</option>
+                  <option value="completed">Concluída</option>
+                  <option value="cancelled">Cancelada</option>
+                  <option value="rescheduled">Reagendada</option>
+                </select>
+              </div>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                <button type="submit" style={submitBtnStyle}>Guardar</button>
+                <button type="button" onClick={() => { setEditMode(false); setCreateError(''); }} style={{ ...cancelBtnStyle, background: colors.surfaceHover, color: colors.textSecondary, borderColor: colors.border }}>Cancelar</button>
+              </div>
+            </form>
           </div>
         </div>
       )}
@@ -581,6 +678,57 @@ const viewToggleStyle: React.CSSProperties = {
   gap: '4px',
   padding: '4px',
   borderRadius: '10px',
+};
+
+const editBtnStyle: React.CSSProperties = {
+  padding: '12px 24px',
+  background: 'linear-gradient(135deg, #3498db, #2980b9)',
+  color: 'white',
+  border: 'none',
+  borderRadius: '10px',
+  cursor: 'pointer',
+  fontWeight: 600,
+  fontSize: '14px',
+  boxShadow: '0 4px 12px rgba(52, 152, 219, 0.3)',
+};
+
+const errorStyle: React.CSSProperties = {
+  background: '#fef2f2',
+  color: '#dc2626',
+  padding: '12px 16px',
+  borderRadius: '8px',
+  marginBottom: '16px',
+  fontSize: '13px',
+  border: '1px solid #fecaca',
+};
+
+const statusLabel = (status: string): string => {
+  const labels: Record<string, string> = {
+    scheduled: 'Agendada',
+    completed: 'Concluída',
+    cancelled: 'Cancelada',
+    rescheduled: 'Reagendada',
+  };
+  return labels[status] || status;
+};
+
+const statusBadgeStyle = (status: string): React.CSSProperties => {
+  const colors: Record<string, string> = {
+    scheduled: '#3498db',
+    completed: '#27ae60',
+    cancelled: '#e74c3c',
+    rescheduled: '#f39c12',
+  };
+  return {
+    display: 'inline-block',
+    padding: '4px 12px',
+    borderRadius: '12px',
+    fontSize: '12px',
+    fontWeight: 600,
+    color: 'white',
+    background: colors[status] || '#3498db',
+    textTransform: 'capitalize',
+  };
 };
 
 export default Calendar;

@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  UseGuards,
-} from "@nestjs/common";
+import { Controller, Get, Post, Body, Param, UseGuards } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "@nestjs/passport";
 import { MessagesService } from "./messages.service";
@@ -29,7 +22,12 @@ export class MessagesController {
   @ApiOperation({ summary: "Send a message" })
   send(
     @CurrentUser() user: { id: number; name: string; role: string },
-    @Body() body: { content: string; receiverId: number; receiverType: "patient" | "professional" },
+    @Body()
+    body: {
+      content: string;
+      receiverId: number;
+      receiverType: "patient" | "professional";
+    },
   ) {
     const senderType = user.role === "doctor" ? "professional" : "patient";
     return this.messagesService.send({
@@ -50,6 +48,11 @@ export class MessagesController {
     @Param("contactType") contactType: "patient" | "professional",
   ) {
     const userType = user.role === "doctor" ? "professional" : "patient";
-    return this.messagesService.getHistory(user.id, contactId, contactType, userType);
+    return this.messagesService.getHistory(
+      user.id,
+      contactId,
+      contactType,
+      userType,
+    );
   }
 }

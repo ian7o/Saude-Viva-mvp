@@ -24,8 +24,18 @@ export class MessagesService {
       patients.map(async (patient) => {
         const lastMessage = await this.messageRepository.findOne({
           where: [
-            { senderId: patient.id, senderType: "patient", receiverId: userId, receiverType: userType },
-            { senderId: userId, senderType: userType, receiverId: patient.id, receiverType: "patient" },
+            {
+              senderId: patient.id,
+              senderType: "patient",
+              receiverId: userId,
+              receiverType: userType,
+            },
+            {
+              senderId: userId,
+              senderType: userType,
+              receiverId: patient.id,
+              receiverType: "patient",
+            },
           ],
           order: { createdAt: "DESC" },
         });
@@ -36,17 +46,27 @@ export class MessagesService {
           lastMessage: lastMessage?.content || null,
           lastMessageDate: lastMessage?.createdAt || null,
         };
-      })
+      }),
     );
 
     const professionalContacts = await Promise.all(
       doctors
-        .filter(d => d.id !== userId)
+        .filter((d) => d.id !== userId)
         .map(async (doctor) => {
           const lastMessage = await this.messageRepository.findOne({
             where: [
-              { senderId: doctor.id, senderType: "professional", receiverId: userId, receiverType: userType },
-              { senderId: userId, senderType: userType, receiverId: doctor.id, receiverType: "professional" },
+              {
+                senderId: doctor.id,
+                senderType: "professional",
+                receiverId: userId,
+                receiverType: userType,
+              },
+              {
+                senderId: userId,
+                senderType: userType,
+                receiverId: doctor.id,
+                receiverType: "professional",
+              },
             ],
             order: { createdAt: "DESC" },
           });
@@ -57,23 +77,43 @@ export class MessagesService {
             lastMessage: lastMessage?.content || null,
             lastMessageDate: lastMessage?.createdAt || null,
           };
-        })
+        }),
     );
 
-    const allContacts = [...patientContacts, ...professionalContacts].filter(c => c.lastMessage !== null);
+    const allContacts = [...patientContacts, ...professionalContacts].filter(
+      (c) => c.lastMessage !== null,
+    );
 
     return allContacts.sort((a, b) => {
       if (!a.lastMessageDate) return 1;
       if (!b.lastMessageDate) return -1;
-      return new Date(b.lastMessageDate).getTime() - new Date(a.lastMessageDate).getTime();
+      return (
+        new Date(b.lastMessageDate).getTime() -
+        new Date(a.lastMessageDate).getTime()
+      );
     });
   }
 
-  async getHistory(userId: number, contactId: number, contactType: "patient" | "professional", userType: "patient" | "professional") {
+  async getHistory(
+    userId: number,
+    contactId: number,
+    contactType: "patient" | "professional",
+    userType: "patient" | "professional",
+  ) {
     const messages = await this.messageRepository.find({
       where: [
-        { senderId: userId, senderType: userType, receiverId: contactId, receiverType: contactType },
-        { senderId: contactId, senderType: contactType, receiverId: userId, receiverType: userType },
+        {
+          senderId: userId,
+          senderType: userType,
+          receiverId: contactId,
+          receiverType: contactType,
+        },
+        {
+          senderId: contactId,
+          senderType: contactType,
+          receiverId: userId,
+          receiverType: userType,
+        },
       ],
       order: { createdAt: "ASC" },
     });

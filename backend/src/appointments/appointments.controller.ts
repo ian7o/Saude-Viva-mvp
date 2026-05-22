@@ -8,6 +8,7 @@ import {
   Param,
   Query,
   UseGuards,
+  ForbiddenException,
 } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiBearerAuth } from "@nestjs/swagger";
 import { AuthGuard } from "@nestjs/passport";
@@ -68,12 +69,19 @@ export class AppointmentsController {
 
   @Put(":id")
   @ApiOperation({ summary: "Update appointment" })
-  update(@Param("id") id: number, @Body() updateDto: UpdateAppointmentDto) {
+  update(
+    @Param("id") id: number,
+    @Body() updateDto: UpdateAppointmentDto,
+    @CurrentUser() user: { id: number; role: string },
+  ) {
+    if (user.role !== "doctor") {
+      throw new ForbiddenException("Apenas médicos podem editar consultas");
+    }
     const data = {
       ...updateDto,
       date: updateDto.date ? new Date(updateDto.date) : undefined,
     };
-    return this.appointmentsService.update(id, data);
+    return this.appointmentsService.update(id, data, user.id);
   }
 
   @Delete(":id")

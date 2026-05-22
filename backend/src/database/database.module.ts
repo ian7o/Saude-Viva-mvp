@@ -11,7 +11,13 @@ import { Message } from "src/entities/message.entity";
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig),
-    TypeOrmModule.forFeature([Doctor, Patient, Appointment, ClinicalDocument, Message]),
+    TypeOrmModule.forFeature([
+      Doctor,
+      Patient,
+      Appointment,
+      ClinicalDocument,
+      Message,
+    ]),
   ],
   exports: [TypeOrmModule],
 })
