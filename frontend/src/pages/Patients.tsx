@@ -23,6 +23,10 @@ const Patients: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    loadPatients();
+  }, []);
+
   const handleCreatePatient = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
