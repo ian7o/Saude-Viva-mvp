@@ -7,8 +7,11 @@ import { getTitleStyles } from '../styles/theme';
 
 const Patients: React.FC = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [search, setSearch] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newPatient, setNewPatient] = useState({ name: '', identificationNumber: '', birthDate: '', phone: '', email: '' });
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
+  const [formData, setFormData] = useState({ name: '', identificationNumber: '', birthDate: '', phone: '', email: '' });
   const [error, setError] = useState('');
 
   const { theme, colors } = useTheme();
@@ -27,22 +30,76 @@ const Patients: React.FC = () => {
     loadPatients();
   }, []);
 
+  const filtered = patients.filter((p) => {
+    if (!search) return true;
+    const q = search.toLowerCase();
+    return (
+      p.name.toLowerCase().includes(q) ||
+      (p.identificationNumber && p.identificationNumber.toLowerCase().includes(q))
+    );
+  });
+
+  const resetForm = () => {
+    setFormData({ name: '', identificationNumber: '', birthDate: '', phone: '', email: '' });
+    setError('');
+  };
+
+  const openAddModal = () => {
+    resetForm();
+    setShowAddModal(true);
+  };
+
+  const openEditModal = (patient: Patient) => {
+    setEditingPatient(patient);
+    setFormData({
+      name: patient.name,
+      identificationNumber: patient.identificationNumber || '',
+      birthDate: patient.birthDate ? patient.birthDate.split('T')[0] : '',
+      phone: patient.phone || '',
+      email: patient.email || '',
+    });
+    setError('');
+    setShowEditModal(true);
+  };
+
   const handleCreatePatient = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     try {
       await patientsService.create({
-        name: newPatient.name,
-        identificationNumber: newPatient.identificationNumber,
-        birthDate: newPatient.birthDate || undefined,
-        phone: newPatient.phone || undefined,
-        email: newPatient.email || undefined,
+        name: formData.name,
+        identificationNumber: formData.identificationNumber,
+        birthDate: formData.birthDate || undefined,
+        phone: formData.phone || undefined,
+        email: formData.email || undefined,
       });
       setShowAddModal(false);
-      setNewPatient({ name: '', identificationNumber: '', birthDate: '', phone: '', email: '' });
+      resetForm();
       loadPatients();
     } catch (err: any) {
       const msg = err.response?.data?.message || 'Erro ao criar paciente';
+      setError(Array.isArray(msg) ? msg.join(', ') : msg);
+    }
+  };
+
+  const handleUpdatePatient = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingPatient) return;
+    setError('');
+    try {
+      await patientsService.update(editingPatient.id, {
+        name: formData.name,
+        identificationNumber: formData.identificationNumber,
+        birthDate: formData.birthDate || undefined,
+        phone: formData.phone || undefined,
+        email: formData.email || undefined,
+      });
+      setShowEditModal(false);
+      setEditingPatient(null);
+      resetForm();
+      loadPatients();
+    } catch (err: any) {
+      const msg = err.response?.data?.message || 'Erro ao atualizar paciente';
       setError(Array.isArray(msg) ? msg.join(', ') : msg);
     }
   };
@@ -57,6 +114,35 @@ const Patients: React.FC = () => {
     }
   };
 
+  const renderForm = (onSubmit: (e: React.FormEvent) => Promise<void>, isEdit: boolean) => (
+    <form onSubmit={onSubmit}>
+      <div style={formGroupStyle}>
+        <label style={{ color: colors.textSecondary }}>Nome *</label>
+        <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} required />
+      </div>
+      <div style={formGroupStyle}>
+        <label style={{ color: colors.textSecondary }}>Nº de Identificação *</label>
+        <input type="text" value={formData.identificationNumber} onChange={(e) => setFormData({ ...formData, identificationNumber: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} required />
+      </div>
+      <div style={formGroupStyle}>
+        <label style={{ color: colors.textSecondary }}>Data de Nascimento</label>
+        <input type="date" value={formData.birthDate} onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} />
+      </div>
+      <div style={formGroupStyle}>
+        <label style={{ color: colors.textSecondary }}>Telefone</label>
+        <input type="text" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} />
+      </div>
+      <div style={formGroupStyle}>
+        <label style={{ color: colors.textSecondary }}>Email</label>
+        <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} />
+      </div>
+      <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+        <button type="submit" style={submitBtnStyle}>{isEdit ? 'Guardar' : 'Registar'}</button>
+        <button type="button" onClick={() => { isEdit ? setShowEditModal(false) : setShowAddModal(false); resetForm(); }} style={{ ...cancelBtnStyle, background: colors.surfaceHover, color: colors.textSecondary, borderColor: colors.border }}>Cancelar</button>
+      </div>
+    </form>
+  );
+
   return (
     <Layout>
       <div style={titleStyles.header}>
@@ -64,40 +150,38 @@ const Patients: React.FC = () => {
           <h1 style={titleStyles.pageTitle}>Pacientes</h1>
           <p style={titleStyles.pageSubtitle}>Registe e gerencie os dados dos pacientes</p>
         </div>
-        <button onClick={() => setShowAddModal(true)} style={addBtnStyle}>+ Novo Paciente</button>
+        <button onClick={openAddModal} style={addBtnStyle}>+ Novo Paciente</button>
+      </div>
+
+      <div style={{ ...searchBarStyle, background: colors.surface, borderColor: colors.border }}>
+        <input
+          type="text"
+          placeholder="Pesquisar por nome ou nº de identificação..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{ ...searchInputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }}
+        />
+        {search && (
+          <button onClick={() => setSearch('')} style={clearBtnStyle}>✕</button>
+        )}
       </div>
 
       {showAddModal && (
-        <div style={modalOverlayStyle} onClick={() => { setShowAddModal(false); setError(''); }}>
+        <div style={modalOverlayStyle} onClick={() => { setShowAddModal(false); resetForm(); }}>
           <div style={{ ...modalContentStyle, background: colors.surface }} onClick={(e) => e.stopPropagation()}>
             <h3 style={{ color: colors.text, marginTop: 0 }}>Registar Novo Paciente</h3>
             {error && <div style={errorStyle}>{error}</div>}
-            <form onSubmit={handleCreatePatient}>
-              <div style={formGroupStyle}>
-                <label style={{ color: colors.textSecondary }}>Nome *</label>
-                <input type="text" value={newPatient.name} onChange={(e) => setNewPatient({ ...newPatient, name: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} required />
-              </div>
-              <div style={formGroupStyle}>
-                <label style={{ color: colors.textSecondary }}>Nº de Identificação *</label>
-                <input type="text" value={newPatient.identificationNumber} onChange={(e) => setNewPatient({ ...newPatient, identificationNumber: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} required />
-              </div>
-              <div style={formGroupStyle}>
-                <label style={{ color: colors.textSecondary }}>Data de Nascimento</label>
-                <input type="date" value={newPatient.birthDate} onChange={(e) => setNewPatient({ ...newPatient, birthDate: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} />
-              </div>
-              <div style={formGroupStyle}>
-                <label style={{ color: colors.textSecondary }}>Telefone</label>
-                <input type="text" value={newPatient.phone} onChange={(e) => setNewPatient({ ...newPatient, phone: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} />
-              </div>
-              <div style={formGroupStyle}>
-                <label style={{ color: colors.textSecondary }}>Email</label>
-                <input type="email" value={newPatient.email} onChange={(e) => setNewPatient({ ...newPatient, email: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} />
-              </div>
-              <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-                <button type="submit" style={submitBtnStyle}>Registar</button>
-                <button type="button" onClick={() => { setShowAddModal(false); setError(''); }} style={{ ...cancelBtnStyle, background: colors.surfaceHover, color: colors.textSecondary, borderColor: colors.border }}>Cancelar</button>
-              </div>
-            </form>
+            {renderForm(handleCreatePatient, false)}
+          </div>
+        </div>
+      )}
+
+      {showEditModal && editingPatient && (
+        <div style={modalOverlayStyle} onClick={() => { setShowEditModal(false); resetForm(); }}>
+          <div style={{ ...modalContentStyle, background: colors.surface }} onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ color: colors.text, marginTop: 0 }}>Editar Paciente</h3>
+            {error && <div style={errorStyle}>{error}</div>}
+            {renderForm(handleUpdatePatient, true)}
           </div>
         </div>
       )}
@@ -110,16 +194,19 @@ const Patients: React.FC = () => {
           <span style={{ ...thStyle, color: colors.textSecondary }}>Contacto</span>
           <span style={{ ...thStyle, color: colors.textSecondary, textAlign: 'right' }}>Ações</span>
         </div>
-        {patients.length === 0 ? (
-          <div style={{ ...emptyStyle, color: colors.textSecondary, background: colors.surface, borderColor: colors.border }}>Nenhum paciente registado</div>
+        {filtered.length === 0 ? (
+          <div style={{ ...emptyStyle, color: colors.textSecondary, background: colors.surface, borderColor: colors.border }}>
+            {search ? 'Nenhum paciente encontrado para esta pesquisa' : 'Nenhum paciente registado'}
+          </div>
         ) : (
-          patients.map((patient) => (
+          filtered.map((patient) => (
             <div key={patient.id} style={{ ...tableRowStyle, background: colors.surface, borderColor: colors.border }}>
               <span style={{ ...tdStyle, color: colors.text, fontWeight: 500 }}>{patient.name}</span>
               <span style={{ ...tdStyle, color: colors.textSecondary }}>{patient.identificationNumber || '-'}</span>
               <span style={{ ...tdStyle, color: colors.textSecondary }}>{patient.birthDate ? new Date(patient.birthDate).toLocaleDateString('pt-PT') : '-'}</span>
               <span style={{ ...tdStyle, color: colors.textSecondary }}>{patient.phone || patient.email || '-'}</span>
-              <span style={{ ...tdStyle, textAlign: 'right' }}>
+              <span style={{ ...tdStyle, textAlign: 'right', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                <button onClick={() => openEditModal(patient)} style={editBtnStyle}>Editar</button>
                 <button onClick={() => handleDeletePatient(patient.id)} style={deleteBtnStyle}>Eliminar</button>
               </span>
             </div>
@@ -179,6 +266,17 @@ const tdStyle: React.CSSProperties = {
   fontSize: '14px',
 };
 
+const editBtnStyle: React.CSSProperties = {
+  padding: '8px 16px',
+  background: 'linear-gradient(135deg, #3498db, #2980b9)',
+  color: 'white',
+  border: 'none',
+  borderRadius: '8px',
+  cursor: 'pointer',
+  fontWeight: 500,
+  fontSize: '12px',
+};
+
 const deleteBtnStyle: React.CSSProperties = {
   padding: '8px 16px',
   background: 'linear-gradient(135deg, #e74c3c, #c0392b)',
@@ -188,6 +286,34 @@ const deleteBtnStyle: React.CSSProperties = {
   cursor: 'pointer',
   fontWeight: 500,
   fontSize: '12px',
+};
+
+const searchBarStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  padding: '12px 16px',
+  borderRadius: '12px',
+  border: '1px solid',
+  marginBottom: '20px',
+};
+
+const searchInputStyle: React.CSSProperties = {
+  flex: 1,
+  padding: '10px 14px',
+  border: '1px solid',
+  borderRadius: '10px',
+  fontSize: '14px',
+  outline: 'none',
+};
+
+const clearBtnStyle: React.CSSProperties = {
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  fontSize: '16px',
+  color: '#94a3b8',
+  padding: '4px 8px',
 };
 
 const errorStyle: React.CSSProperties = {

@@ -30,19 +30,31 @@ export class AppointmentsService {
     });
   }
 
+  async findByDateRange(
+    startDate: Date,
+    endDate: Date,
+    doctorId?: number,
+    specialty?: string,
+  ): Promise<Appointment[]> {
+    const where: any = {
+      date: Between(startDate, endDate),
+    };
+    if (doctorId) where.doctorId = doctorId;
+    if (specialty) where.specialty = specialty;
+
+    return await this.appointmentRepository.find({
+      where,
+      relations: ["patient", "doctor"],
+      order: { date: "ASC" },
+    });
+  }
+
   async findByDoctorAndDateRange(
     doctorId: number,
     startDate: Date,
     endDate: Date,
   ): Promise<Appointment[]> {
-    return await this.appointmentRepository.find({
-      where: {
-        doctorId,
-        date: Between(startDate, endDate),
-      },
-      relations: ["patient", "doctor"],
-      order: { date: "ASC" },
-    });
+    return await this.findByDateRange(startDate, endDate, doctorId);
   }
 
   async findByDoctorAndDate(

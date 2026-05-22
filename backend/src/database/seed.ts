@@ -45,6 +45,21 @@ export async function seed(dataSource: DataSource) {
     await userRepo.save(user2);
   }
 
+  let user3 = await userRepo.findOne({
+    where: { email: "secretaria@saudeviva.com" },
+  });
+  if (!user3) {
+    user3 = userRepo.create({
+      email: "secretaria@saudeviva.com",
+      name: "Maria Secretária",
+      password: hashedPassword,
+      age: 28,
+      sex: "female",
+      role: "secretary",
+    });
+    await userRepo.save(user3);
+  }
+
   let doctor = await doctorRepo.findOne({
     where: { email: "admin@saudeviva.com" },
   });

@@ -9,7 +9,20 @@ import Patients from './pages/Patients';
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('token');
-  return token ? <>{children}</> : <Navigate to="/login" />;
+  if (!token) return <Navigate to="/login" />;
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  if (user.role === 'secretary') {
+    return <>{children}</>;
+  }
+  return <>{children}</>;
+};
+
+const RootRedirect = () => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  if (user.role === 'secretary') {
+    return <Navigate to="/patients" />;
+  }
+  return <Navigate to="/dashboard" />;
 };
 
 function App() {
@@ -58,7 +71,7 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route path="*" element={<Navigate to="/dashboard" />} />
+        <Route path="*" element={<RootRedirect />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

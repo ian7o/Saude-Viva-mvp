@@ -59,7 +59,7 @@ const Login: React.FC = () => {
             <button type="submit" style={buttonStyle}>Entrar</button>
           </form>
           
-          <p style={hintStyle}>Default: admin@saudeviva.com / admin123</p>
+          <p style={hintStyle}>Médico: admin@saudeviva.com / admin123  |  Secretária: secretaria@saudeviva.com / admin123</p>
         </div>
       </div>
     </div>

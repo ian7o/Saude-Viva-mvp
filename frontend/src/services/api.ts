@@ -28,10 +28,11 @@ export const appointmentsService = {
     const response = await api.get('/appointments/today');
     return response.data;
   },
-  getByRange: async (startDate: string, endDate: string) => {
-    const response = await api.get('/appointments/range', {
-      params: { startDate, endDate },
-    });
+  getByRange: async (startDate: string, endDate: string, doctorId?: number, specialty?: string) => {
+    const params: any = { startDate, endDate };
+    if (doctorId) params.doctorId = doctorId;
+    if (specialty) params.specialty = specialty;
+    const response = await api.get('/appointments/range', { params });
     return response.data;
   },
 };
@@ -76,8 +77,19 @@ export const patientsService = {
     const response = await api.post('/patients', data);
     return response.data;
   },
+  update: async (id: number, data: { name?: string; identificationNumber?: string; birthDate?: string; phone?: string; email?: string }) => {
+    const response = await api.put(`/patients/${id}`, data);
+    return response.data;
+  },
   delete: async (id: number) => {
     const response = await api.delete(`/patients/${id}`);
+    return response.data;
+  },
+};
+
+export const doctorsService = {
+  getAll: async () => {
+    const response = await api.get('/doctors');
     return response.data;
   },
 };

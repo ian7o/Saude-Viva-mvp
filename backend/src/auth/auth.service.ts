@@ -7,6 +7,7 @@ interface ValidatedUser {
   id: number;
   email: string;
   name: string;
+  role: string;
 }
 
 @Injectable()
@@ -28,6 +29,7 @@ export class AuthService {
           id: user.id,
           email: user.email,
           name: user.name,
+          role: user.role || "doctor",
         };
         return result;
       }
@@ -40,13 +42,14 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException("Invalid credentials");
     }
-    const payload = { sub: user.id, email: user.email, role: "doctor" };
+    const payload = { sub: user.id, email: user.email, role: user.role };
     return {
       access_token: this.jwtService.sign(payload),
       user: {
         id: user.id,
         email: user.email,
         name: user.name,
+        role: user.role,
       },
     };
   }
@@ -71,8 +74,9 @@ export class AuthService {
       age: user.age,
       sex: user.sex,
       status: user.status,
+      role: user.role || "doctor",
     };
-    const payload = { sub: result.id, email: result.email, role: "doctor" };
+    const payload = { sub: result.id, email: result.email, role: result.role };
     return {
       access_token: this.jwtService.sign(payload),
       user: result,

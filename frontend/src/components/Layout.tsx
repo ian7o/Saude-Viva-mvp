@@ -25,26 +25,42 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
         
         <nav style={navStyle}>
-          <NavLink to="/dashboard" style={({ isActive }) => navLinkStyle(isActive, colors)}>
-            <span style={navIconStyle}>📊</span>
-            Dashboard
-          </NavLink>
-          <NavLink to="/calendar" style={({ isActive }) => navLinkStyle(isActive, colors)}>
-            <span style={navIconStyle}>📅</span>
-            Calendário
-          </NavLink>
-          <NavLink to="/documents" style={({ isActive }) => navLinkStyle(isActive, colors)}>
-            <span style={navIconStyle}>📁</span>
-            Documentos
-          </NavLink>
-          <NavLink to="/patients" style={({ isActive }) => navLinkStyle(isActive, colors)}>
-            <span style={navIconStyle}>👤</span>
-            Pacientes
-          </NavLink>
-          <NavLink to="/messages" style={({ isActive }) => navLinkStyle(isActive, colors)}>
-            <span style={navIconStyle}>💬</span>
-            Mensagens
-          </NavLink>
+          {user.role !== 'secretary' && (
+            <>
+              <NavLink to="/dashboard" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+                <span style={navIconStyle}>📊</span>
+                Dashboard
+              </NavLink>
+              <NavLink to="/calendar" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+                <span style={navIconStyle}>📅</span>
+                Calendário
+              </NavLink>
+              <NavLink to="/documents" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+                <span style={navIconStyle}>📁</span>
+                Documentos
+              </NavLink>
+              <NavLink to="/messages" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+                <span style={navIconStyle}>💬</span>
+                Mensagens
+              </NavLink>
+            </>
+          )}
+          {user.role === 'secretary' && (
+            <>
+              <NavLink to="/patients" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+                <span style={navIconStyle}>👤</span>
+                Pacientes
+              </NavLink>
+              <NavLink to="/calendar" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+                <span style={navIconStyle}>📅</span>
+                Calendário
+              </NavLink>
+              <NavLink to="/messages" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+                <span style={navIconStyle}>💬</span>
+                Mensagens
+              </NavLink>
+            </>
+          )}
         </nav>
 
         <div style={sidebarFooterStyle}>
@@ -52,7 +68,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <div style={userAvatarStyle}>{user.name?.[0] || 'U'}</div>
             <div>
               <p style={userNameStyle}>{user.name || 'Usuário'}</p>
-              <p style={userRoleStyle}>Médico</p>
+              <p style={userRoleStyle}>{user.role === 'secretary' ? 'Secretária' : 'Médico'}</p>
             </div>
           </div>
           <button onClick={handleLogout} style={logoutBtnStyle}>

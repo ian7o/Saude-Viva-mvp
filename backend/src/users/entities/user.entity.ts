@@ -29,6 +29,9 @@ export class User {
   @Column({ default: "ACTIVE" })
   status: string;
 
+  @Column({ default: "doctor" })
+  role: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

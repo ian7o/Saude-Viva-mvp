@@ -38,12 +38,22 @@ export class AppointmentsController {
   }
 
   @Get("range")
-  @ApiOperation({ summary: "Get appointments by date range" })
+  @ApiOperation({ summary: "Get appointments by date range with optional filters" })
   findByRange(
-    @CurrentUser() user: { id: number },
+    @CurrentUser() user: { id: number; role: string },
     @Query("startDate") startDate: string,
     @Query("endDate") endDate: string,
+    @Query("doctorId") doctorId?: string,
+    @Query("specialty") specialty?: string,
   ) {
+    if (user.role === "secretary" || doctorId) {
+      return this.appointmentsService.findByDateRange(
+        new Date(startDate),
+        new Date(endDate),
+        doctorId ? parseInt(doctorId) : undefined,
+        specialty,
+      );
+    }
     return this.appointmentsService.findByDoctorAndDateRange(
       user.id,
       new Date(startDate),

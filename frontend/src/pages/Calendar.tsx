@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { appointmentsService, patientsService } from '../services/api';
+import { appointmentsService, patientsService, doctorsService } from '../services/api';
 import type { Appointment, Patient } from '../types';
 import Layout from '../components/Layout';
 import { useTheme } from '../context/ThemeContext';
@@ -15,7 +15,7 @@ const Calendar: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [showAddModal, setShowAddModal] = useState(false);
   const [createError, setCreateError] = useState('');
-  const [newAppointment, setNewAppointment] = useState({ description: '', specialty: '', date: '', time: '', patientId: '' });
+  const [newAppointment, setNewAppointment] = useState({ description: '', specialty: '', date: '', time: '', patientId: '', doctorId: '' });
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [editMode, setEditMode] = useState(false);
   const [editAppointment, setEditAppointment] = useState({ description: '', specialty: '', date: '', time: '', patientId: '', status: '' });
@@ -33,7 +33,13 @@ const Calendar: React.FC = () => {
   ]);
   const [newSpecialty, setNewSpecialty] = useState('');
   const [showSpecialtyInput, setShowSpecialtyInput] = useState(false);
+  const [doctors, setDoctors] = useState<any[]>([]);
+  const [filterDoctorId, setFilterDoctorId] = useState('');
+  const [filterSpecialty, setFilterSpecialty] = useState('');
   
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const isSecretary = user.role === 'secretary';
+
   const { theme, colors } = useTheme();
   const titleStyles = getTitleStyles(colors);
 
@@ -56,8 +62,21 @@ const Calendar: React.FC = () => {
   const loadAppointments = useCallback(async () => {
     try {
       let data: Appointment[];
+      const docId = filterDoctorId ? parseInt(filterDoctorId) : undefined;
+      const spec = filterSpecialty || undefined;
+
+      const startOfDay = new Date(currentDate);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(currentDate);
+      endOfDay.setHours(23, 59, 59, 999);
+
       if (viewMode === 'day') {
-        data = await appointmentsService.getToday();
+        data = await appointmentsService.getByRange(
+          startOfDay.toISOString(),
+          endOfDay.toISOString(),
+          docId,
+          spec
+        );
       } else {
         const startOfWeek = new Date(currentDate);
         const day = currentDate.getDay();
@@ -70,14 +89,16 @@ const Calendar: React.FC = () => {
         
         data = await appointmentsService.getByRange(
           startOfWeek.toISOString(),
-          endOfWeek.toISOString()
+          endOfWeek.toISOString(),
+          docId,
+          spec
         );
       }
       setAppointments(data);
     } catch (error) {
       console.error('Erro ao carregar consultas:', error);
     }
-  }, [viewMode, currentDate]);
+  }, [viewMode, currentDate, filterDoctorId, filterSpecialty]);
 
   useEffect(() => {
     loadAppointments();
@@ -94,6 +115,18 @@ const Calendar: React.FC = () => {
 
   useEffect(() => {
     loadPatients();
+  }, []);
+
+  useEffect(() => {
+    const loadDoctors = async () => {
+      try {
+        const data = await doctorsService.getAll();
+        setDoctors(data);
+      } catch (err) {
+        console.error('Erro ao carregar médicos:', err);
+      }
+    };
+    loadDoctors();
   }, []);
 
   const getDaysOfWeek = () => {
@@ -135,15 +168,16 @@ const Calendar: React.FC = () => {
     try {
       const dateTime = new Date(`${newAppointment.date}T${newAppointment.time}`);
       const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const docId = isSecretary ? parseInt(newAppointment.doctorId) : user.id;
       await api.post('/appointments', {
         description: newAppointment.description,
         specialty: newAppointment.specialty,
         date: dateTime.toISOString(),
-        doctorId: user.id,
+        doctorId: docId,
         patientId: parseInt(newAppointment.patientId)
       });
       setShowAddModal(false);
-      setNewAppointment({ description: '', specialty: '', date: '', time: '', patientId: '' });
+      setNewAppointment({ description: '', specialty: '', date: '', time: '', patientId: '', doctorId: '' });
       loadAppointments();
     } catch (error: any) {
       const msg = error.response?.data?.message || 'Erro ao criar consulta';
@@ -239,6 +273,23 @@ const Calendar: React.FC = () => {
         </div>
       </div>
 
+      <div style={{ ...filterBarStyle, background: colors.surface, borderColor: colors.border }}>
+        {isSecretary && (
+          <select value={filterDoctorId} onChange={(e) => setFilterDoctorId(e.target.value)} style={{ ...filterSelectStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }}>
+            <option value="">Todos os Médicos</option>
+            {doctors.map((d: any) => (
+              <option key={d.id} value={d.id}>{d.name} {d.specialty ? `- ${d.specialty}` : ''}</option>
+            ))}
+          </select>
+        )}
+        <select value={filterSpecialty} onChange={(e) => setFilterSpecialty(e.target.value)} style={{ ...filterSelectStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }}>
+          <option value="">Todas as Especialidades</option>
+          {specialties.map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+      </div>
+
       {showAddModal && (
         <div style={modalOverlayStyle} onClick={() => { setShowAddModal(false); setCreateError(''); }}>
           <div style={{ ...modalContentStyle, background: colors.surface }} onClick={(e) => e.stopPropagation()}>
@@ -267,6 +318,17 @@ const Calendar: React.FC = () => {
                   </div>
                 )}
               </div>
+              {isSecretary && (
+                <div style={formGroupStyle}>
+                  <label style={{ color: colors.textSecondary }}>Médico</label>
+                  <select value={newAppointment.doctorId} onChange={(e) => setNewAppointment({ ...newAppointment, doctorId: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} required>
+                    <option value="">Selecione...</option>
+                    {doctors.map((d: any) => (
+                      <option key={d.id} value={d.id}>{d.name}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
               <div style={formGroupStyle}>
                 <label style={{ color: colors.textSecondary }}>Paciente</label>
                 <select value={newAppointment.patientId} onChange={(e) => setNewAppointment({ ...newAppointment, patientId: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} required>
@@ -671,6 +733,25 @@ const navControlsStyle: React.CSSProperties = {
   padding: '6px',
   borderRadius: '10px',
   border: '1px solid',
+};
+
+const filterBarStyle: React.CSSProperties = {
+  display: 'flex',
+  gap: '12px',
+  padding: '16px',
+  borderRadius: '12px',
+  border: '1px solid',
+  marginBottom: '24px',
+  alignItems: 'center',
+};
+
+const filterSelectStyle: React.CSSProperties = {
+  padding: '10px 14px',
+  border: '1px solid',
+  borderRadius: '10px',
+  fontSize: '14px',
+  minWidth: '200px',
+  outline: 'none',
 };
 
 const viewToggleStyle: React.CSSProperties = {
