@@ -118,27 +118,27 @@ const Patients: React.FC = () => {
     <form onSubmit={onSubmit}>
       <div style={formGroupStyle}>
         <label style={{ color: colors.textSecondary }}>Nome *</label>
-        <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} required />
+        <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="input-focus" style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} required />
       </div>
       <div style={formGroupStyle}>
         <label style={{ color: colors.textSecondary }}>Nº de Identificação *</label>
-        <input type="text" value={formData.identificationNumber} onChange={(e) => setFormData({ ...formData, identificationNumber: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} required />
+        <input type="text" value={formData.identificationNumber} onChange={(e) => setFormData({ ...formData, identificationNumber: e.target.value })} className="input-focus" style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} required />
       </div>
       <div style={formGroupStyle}>
         <label style={{ color: colors.textSecondary }}>Data de Nascimento</label>
-        <input type="date" value={formData.birthDate} onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} />
+        <input type="date" value={formData.birthDate} onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })} className="input-focus" style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} />
       </div>
       <div style={formGroupStyle}>
         <label style={{ color: colors.textSecondary }}>Telefone</label>
-        <input type="text" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} />
+        <input type="text" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="input-focus" style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} />
       </div>
       <div style={formGroupStyle}>
         <label style={{ color: colors.textSecondary }}>Email</label>
-        <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} />
+        <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="input-focus" style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} />
       </div>
       <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-        <button type="submit" style={submitBtnStyle}>{isEdit ? 'Guardar' : 'Registar'}</button>
-        <button type="button" onClick={() => { isEdit ? setShowEditModal(false) : setShowAddModal(false); resetForm(); }} style={{ ...cancelBtnStyle, background: colors.surfaceHover, color: colors.textSecondary, borderColor: colors.border }}>Cancelar</button>
+        <button type="submit" className="btn-hover" style={submitBtnStyle}>{isEdit ? 'Guardar' : 'Registar'}</button>
+        <button type="button" onClick={() => { isEdit ? setShowEditModal(false) : setShowAddModal(false); resetForm(); }} className="btn-hover" style={{ ...cancelBtnStyle, background: colors.surfaceHover, color: colors.textSecondary, borderColor: colors.border }}>Cancelar</button>
       </div>
     </form>
   );
@@ -150,7 +150,7 @@ const Patients: React.FC = () => {
           <h1 style={titleStyles.pageTitle}>Pacientes</h1>
           <p style={titleStyles.pageSubtitle}>Registe e gerencie os dados dos pacientes</p>
         </div>
-        <button onClick={openAddModal} style={addBtnStyle}>+ Novo Paciente</button>
+        <button onClick={openAddModal} className="btn-hover" style={addBtnStyle}>+ Novo Paciente</button>
       </div>
 
       <div style={{ ...searchBarStyle, background: colors.surface, borderColor: colors.border }}>
@@ -159,6 +159,7 @@ const Patients: React.FC = () => {
           placeholder="Pesquisar por nome ou nº de identificação..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          className="input-focus"
           style={{ ...searchInputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }}
         />
         {search && (
@@ -168,7 +169,7 @@ const Patients: React.FC = () => {
 
       {showAddModal && (
         <div style={modalOverlayStyle} onClick={() => { setShowAddModal(false); resetForm(); }}>
-          <div style={{ ...modalContentStyle, background: colors.surface }} onClick={(e) => e.stopPropagation()}>
+          <div className="modal-animate" style={{ ...modalContentStyle, background: colors.surface }} onClick={(e) => e.stopPropagation()}>
             <h3 style={{ color: colors.text, marginTop: 0 }}>Registar Novo Paciente</h3>
             {error && <div style={errorStyle}>{error}</div>}
             {renderForm(handleCreatePatient, false)}
@@ -178,7 +179,7 @@ const Patients: React.FC = () => {
 
       {showEditModal && editingPatient && (
         <div style={modalOverlayStyle} onClick={() => { setShowEditModal(false); resetForm(); }}>
-          <div style={{ ...modalContentStyle, background: colors.surface }} onClick={(e) => e.stopPropagation()}>
+          <div className="modal-animate" style={{ ...modalContentStyle, background: colors.surface }} onClick={(e) => e.stopPropagation()}>
             <h3 style={{ color: colors.text, marginTop: 0 }}>Editar Paciente</h3>
             {error && <div style={errorStyle}>{error}</div>}
             {renderForm(handleUpdatePatient, true)}
@@ -200,14 +201,14 @@ const Patients: React.FC = () => {
           </div>
         ) : (
           filtered.map((patient) => (
-            <div key={patient.id} style={{ ...tableRowStyle, background: colors.surface, borderColor: colors.border }}>
+            <div key={patient.id} className="row-hover" style={{ ...tableRowStyle, background: colors.surface, borderColor: colors.border }}>
               <span style={{ ...tdStyle, color: colors.text, fontWeight: 500 }}>{patient.name}</span>
               <span style={{ ...tdStyle, color: colors.textSecondary }}>{patient.identificationNumber || '-'}</span>
               <span style={{ ...tdStyle, color: colors.textSecondary }}>{patient.birthDate ? new Date(patient.birthDate).toLocaleDateString('pt-PT') : '-'}</span>
               <span style={{ ...tdStyle, color: colors.textSecondary }}>{patient.phone || patient.email || '-'}</span>
               <span style={{ ...tdStyle, textAlign: 'right', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                <button onClick={() => openEditModal(patient)} style={editBtnStyle}>Editar</button>
-                <button onClick={() => handleDeletePatient(patient.id)} style={deleteBtnStyle}>Eliminar</button>
+                <button onClick={() => openEditModal(patient)} className="btn-hover" style={editBtnStyle}>Editar</button>
+                <button onClick={() => handleDeletePatient(patient.id)} className="btn-danger-hover" style={deleteBtnStyle}>Eliminar</button>
               </span>
             </div>
           ))
@@ -233,8 +234,10 @@ const addBtnStyle: React.CSSProperties = {
 };
 
 const cardStyle: React.CSSProperties = {
-  borderRadius: '12px',
+  borderRadius: '14px',
   overflow: 'hidden',
+  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+  border: '1px solid #e2e8f0',
 };
 
 const tableHeaderStyle: React.CSSProperties = {
@@ -242,10 +245,10 @@ const tableHeaderStyle: React.CSSProperties = {
   gridTemplateColumns: '2fr 1.5fr 1.5fr 1.5fr 1fr',
   padding: '16px 20px',
   borderBottom: '2px solid',
-  fontWeight: 600,
-  fontSize: '13px',
+  fontWeight: 700,
+  fontSize: '12px',
   textTransform: 'uppercase',
-  letterSpacing: '0.5px',
+  letterSpacing: '0.8px',
 };
 
 const thStyle: React.CSSProperties = {
@@ -273,8 +276,9 @@ const editBtnStyle: React.CSSProperties = {
   border: 'none',
   borderRadius: '8px',
   cursor: 'pointer',
-  fontWeight: 500,
+  fontWeight: 600,
   fontSize: '12px',
+  boxShadow: '0 2px 6px rgba(52, 152, 219, 0.25)',
 };
 
 const deleteBtnStyle: React.CSSProperties = {
@@ -284,8 +288,9 @@ const deleteBtnStyle: React.CSSProperties = {
   border: 'none',
   borderRadius: '8px',
   cursor: 'pointer',
-  fontWeight: 500,
+  fontWeight: 600,
   fontSize: '12px',
+  boxShadow: '0 2px 6px rgba(231, 76, 60, 0.25)',
 };
 
 const searchBarStyle: React.CSSProperties = {
@@ -295,7 +300,8 @@ const searchBarStyle: React.CSSProperties = {
   padding: '12px 16px',
   borderRadius: '12px',
   border: '1px solid',
-  marginBottom: '20px',
+  marginBottom: '24px',
+  boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
 };
 
 const searchInputStyle: React.CSSProperties = {

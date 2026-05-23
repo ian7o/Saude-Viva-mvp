@@ -59,27 +59,27 @@ const Dashboard: React.FC = () => {
       </div>
       
       <div style={statsGridStyle}>
-        <div style={statCardStyle}>
-          <div style={statIconStyle}>📅</div>
-          <div>
-            <h3 style={statLabelStyle}>Consultas de Hoje</h3>
-            <p style={statValueStyle}>{todayAppointments.length}</p>
+          <div className="card-hover" style={statCardStyle}>
+            <div style={statIconStyle}>📅</div>
+            <div>
+              <h3 style={statLabelStyle}>Consultas de Hoje</h3>
+              <p style={statValueStyle}>{todayAppointments.length}</p>
+            </div>
           </div>
-        </div>
-        <div style={statCardStyle}>
-          <div style={statIconStyle}>👥</div>
-          <div>
-            <h3 style={statLabelStyle}>Pacientes Atendidos</h3>
-            <p style={statValueStyle}>0</p>
+          <div className="card-hover" style={statCardStyle}>
+            <div style={statIconStyle}>👥</div>
+            <div>
+              <h3 style={statLabelStyle}>Pacientes Atendidos</h3>
+              <p style={statValueStyle}>0</p>
+            </div>
           </div>
-        </div>
-        <div style={statCardStyle}>
-          <div style={statIconStyle}>📄</div>
-          <div>
-            <h3 style={statLabelStyle}>Documentos</h3>
-            <p style={statValueStyle}>{documentsCount}</p>
+          <div className="card-hover" style={statCardStyle}>
+            <div style={statIconStyle}>📄</div>
+            <div>
+              <h3 style={statLabelStyle}>Documentos</h3>
+              <p style={statValueStyle}>{documentsCount}</p>
+            </div>
           </div>
-        </div>
       </div>
 
       <div style={sectionStyle}>
@@ -92,7 +92,7 @@ const Dashboard: React.FC = () => {
         ) : (
           <div style={listStyle}>
             {todayAppointments.map((apt) => (
-              <div key={apt.id} style={itemStyle}>
+              <div key={apt.id} className="card-hover" style={itemStyle}>
                 <div style={itemLeftStyle}>
                   <div style={patientAvatarStyle}>{apt.patient?.name?.[0] || 'P'}</div>
                   <div>
@@ -122,6 +122,8 @@ const headerStyle: React.CSSProperties = {
   marginBottom: '32px',
   paddingBottom: '24px',
   borderBottom: '1px solid #e2e8f0',
+  flexWrap: 'wrap',
+  gap: '16px',
 };
 
 const greetingStyle: React.CSSProperties = {
@@ -148,6 +150,7 @@ const dateDisplayStyle: React.CSSProperties = {
   color: '#475569',
   fontSize: '14px',
   fontWeight: 500,
+  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
 };
 
 const dateIconStyle: React.CSSProperties = {
@@ -165,16 +168,15 @@ const statCardStyle: React.CSSProperties = {
   background: 'white',
   padding: '24px',
   borderRadius: '16px',
-  boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+  boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03)',
   display: 'flex',
   alignItems: 'center',
   gap: '20px',
   border: '1px solid #e2e8f0',
-  transition: 'all 0.2s ease',
 };
 
 const statIconStyle: React.CSSProperties = {
-  fontSize: '32px',
+  fontSize: '28px',
   width: '56px',
   height: '56px',
   display: 'flex',
@@ -196,6 +198,7 @@ const statValueStyle: React.CSSProperties = {
   fontWeight: 700,
   color: '#1e293b',
   margin: 0,
+  lineHeight: 1.2,
 };
 
 const sectionStyle: React.CSSProperties = {
@@ -211,10 +214,10 @@ const sectionTitleStyle: React.CSSProperties = {
 
 const emptyStateStyle: React.CSSProperties = {
   textAlign: 'center',
-  padding: '50px 40px',
+  padding: '60px 40px',
   color: '#94a3b8',
   background: 'white',
-  borderRadius: '12px',
+  borderRadius: '16px',
   border: '2px dashed #e2e8f0',
 };
 
@@ -234,12 +237,11 @@ const itemStyle: React.CSSProperties = {
   background: 'white',
   padding: '20px 24px',
   borderRadius: '14px',
-  boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
   border: '1px solid #e2e8f0',
-  transition: 'all 0.2s ease',
 };
 
 const itemLeftStyle: React.CSSProperties = {

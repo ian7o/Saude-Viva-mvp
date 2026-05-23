@@ -42,6 +42,7 @@ const Login: React.FC = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                className="input-focus"
                 style={inputStyle}
                 required
               />
@@ -52,11 +53,12 @@ const Login: React.FC = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                className="input-focus"
                 style={inputStyle}
                 required
               />
             </div>
-            <button type="submit" style={buttonStyle}>Entrar</button>
+            <button type="submit" className="btn-hover" style={buttonStyle}>Entrar</button>
           </form>
           
           <p style={hintStyle}>Médico: admin@saudeviva.com / admin123  |  Secretária: secretaria@saudeviva.com / admin123</p>
@@ -72,13 +74,13 @@ const containerStyle: React.CSSProperties = {
   alignItems: 'center',
   minHeight: '100vh',
   background: 'linear-gradient(135deg, #0d2137 0%, #1a3a5c 50%, #0d2137 100%)',
-  padding: '20px',
+  padding: '24px',
 };
 
 const loginBoxStyle: React.CSSProperties = {
   background: 'white',
   borderRadius: '24px',
-  boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+  boxShadow: '0 25px 60px rgba(0,0,0,0.35)',
   width: '100%',
   maxWidth: '440px',
   overflow: 'hidden',
@@ -121,7 +123,7 @@ const logoSubtitleStyle: React.CSSProperties = {
 };
 
 const formSectionStyle: React.CSSProperties = {
-  padding: '36px 40px 40px',
+  padding: '40px',
 };
 
 const formTitleStyle: React.CSSProperties = {
@@ -154,12 +156,12 @@ const labelStyle: React.CSSProperties = {
 const inputStyle: React.CSSProperties = {
   width: '100%',
   padding: '14px 16px',
-  border: '1px solid #e2e8f0',
+  border: '1.5px solid #e2e8f0',
   borderRadius: '12px',
   fontSize: '15px',
   color: '#334155',
   background: '#f8fafc',
-  transition: 'all 0.2s ease',
+  outline: 'none',
   boxSizing: 'border-box',
 };
 
@@ -173,9 +175,9 @@ const buttonStyle: React.CSSProperties = {
   fontSize: '16px',
   fontWeight: 600,
   cursor: 'pointer',
-  marginTop: '8px',
-  boxShadow: '0 4px 12px rgba(52, 152, 219, 0.3)',
-  transition: 'all 0.2s ease',
+  marginTop: '12px',
+  letterSpacing: '0.5px',
+  boxShadow: '0 4px 16px rgba(52, 152, 219, 0.35)',
 };
 
 const errorStyle: React.CSSProperties = {

@@ -18,6 +18,11 @@ export interface ThemeColorPalette {
   primaryHover: string;
   accent: string;
   shadow: string;
+  primaryGradient: string;
+  successGradient: string;
+  dangerGradient: string;
+  danger: string;
+  dangerHover: string;
 }
 
 interface ThemeContextType {
@@ -37,6 +42,11 @@ const lightColors: ThemeColorPalette = {
   primaryHover: '#2980b9',
   accent: '#10b981',
   shadow: 'rgba(0,0,0,0.05)',
+  primaryGradient: 'linear-gradient(135deg, #3498db, #2980b9)',
+  successGradient: 'linear-gradient(135deg, #27ae60, #1e8449)',
+  dangerGradient: 'linear-gradient(135deg, #e74c3c, #c0392b)',
+  danger: '#e74c3c',
+  dangerHover: '#c0392b',
 };
 
 const darkColors: ThemeColorPalette = {
@@ -50,6 +60,11 @@ const darkColors: ThemeColorPalette = {
   primaryHover: '#60a5fa',
   accent: '#22c55e',
   shadow: 'rgba(0,0,0,0.5)',
+  primaryGradient: 'linear-gradient(135deg, #3b82f6, #2563eb)',
+  successGradient: 'linear-gradient(135deg, #22c55e, #16a34a)',
+  dangerGradient: 'linear-gradient(135deg, #ef4444, #dc2626)',
+  danger: '#ef4444',
+  dangerHover: '#dc2626',
 };
 
 const colorMap: Record<Theme, ThemeColorPalette> = {

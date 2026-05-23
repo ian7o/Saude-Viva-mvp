@@ -261,15 +261,15 @@ const Calendar: React.FC = () => {
         </div>
         <div style={headerRightStyle}>
           <div style={{ ...navControlsStyle, background: colors.surface, borderColor: colors.border }}>
-            <button onClick={goToPreviousDay} style={{ ...navBtnStyle, color: colors.textSecondary, borderColor: colors.border, background: colors.surface }}>◀</button>
-            <button onClick={goToToday} style={todayBtnStyle}>Hoje</button>
-            <button onClick={goToNextDay} style={{ ...navBtnStyle, color: colors.textSecondary, borderColor: colors.border, background: colors.surface }}>▶</button>
+            <button onClick={goToPreviousDay} className="btn-hover" style={{ ...navBtnStyle, color: colors.textSecondary, borderColor: colors.border, background: colors.surface }}>◀</button>
+            <button onClick={goToToday} className="btn-hover" style={todayBtnStyle}>Hoje</button>
+            <button onClick={goToNextDay} className="btn-hover" style={{ ...navBtnStyle, color: colors.textSecondary, borderColor: colors.border, background: colors.surface }}>▶</button>
           </div>
           <div style={{ ...viewToggleStyle, background: colors.surface }}>
             <button onClick={() => setViewMode('day')} style={viewBtnStyle(viewMode === 'day', theme)}>Dia</button>
             <button onClick={() => setViewMode('week')} style={viewBtnStyle(viewMode === 'week', theme)}>Semana</button>
           </div>
-          <button onClick={() => setShowAddModal(true)} style={addBtnStyle}>+ Nova Consulta</button>
+          <button onClick={() => setShowAddModal(true)} className="btn-hover" style={addBtnStyle}>+ Nova Consulta</button>
         </div>
       </div>
 
@@ -292,7 +292,7 @@ const Calendar: React.FC = () => {
 
       {showAddModal && (
         <div style={modalOverlayStyle} onClick={() => { setShowAddModal(false); setCreateError(''); }}>
-          <div style={{ ...modalContentStyle, background: colors.surface }} onClick={(e) => e.stopPropagation()}>
+          <div className="modal-animate" style={{ ...modalContentStyle, background: colors.surface }} onClick={(e) => e.stopPropagation()}>
             <h3 style={{ color: colors.text, marginTop: 0 }}>Nova Consulta</h3>
             {createError && <div style={errorStyle}>{createError}</div>}
             <form onSubmit={handleCreateAppointment}>
@@ -347,8 +347,8 @@ const Calendar: React.FC = () => {
                 <input type="time" value={newAppointment.time} onChange={(e) => setNewAppointment({ ...newAppointment, time: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} required />
               </div>
               <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-                <button type="submit" style={submitBtnStyle}>Criar</button>
-                <button type="button" onClick={() => setShowAddModal(false)} style={{ ...cancelBtnStyle, background: colors.surfaceHover, color: colors.textSecondary, borderColor: colors.border }}>Cancelar</button>
+                <button type="submit" className="btn-hover" style={submitBtnStyle}>Criar</button>
+                <button type="button" onClick={() => setShowAddModal(false)} className="btn-hover" style={{ ...cancelBtnStyle, background: colors.surfaceHover, color: colors.textSecondary, borderColor: colors.border }}>Cancelar</button>
               </div>
             </form>
           </div>
@@ -357,7 +357,7 @@ const Calendar: React.FC = () => {
 
       {selectedAppointment && !editMode && (
         <div style={modalOverlayStyle} onClick={() => setSelectedAppointment(null)}>
-          <div style={{ ...modalContentStyle, background: colors.surface }} onClick={(e) => e.stopPropagation()}>
+          <div className="modal-animate" style={{ ...modalContentStyle, background: colors.surface }} onClick={(e) => e.stopPropagation()}>
             <h3 style={{ color: colors.text, marginTop: 0 }}>Detalhes da Consulta</h3>
             <div style={{ marginTop: '20px' }}>
               <p style={{ ...detailRowStyle, color: colors.text, background: colors.surfaceHover, borderColor: colors.border }}><strong>Descrição:</strong> {selectedAppointment.description}</p>
@@ -372,9 +372,9 @@ const Calendar: React.FC = () => {
               <p style={{ ...detailRowStyle, color: colors.text, background: colors.surfaceHover, borderColor: colors.border }}><strong>Estado:</strong> <span style={statusBadgeStyle(selectedAppointment.status || 'scheduled')}>{statusLabel(selectedAppointment.status || 'scheduled')}</span></p>
             </div>
             <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-              <button onClick={() => startEditAppointment()} style={editBtnStyle}>Editar</button>
-              <button onClick={handleDeleteAppointment} style={deleteBtnStyle}>Eliminar</button>
-              <button onClick={() => setSelectedAppointment(null)} style={{ ...cancelBtnStyle, background: colors.surfaceHover, color: colors.textSecondary, borderColor: colors.border }}>Fechar</button>
+              <button onClick={() => startEditAppointment()} className="btn-hover" style={editBtnStyle}>Editar</button>
+              <button onClick={handleDeleteAppointment} className="btn-danger-hover" style={deleteBtnStyle}>Eliminar</button>
+              <button onClick={() => setSelectedAppointment(null)} className="btn-hover" style={{ ...cancelBtnStyle, background: colors.surfaceHover, color: colors.textSecondary, borderColor: colors.border }}>Fechar</button>
             </div>
           </div>
         </div>
@@ -382,7 +382,7 @@ const Calendar: React.FC = () => {
 
       {selectedAppointment && editMode && (
         <div style={modalOverlayStyle} onClick={() => { setEditMode(false); setSelectedAppointment(null); }}>
-          <div style={{ ...modalContentStyle, background: colors.surface }} onClick={(e) => e.stopPropagation()}>
+          <div className="modal-animate" style={{ ...modalContentStyle, background: colors.surface }} onClick={(e) => e.stopPropagation()}>
             <h3 style={{ color: colors.text, marginTop: 0 }}>Editar Consulta</h3>
             {createError && <div style={errorStyle}>{createError}</div>}
             <form onSubmit={handleUpdateAppointment}>
@@ -426,8 +426,8 @@ const Calendar: React.FC = () => {
                 </select>
               </div>
               <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-                <button type="submit" style={submitBtnStyle}>Guardar</button>
-                <button type="button" onClick={() => { setEditMode(false); setCreateError(''); }} style={{ ...cancelBtnStyle, background: colors.surfaceHover, color: colors.textSecondary, borderColor: colors.border }}>Cancelar</button>
+                <button type="submit" className="btn-hover" style={submitBtnStyle}>Guardar</button>
+                <button type="button" onClick={() => { setEditMode(false); setCreateError(''); }} className="btn-hover" style={{ ...cancelBtnStyle, background: colors.surfaceHover, color: colors.textSecondary, borderColor: colors.border }}>Cancelar</button>
               </div>
             </form>
           </div>
@@ -444,7 +444,7 @@ const Calendar: React.FC = () => {
           ) : (
             <div style={dayViewStyle}>
               {appointments.map((apt) => (
-                <div key={apt.id} style={{ ...appointmentCardStyle, background: colors.surface, borderColor: colors.border }} onClick={() => setSelectedAppointment(apt)}>
+                <div key={apt.id} className="card-hover" style={{ ...appointmentCardStyle, background: colors.surface, borderColor: colors.border }} onClick={() => setSelectedAppointment(apt)}>
                   <div style={timeBlockStyle}>
                     {new Date(apt.date).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })}
                   </div>
@@ -495,14 +495,14 @@ const Calendar: React.FC = () => {
 
 const viewBtnStyle = (active: boolean, theme: string): React.CSSProperties => ({
   padding: '10px 20px',
-  background: active ? '#3498db' : (theme === 'dark' ? '#1e293b' : '#f8fafc'),
+  background: active ? 'linear-gradient(135deg, #3498db, #2980b9)' : (theme === 'dark' ? '#1e293b' : '#f8fafc'),
   color: active ? 'white' : (theme === 'dark' ? '#cbd5e1' : '#64748b'),
   border: `1px solid ${active ? '#3498db' : (theme === 'dark' ? '#334155' : '#e2e8f0')}`,
   borderRadius: '8px',
   cursor: 'pointer',
-  fontWeight: 500,
+  fontWeight: 600,
   fontSize: '13px',
-  transition: 'all 0.2s ease',
+  boxShadow: active ? '0 2px 8px rgba(52, 152, 219, 0.25)' : 'none',
 });
 
 const emptyStyle: React.CSSProperties = {
@@ -523,10 +523,9 @@ const appointmentCardStyle: React.CSSProperties = {
   display: 'flex',
   borderRadius: '12px',
   overflow: 'hidden',
-  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
   cursor: 'pointer',
   border: '1px solid',
-  transition: 'all 0.2s ease',
 };
 
 const timeBlockStyle: React.CSSProperties = {
@@ -537,8 +536,9 @@ const timeBlockStyle: React.CSSProperties = {
   alignItems: 'center',
   justifyContent: 'center',
   minWidth: '120px',
-  fontWeight: 600,
+  fontWeight: 700,
   fontSize: '15px',
+  letterSpacing: '0.5px',
 };
 
 const detailsStyle: React.CSSProperties = {
@@ -593,6 +593,8 @@ const weekAppointmentStyle: React.CSSProperties = {
   marginBottom: '8px',
   fontSize: '12px',
   boxShadow: '0 2px 4px rgba(52, 152, 219, 0.3)',
+  cursor: 'pointer',
+  transition: 'transform 0.15s ease',
 };
 
 const navBtnStyle: React.CSSProperties = {
@@ -602,7 +604,7 @@ const navBtnStyle: React.CSSProperties = {
   borderRadius: '8px',
   cursor: 'pointer',
   fontSize: '14px',
-  transition: 'all 0.2s ease',
+  lineHeight: 1,
 };
 
 const todayBtnStyle: React.CSSProperties = {

@@ -103,7 +103,7 @@ const Documents: React.FC = () => {
           <h1 style={titleStyles.pageTitle}>Documentos Clínicos</h1>
           <p style={titleStyles.pageSubtitle}>Gerencie arquivos e documentos dos pacientes</p>
         </div>
-        <button onClick={() => setShowUpload(!showUpload)} style={uploadBtnStyle}>
+        <button onClick={() => setShowUpload(!showUpload)} className="btn-hover" style={uploadBtnStyle}>
           {showUpload ? '✕ Cancelar' : '+ Novo Documento'}
         </button>
       </div>
@@ -161,14 +161,14 @@ const Documents: React.FC = () => {
                 </select>
               </div>
             </div>
-            <button type="submit" style={submitBtnStyle}>Carregar</button>
+            <button type="submit" className="btn-hover" style={submitBtnStyle}>Carregar</button>
           </form>
         </div>
       )}
 
       {selectedDoc && (
         <div style={modalOverlayStyle} onClick={() => setSelectedDoc(null)}>
-          <div style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
+          <div className="modal-animate" style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
             <h3>{selectedDoc.originalName}</h3>
             <p><strong>Descrição:</strong> {selectedDoc.description || 'N/A'}</p>
             <p><strong>Sala:</strong> {selectedDoc.room || 'N/A'}</p>
@@ -177,14 +177,14 @@ const Documents: React.FC = () => {
             <p><strong>Data:</strong> {new Date(selectedDoc.uploadDate).toLocaleDateString('pt-PT')}</p>
             <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
               {canView(selectedDoc) && (
-                <a href={documentsService.view(selectedDoc.id)} target="_blank" rel="noopener noreferrer" style={actionBtnStyle('#27ae60')}>
+                <a href={documentsService.view(selectedDoc.id)} target="_blank" rel="noopener noreferrer" className="btn-hover" style={actionBtnStyle('#27ae60')}>
                   Visualizar
                 </a>
               )}
-              <button onClick={() => handleDownload(selectedDoc)} style={actionBtnStyle('#3498db')}>
+              <button onClick={() => handleDownload(selectedDoc)} className="btn-hover" style={actionBtnStyle('#3498db')}>
                 Baixar
               </button>
-              <button onClick={() => setSelectedDoc(null)} style={actionBtnStyle('#95a5a6')}>
+              <button onClick={() => setSelectedDoc(null)} className="btn-hover" style={actionBtnStyle('#95a5a6')}>
                 Fechar
               </button>
             </div>
@@ -197,7 +197,7 @@ const Documents: React.FC = () => {
       ) : (
         <div style={gridStyle}>
           {documents.map((doc) => (
-            <div key={doc.id} style={docCardStyle}>
+            <div key={doc.id} className="card-hover" style={docCardStyle}>
               <div style={docIconStyle}>
                 {doc.mimetype.includes('pdf') ? '📄' : '📎'}
               </div>
@@ -212,10 +212,10 @@ const Documents: React.FC = () => {
               </div>
               <div style={docActionsStyle}>
                 {canView(doc) && (
-                  <button onClick={() => handleView(doc)} style={smallBtnStyle}>Ver</button>
+                  <button onClick={() => handleView(doc)} className="btn-hover" style={smallBtnStyle}>Ver</button>
                 )}
-                <button onClick={() => handleDownload(doc)} style={smallBtnStyle}>Baixar</button>
-                <button onClick={() => handleDelete(doc)} style={smallDeleteBtnStyle}>Eliminar</button>
+                <button onClick={() => handleDownload(doc)} className="btn-hover" style={smallBtnStyle}>Baixar</button>
+                <button onClick={() => handleDelete(doc)} className="btn-danger-hover" style={smallDeleteBtnStyle}>Eliminar</button>
               </div>
             </div>
           ))}
@@ -244,8 +244,8 @@ const uploadFormStyle: React.CSSProperties = {
   background: 'white',
   padding: '28px',
   borderRadius: '16px',
-  marginBottom: '30px',
-  boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+  marginBottom: '28px',
+  boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03)',
   border: '1px solid #e2e8f0',
 };
 
@@ -308,12 +308,11 @@ const docCardStyle: React.CSSProperties = {
   background: 'white',
   padding: '24px',
   borderRadius: '14px',
-  boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
   display: 'flex',
   flexDirection: 'column',
   gap: '16px',
   border: '1px solid #e2e8f0',
-  transition: 'all 0.2s ease',
 };
 
 const docIconStyle: React.CSSProperties = {

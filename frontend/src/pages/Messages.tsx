@@ -148,12 +148,14 @@ const Messages: React.FC = () => {
         <div style={sidebarStyle}>
           <div style={tabContainerStyle}>
             <button 
+              className="btn-hover"
               style={tabStyle(activeTab === 'patient')} 
               onClick={() => { setActiveTab('patient'); setSelectedContact(null); }}
             >
               👥 Pacientes
             </button>
             <button 
+              className="btn-hover"
               style={tabStyle(activeTab === 'professional')} 
               onClick={() => { setActiveTab('professional'); setSelectedContact(null); }}
             >
@@ -169,6 +171,7 @@ const Messages: React.FC = () => {
                 placeholder="Pesquisar..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                className="input-focus"
                 style={searchInputStyle}
               />
               {searchTerm && (
@@ -264,6 +267,7 @@ const Messages: React.FC = () => {
                 />
                 <button 
                   type="submit" 
+                  className={newMessage.trim() ? 'btn-hover' : ''}
                   style={newMessage ? sendButtonActiveStyle : sendButtonStyle}
                   disabled={!newMessage.trim()}
                 >
@@ -288,10 +292,10 @@ const containerStyle: React.CSSProperties = {
   display: 'flex',
   height: 'calc(100vh - 200px)',
   background: 'white',
-  borderRadius: '20px',
+  borderRadius: '16px',
   border: '1px solid #e2e8f0',
   overflow: 'hidden',
-  boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+  boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03)',
 };
 
 const sidebarStyle: React.CSSProperties = {
@@ -337,7 +341,6 @@ const searchBarStyle: React.CSSProperties = {
   borderRadius: '12px',
   padding: '0 12px',
   border: '1px solid transparent',
-  transition: 'all 0.2s ease',
 };
 
 const searchIconStyle: React.CSSProperties = {

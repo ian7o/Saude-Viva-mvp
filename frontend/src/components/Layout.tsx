@@ -27,19 +27,19 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <nav style={navStyle}>
           {user.role !== 'secretary' && (
             <>
-              <NavLink to="/dashboard" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+              <NavLink to="/dashboard" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
                 <span style={navIconStyle}>📊</span>
                 Dashboard
               </NavLink>
-              <NavLink to="/calendar" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+              <NavLink to="/calendar" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
                 <span style={navIconStyle}>📅</span>
                 Calendário
               </NavLink>
-              <NavLink to="/documents" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+              <NavLink to="/documents" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
                 <span style={navIconStyle}>📁</span>
                 Documentos
               </NavLink>
-              <NavLink to="/messages" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+              <NavLink to="/messages" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
                 <span style={navIconStyle}>💬</span>
                 Mensagens
               </NavLink>
@@ -47,15 +47,15 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           )}
           {user.role === 'secretary' && (
             <>
-              <NavLink to="/patients" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+              <NavLink to="/patients" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
                 <span style={navIconStyle}>👤</span>
                 Pacientes
               </NavLink>
-              <NavLink to="/calendar" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+              <NavLink to="/calendar" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
                 <span style={navIconStyle}>📅</span>
                 Calendário
               </NavLink>
-              <NavLink to="/messages" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+              <NavLink to="/messages" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
                 <span style={navIconStyle}>💬</span>
                 Mensagens
               </NavLink>
@@ -71,7 +71,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <p style={userRoleStyle}>{user.role === 'secretary' ? 'Secretária' : 'Médico'}</p>
             </div>
           </div>
-          <button onClick={handleLogout} style={logoutBtnStyle}>
+          <button onClick={handleLogout} className="btn-hover" style={logoutBtnStyle}>
             <span>🚪</span> Sair
           </button>
         </div>
@@ -79,7 +79,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       
       <main style={{ ...mainStyle, background: colors.background }}>
         <div style={{ ...themeToggleContainer, background: colors.surface }}>
-          <button onClick={toggleTheme} style={themeToggleStyle(theme)}>
+          <button onClick={toggleTheme} className="btn-hover" style={themeToggleStyle(theme)}>
             {theme === 'dark' ? '☀️' : '🌙'} {theme === 'dark' ? 'Claro' : 'Escuro'}
           </button>
         </div>
@@ -101,30 +101,31 @@ const sidebarStyle: React.CSSProperties = {
   color: 'white',
   display: 'flex',
   flexDirection: 'column',
-  boxShadow: '4px 0 20px rgba(0,0,0,0.15)',
+  boxShadow: '4px 0 24px rgba(0,0,0,0.2)',
   position: 'fixed',
   height: '100vh',
   zIndex: 100,
 };
 
 const logoContainerStyle: React.CSSProperties = {
-  padding: '25px 20px',
-  borderBottom: '1px solid rgba(255,255,255,0.1)',
+  padding: '28px 24px',
+  borderBottom: '1px solid rgba(255,255,255,0.08)',
   display: 'flex',
   alignItems: 'center',
-  gap: '12px',
+  gap: '14px',
 };
 
 const logoIconStyle: React.CSSProperties = {
-  width: '40px',
-  height: '40px',
+  width: '42px',
+  height: '42px',
   background: 'linear-gradient(135deg, #3498db, #2980b9)',
-  borderRadius: '10px',
+  borderRadius: '12px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  fontSize: '20px',
+  fontSize: '22px',
   fontWeight: 'bold',
+  boxShadow: '0 4px 12px rgba(52, 152, 219, 0.3)',
 };
 
 const logoTitleStyle: React.CSSProperties = {
@@ -144,25 +145,24 @@ const logoSubtitleStyle: React.CSSProperties = {
 
 const navStyle: React.CSSProperties = {
   flex: 1,
-  padding: '20px 15px',
+  padding: '20px 12px',
   display: 'flex',
   flexDirection: 'column',
-  gap: '5px',
+  gap: '4px',
 };
 
 const navLinkStyle = (isActive: boolean, colors: any): React.CSSProperties => ({
   display: 'flex',
   alignItems: 'center',
   gap: '12px',
-  padding: '14px 16px',
-  borderRadius: '8px',
+  padding: '12px 16px',
+  borderRadius: '10px',
   textDecoration: 'none',
-  color: isActive ? 'white' : 'rgba(255,255,255,0.7)',
-  background: isActive ? 'rgba(52, 152, 219, 0.2)' : 'transparent',
-  transition: 'all 0.2s ease',
+  color: isActive ? 'white' : 'rgba(255,255,255,0.65)',
+  background: isActive ? 'linear-gradient(135deg, rgba(52, 152, 219, 0.25), rgba(52, 152, 219, 0.15))' : 'transparent',
   fontSize: '14px',
   fontWeight: isActive ? 600 : 400,
-  border: isActive ? '1px solid rgba(52, 152, 219, 0.3)' : '1px solid transparent',
+  border: isActive ? '1px solid rgba(52, 152, 219, 0.25)' : '1px solid transparent',
 });
 
 const navIconStyle: React.CSSProperties = {
@@ -172,8 +172,8 @@ const navIconStyle: React.CSSProperties = {
 };
 
 const sidebarFooterStyle: React.CSSProperties = {
-  padding: '15px',
-  borderTop: '1px solid rgba(255,255,255,0.1)',
+  padding: '16px',
+  borderTop: '1px solid rgba(255,255,255,0.08)',
   background: 'rgba(0,0,0,0.2)',
 };
 
@@ -181,10 +181,10 @@ const userInfoStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: '12px',
-  marginBottom: '15px',
-  padding: '10px',
-  background: 'rgba(255,255,255,0.05)',
-  borderRadius: '8px',
+  marginBottom: '12px',
+  padding: '12px',
+  background: 'rgba(255,255,255,0.06)',
+  borderRadius: '10px',
 };
 
 const userAvatarStyle: React.CSSProperties = {
@@ -214,24 +214,24 @@ const userRoleStyle: React.CSSProperties = {
 const logoutBtnStyle: React.CSSProperties = {
   width: '100%',
   padding: '12px',
-  background: 'rgba(231, 76, 60, 0.2)',
+  background: 'rgba(231, 76, 60, 0.15)',
   color: '#e74c3c',
-  border: '1px solid rgba(231, 76, 60, 0.3)',
-  borderRadius: '8px',
+  border: '1px solid rgba(231, 76, 60, 0.2)',
+  borderRadius: '10px',
   cursor: 'pointer',
   fontSize: '13px',
-  fontWeight: 500,
+  fontWeight: 600,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   gap: '8px',
-  transition: 'all 0.2s ease',
+  letterSpacing: '0.3px',
 };
 
 const mainStyle: React.CSSProperties = {
   flex: 1,
   marginLeft: '260px',
-  padding: '30px 40px',
+  padding: '32px 40px',
   minHeight: '100vh',
 };
 
