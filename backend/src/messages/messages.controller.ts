@@ -13,7 +13,10 @@ export class MessagesController {
 
   @Get("contacts")
   @ApiOperation({ summary: "Get all contacts with messages" })
-  getContacts(@CurrentUser() user: { id: number; role: string }) {
+  getContacts(@CurrentUser() user: { id: number; role: string; patientId?: number }) {
+    if (user.role === "patient") {
+      return this.messagesService.getProfessionalContacts(user.patientId!);
+    }
     const userType = user.role === "doctor" ? "professional" : "patient";
     return this.messagesService.getContacts(user.id, userType);
   }
@@ -21,7 +24,7 @@ export class MessagesController {
   @Post()
   @ApiOperation({ summary: "Send a message" })
   send(
-    @CurrentUser() user: { id: number; name: string; role: string },
+    @CurrentUser() user: { id: number; name: string; role: string; patientId?: number },
     @Body()
     body: {
       content: string;
@@ -29,6 +32,16 @@ export class MessagesController {
       receiverType: "patient" | "professional";
     },
   ) {
+    if (user.role === "patient") {
+      return this.messagesService.send({
+        content: body.content,
+        senderId: user.patientId!,
+        senderName: user.name,
+        senderType: "patient",
+        receiverId: body.receiverId,
+        receiverType: body.receiverType,
+      });
+    }
     const senderType = user.role === "doctor" ? "professional" : "patient";
     return this.messagesService.send({
       content: body.content,
@@ -43,10 +56,18 @@ export class MessagesController {
   @Get(":contactId/:contactType")
   @ApiOperation({ summary: "Get message history with a contact" })
   getHistory(
-    @CurrentUser() user: { id: number; role: string },
+    @CurrentUser() user: { id: number; role: string; patientId?: number },
     @Param("contactId") contactId: number,
     @Param("contactType") contactType: "patient" | "professional",
   ) {
+    if (user.role === "patient") {
+      return this.messagesService.getHistory(
+        user.patientId!,
+        contactId,
+        contactType,
+        "patient",
+      );
+    }
     const userType = user.role === "doctor" ? "professional" : "patient";
     return this.messagesService.getHistory(
       user.id,

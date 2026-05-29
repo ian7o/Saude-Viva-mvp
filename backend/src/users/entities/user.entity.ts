@@ -32,6 +32,9 @@ export class User {
   @Column({ default: "doctor" })
   role: string;
 
+  @Column({ nullable: true })
+  patientId: number;
+
   @CreateDateColumn()
   createdAt: Date;
 

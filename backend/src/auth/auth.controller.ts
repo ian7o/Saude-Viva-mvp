@@ -25,4 +25,5 @@ export class AuthController {
       registerDto.name,
     );
   }
+
 }

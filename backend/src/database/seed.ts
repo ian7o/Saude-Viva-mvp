@@ -95,6 +95,20 @@ export async function seed(dataSource: DataSource) {
   });
   await patientRepo.save(patient1);
 
+  let patientUser = await userRepo.findOne({ where: { email: patient1.email } });
+  if (!patientUser) {
+    patientUser = userRepo.create({
+      email: patient1.email!,
+      name: patient1.name,
+      password: await bcrypt.hash("paciente123", 10),
+      age: 0,
+      sex: "male",
+      role: "patient",
+      patientId: patient1.id,
+    });
+    await userRepo.save(patientUser);
+  }
+
   const patient2 = patientRepo.create({
     name: "Maria Santos",
     birthDate: new Date("1990-03-22"),
@@ -103,6 +117,20 @@ export async function seed(dataSource: DataSource) {
     email: "maria.santos@example.com",
   });
   await patientRepo.save(patient2);
+
+  patientUser = await userRepo.findOne({ where: { email: patient2.email } });
+  if (!patientUser) {
+    patientUser = userRepo.create({
+      email: patient2.email!,
+      name: patient2.name,
+      password: await bcrypt.hash("paciente123", 10),
+      age: 0,
+      sex: "female",
+      role: "patient",
+      patientId: patient2.id,
+    });
+    await userRepo.save(patientUser);
+  }
 
   const patient3 = patientRepo.create({
     name: "Pedro Almeida",
@@ -113,6 +141,20 @@ export async function seed(dataSource: DataSource) {
   });
   await patientRepo.save(patient3);
 
+  patientUser = await userRepo.findOne({ where: { email: patient3.email } });
+  if (!patientUser) {
+    patientUser = userRepo.create({
+      email: patient3.email!,
+      name: patient3.name,
+      password: await bcrypt.hash("paciente123", 10),
+      age: 0,
+      sex: "male",
+      role: "patient",
+      patientId: patient3.id,
+    });
+    await userRepo.save(patientUser);
+  }
+
   const patient4 = patientRepo.create({
     name: "Sofia Costa",
     birthDate: new Date("1995-05-20"),
@@ -122,6 +164,20 @@ export async function seed(dataSource: DataSource) {
   });
   await patientRepo.save(patient4);
 
+  patientUser = await userRepo.findOne({ where: { email: patient4.email } });
+  if (!patientUser) {
+    patientUser = userRepo.create({
+      email: patient4.email!,
+      name: patient4.name,
+      password: await bcrypt.hash("paciente123", 10),
+      age: 0,
+      sex: "female",
+      role: "patient",
+      patientId: patient4.id,
+    });
+    await userRepo.save(patientUser);
+  }
+
   const patient5 = patientRepo.create({
     name: "Miguel Rodrigues",
     birthDate: new Date("1982-08-14"),
@@ -130,6 +186,20 @@ export async function seed(dataSource: DataSource) {
     email: "miguel.rodrigues@example.com",
   });
   await patientRepo.save(patient5);
+
+  patientUser = await userRepo.findOne({ where: { email: patient5.email } });
+  if (!patientUser) {
+    patientUser = userRepo.create({
+      email: patient5.email!,
+      name: patient5.name,
+      password: await bcrypt.hash("paciente123", 10),
+      age: 0,
+      sex: "male",
+      role: "patient",
+      patientId: patient5.id,
+    });
+    await userRepo.save(patientUser);
+  }
 
   const today = new Date();
   const tomorrow = new Date(today);

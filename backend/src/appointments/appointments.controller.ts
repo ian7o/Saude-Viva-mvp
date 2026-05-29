@@ -25,27 +25,40 @@ export class AppointmentsController {
   constructor(private readonly appointmentsService: AppointmentsService) {}
 
   @Get()
-  @ApiOperation({ summary: "Get all appointments for current doctor" })
-  findAll(@CurrentUser() user: { id: number }) {
+  @ApiOperation({ summary: "Get all appointments for current user" })
+  findAll(@CurrentUser() user: { id: number; role: string; patientId?: number }) {
+    if (user.role === "patient") {
+      return this.appointmentsService.findByPatient(user.patientId!);
+    }
     return this.appointmentsService.findByDoctor(user.id);
   }
 
   @Get("today")
-  @ApiOperation({ summary: "Get today appointments for current doctor" })
-  findToday(@CurrentUser() user: { id: number }) {
+  @ApiOperation({ summary: "Get today appointments for current user" })
+  findToday(@CurrentUser() user: { id: number; role: string; patientId?: number }) {
     const today = new Date();
+    if (user.role === "patient") {
+      return this.appointmentsService.findByPatientAndDate(user.patientId!, today);
+    }
     return this.appointmentsService.findByDoctorAndDate(user.id, today);
   }
 
   @Get("range")
   @ApiOperation({ summary: "Get appointments by date range with optional filters" })
   findByRange(
-    @CurrentUser() user: { id: number; role: string },
+    @CurrentUser() user: { id: number; role: string; patientId?: number },
     @Query("startDate") startDate: string,
     @Query("endDate") endDate: string,
     @Query("doctorId") doctorId?: string,
     @Query("specialty") specialty?: string,
   ) {
+    if (user.role === "patient") {
+      return this.appointmentsService.findByPatientAndDateRange(
+        user.patientId!,
+        new Date(startDate),
+        new Date(endDate),
+      );
+    }
     if (user.role === "secretary" || doctorId) {
       return this.appointmentsService.findByDateRange(
         new Date(startDate),
@@ -69,10 +82,16 @@ export class AppointmentsController {
 
   @Post()
   @ApiOperation({ summary: "Create appointment" })
-  create(@Body() createDto: CreateAppointmentDto) {
+  create(
+    @Body() createDto: CreateAppointmentDto,
+    @CurrentUser() user: { id: number; role: string; patientId?: number },
+  ) {
     const data = {
       ...createDto,
       date: new Date(createDto.date),
+      patientId: user.role === "patient" ? user.patientId : createDto.patientId
+        ? Number(createDto.patientId)
+        : undefined,
     };
     return this.appointmentsService.create(data);
   }

@@ -34,8 +34,11 @@ export class DocumentsController {
   constructor(private readonly documentsService: DocumentsService) {}
 
   @Get()
-  @ApiOperation({ summary: "Get all documents for current doctor" })
-  findAll(@CurrentUser() user: { id: number }) {
+  @ApiOperation({ summary: "Get all documents for current user" })
+  findAll(@CurrentUser() user: { id: number; role: string; patientId?: number }) {
+    if (user.role === "patient") {
+      return this.documentsService.findByPatient(user.patientId!);
+    }
     return this.documentsService.findByDoctor(user.id);
   }
 

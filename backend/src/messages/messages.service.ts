@@ -16,6 +16,48 @@ export class MessagesService {
     private readonly doctorRepository: Repository<Doctor>,
   ) {}
 
+  async getProfessionalContacts(patientId: number) {
+    const doctors = await this.doctorRepository.find();
+
+    const professionalContacts = await Promise.all(
+      doctors.map(async (doctor) => {
+        const lastMessage = await this.messageRepository.findOne({
+          where: [
+            {
+              senderId: doctor.id,
+              senderType: "professional",
+              receiverId: patientId,
+              receiverType: "patient",
+            },
+            {
+              senderId: patientId,
+              senderType: "patient",
+              receiverId: doctor.id,
+              receiverType: "professional",
+            },
+          ],
+          order: { createdAt: "DESC" },
+        });
+        return {
+          id: doctor.id,
+          name: doctor.name,
+          type: "professional" as const,
+          lastMessage: lastMessage?.content || null,
+          lastMessageDate: lastMessage?.createdAt || null,
+        };
+      }),
+    );
+
+    return professionalContacts.sort((a, b) => {
+      if (!a.lastMessageDate) return 1;
+      if (!b.lastMessageDate) return -1;
+      return (
+        new Date(b.lastMessageDate).getTime() -
+        new Date(a.lastMessageDate).getTime()
+      );
+    });
+  }
+
   async getContacts(userId: number, userType: "patient" | "professional") {
     const patients = await this.patientRepository.find();
     const doctors = await this.doctorRepository.find();

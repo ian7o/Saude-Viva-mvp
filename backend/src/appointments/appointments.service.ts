@@ -57,6 +57,49 @@ export class AppointmentsService {
     return await this.findByDateRange(startDate, endDate, doctorId);
   }
 
+  async findByPatient(patientId: number): Promise<Appointment[]> {
+    return await this.appointmentRepository.find({
+      where: { patientId },
+      relations: ["patient", "doctor"],
+      order: { date: "ASC" },
+    });
+  }
+
+  async findByPatientAndDateRange(
+    patientId: number,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<Appointment[]> {
+    return await this.appointmentRepository.find({
+      where: {
+        patientId,
+        date: Between(startDate, endDate),
+      },
+      relations: ["patient", "doctor"],
+      order: { date: "ASC" },
+    });
+  }
+
+  async findByPatientAndDate(
+    patientId: number,
+    date: Date,
+  ): Promise<Appointment[]> {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    return await this.appointmentRepository.find({
+      where: {
+        patientId,
+        date: Between(startOfDay, endOfDay),
+      },
+      relations: ["patient", "doctor"],
+      order: { date: "ASC" },
+    });
+  }
+
   async findByDoctorAndDate(
     doctorId: number,
     date: Date,

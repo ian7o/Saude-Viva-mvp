@@ -2,12 +2,16 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcryptjs";
 import { UsersRepository } from "src/users/users.repository";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Patient } from "src/entities/patient.entity";
 
 interface ValidatedUser {
   id: number;
   email: string;
   name: string;
   role: string;
+  patientId?: number;
 }
 
 @Injectable()
@@ -15,6 +19,8 @@ export class AuthService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly jwtService: JwtService,
+    @InjectRepository(Patient)
+    private readonly patientRepository: Repository<Patient>,
   ) {}
 
   async validateUser(
@@ -23,15 +29,15 @@ export class AuthService {
   ): Promise<ValidatedUser | null> {
     const user = await this.usersRepository.findByEmail(email);
     if (user && user.password) {
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (isPasswordValid) {
-        const result: ValidatedUser = {
+      const isValid = await bcrypt.compare(password, user.password);
+      if (isValid) {
+        return {
           id: user.id,
           email: user.email,
           name: user.name,
           role: user.role || "doctor",
+          patientId: user.patientId || undefined,
         };
-        return result;
       }
     }
     return null;
@@ -50,6 +56,7 @@ export class AuthService {
         email: user.email,
         name: user.name,
         role: user.role,
+        patientId: user.patientId,
       },
     };
   }
@@ -81,5 +88,33 @@ export class AuthService {
       access_token: this.jwtService.sign(payload),
       user: result,
     };
+  }
+
+  async seedPatients() {
+    const patients = await this.patientRepository.find();
+    let created = 0;
+
+    for (const patient of patients) {
+      const existingUser = await this.usersRepository.findByEmail(
+        patient.email || `paciente${patient.id}@clinica.com`,
+      );
+      if (existingUser) continue;
+
+      const email = patient.email || `paciente${patient.id}@clinica.com`;
+      const hashedPassword = await bcrypt.hash("paciente123", 10);
+
+      await this.usersRepository.create({
+        email,
+        name: patient.name,
+        password: hashedPassword,
+        age: 0,
+        sex: "male",
+        role: "patient",
+        patientId: patient.id,
+      });
+      created++;
+    }
+
+    return { message: `Created ${created} patient user accounts` };
   }
 }

@@ -36,4 +36,10 @@ export class CreateUserReqDto {
   @ApiProperty({ example: "password123", description: "User password" })
   @IsNotEmpty()
   password: string;
+
+  @ApiProperty({ example: "doctor", description: "User role" })
+  role?: string;
+
+  @ApiProperty({ example: 1, description: "Linked patient ID" })
+  patientId?: number;
 }
