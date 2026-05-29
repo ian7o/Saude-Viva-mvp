@@ -61,27 +61,49 @@ export class AuthService {
     };
   }
 
-  async register(email: string, password: string, name: string) {
-    const existingUser = await this.usersRepository.findByEmail(email);
+  async register(dto: {
+    email: string;
+    password: string;
+    name: string;
+    role?: string;
+    phone?: string;
+    identificationNumber?: string;
+    birthDate?: string;
+  }) {
+    const existingUser = await this.usersRepository.findByEmail(dto.email);
     if (existingUser) {
       throw new UnauthorizedException("User already exists");
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
+
+    let patientId: number | undefined;
+    if (dto.role === "patient") {
+      const patient = this.patientRepository.create({
+        name: dto.name,
+        email: dto.email,
+        phone: dto.phone,
+        identificationNumber: dto.identificationNumber,
+        birthDate: dto.birthDate ? new Date(dto.birthDate) : undefined,
+      });
+      const savedPatient = await this.patientRepository.save(patient);
+      patientId = savedPatient.id;
+    }
+
     const user = await this.usersRepository.create({
-      email,
-      name,
+      email: dto.email,
+      name: dto.name,
       password: hashedPassword,
       age: 0,
       sex: "male",
+      role: dto.role || "doctor",
+      patientId,
     });
     const result = {
       id: user.id,
       email: user.email,
       name: user.name,
-      age: user.age,
-      sex: user.sex,
-      status: user.status,
       role: user.role || "doctor",
+      patientId: user.patientId,
     };
     const payload = { sub: result.id, email: result.email, role: result.role };
     return {

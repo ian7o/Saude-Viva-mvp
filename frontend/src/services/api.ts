@@ -17,6 +17,10 @@ export const authService = {
     const response = await api.post('/auth/login', { email, password });
     return response.data;
   },
+  register: async (data: { name: string; email: string; password: string; role?: string; birthDate?: string }) => {
+    const response = await api.post('/auth/register', { ...data, role: 'patient' });
+    return response.data;
+  },
 };
 
 export const appointmentsService = {

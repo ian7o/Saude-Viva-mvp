@@ -19,11 +19,7 @@ export class AuthController {
   @Post("register")
   @ApiOperation({ summary: "User registration" })
   async register(@Body() registerDto: RegisterDto) {
-    return this.authService.register(
-      registerDto.email,
-      registerDto.password,
-      registerDto.name,
-    );
+    return this.authService.register(registerDto);
   }
 
 }

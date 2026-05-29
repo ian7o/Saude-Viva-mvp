@@ -11,19 +11,11 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('admin@saudeviva.com');
   const [password, setPassword] = useState('admin123');
   const [error, setError] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [name, setName] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [birthDate, setBirthDate] = useState('');
   const navigate = useNavigate();
-
-  const handleTabChange = (tab: LoginTab) => {
-    setActiveTab(tab);
-    setError('');
-    if (tab === 'staff') {
-      setEmail('admin@saudeviva.com');
-      setPassword('admin123');
-    } else {
-      setEmail('joao.silva@example.com');
-      setPassword('paciente123');
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +26,35 @@ const Login: React.FC = () => {
       navigate(data.user.role === 'patient' ? '/calendar' : '/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed');
+    }
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      setError('As palavras-passe não coincidem');
+      return;
+    }
+    try {
+      const data = await authService.register({ name, email, password, birthDate });
+      localStorage.setItem('token', data.access_token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      navigate('/calendar');
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Registo falhou');
+    }
+  };
+
+  const handleTabChange = (tab: LoginTab) => {
+    setActiveTab(tab);
+    setIsRegistering(false);
+    setError('');
+    if (tab === 'staff') {
+      setEmail('admin@saudeviva.com');
+      setPassword('admin123');
+    } else {
+      setEmail('joao.silva@example.com');
+      setPassword('paciente123');
     }
   };
 
@@ -62,45 +83,138 @@ const Login: React.FC = () => {
             </button>
           </div>
 
-          <h2 style={formTitleStyle(colors)}>Entrar</h2>
-          <p style={formSubtitleStyle(colors)}>
-            {activeTab === 'staff' ? 'Aceda à sua conta' : 'Aceda à sua conta de paciente'}
-          </p>
-          
-          {error && <div style={errorStyle}>{error}</div>}
-          
-          <form onSubmit={handleSubmit}>
-            <div style={formGroupStyle}>
-              <label style={labelStyle(colors)}>Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="input-focus"
-                style={inputStyle(colors)}
-                placeholder="seu@email.com"
-                required
-              />
-            </div>
-            <div style={formGroupStyle}>
-              <label style={labelStyle(colors)}>Palavra-passe</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="input-focus"
-                style={inputStyle(colors)}
-                required
-              />
-            </div>
-            <button type="submit" className="btn-hover" style={buttonStyle}>Entrar</button>
-          </form>
-          
-          <p style={hintStyle(colors)}>
-            {activeTab === 'staff'
-              ? 'Médico: admin@saudeviva.com / admin123  |  Secretária: secretaria@saudeviva.com / admin123'
-              : 'Use o email do paciente e palavra-passe: paciente123'}
-          </p>
+          {activeTab === 'patient' && isRegistering ? (
+            <>
+              <h2 style={formTitleStyle(colors)}>Criar Conta</h2>
+              <p style={formSubtitleStyle(colors)}>Registe-se como paciente</p>
+
+              {error && <div style={errorStyle}>{error}</div>}
+
+              <form onSubmit={handleRegister}>
+                <div style={formGroupStyle}>
+                  <label style={labelStyle(colors)}>Nome completo</label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="input-focus"
+                    style={inputStyle(colors)}
+                    placeholder="O seu nome"
+                    required
+                  />
+                </div>
+                <div style={formGroupStyle}>
+                  <label style={labelStyle(colors)}>Email</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="input-focus"
+                    style={inputStyle(colors)}
+                    placeholder="seu@email.com"
+                    required
+                  />
+                </div>
+                <div style={formGroupStyle}>
+                  <label style={labelStyle(colors)}>Data de Nascimento</label>
+                  <input
+                    type="date"
+                    value={birthDate}
+                    onChange={(e) => setBirthDate(e.target.value)}
+                    className="input-focus"
+                    style={inputStyle(colors)}
+                  />
+                </div>
+                <div style={formGroupStyle}>
+                  <label style={labelStyle(colors)}>Palavra-passe</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="input-focus"
+                    style={inputStyle(colors)}
+                    required
+                  />
+                </div>
+                <div style={formGroupStyle}>
+                  <label style={labelStyle(colors)}>Confirmar Palavra-passe</label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="input-focus"
+                    style={inputStyle(colors)}
+                    required
+                  />
+                </div>
+                <button type="submit" className="btn-hover" style={buttonStyle}>Registrar</button>
+              </form>
+
+              <p style={registerLinkStyle(colors)}>
+                Já tem conta?{' '}
+                <button
+                  onClick={() => { setIsRegistering(false); setError(''); }}
+                  style={linkBtnStyle}
+                >
+                  Faça login
+                </button>
+              </p>
+            </>
+          ) : (
+            <>
+              <h2 style={formTitleStyle(colors)}>Entrar</h2>
+              <p style={formSubtitleStyle(colors)}>
+                {activeTab === 'staff' ? 'Aceda à sua conta' : 'Aceda à sua conta de paciente'}
+              </p>
+
+              {error && <div style={errorStyle}>{error}</div>}
+
+              <form onSubmit={handleSubmit}>
+                <div style={formGroupStyle}>
+                  <label style={labelStyle(colors)}>Email</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="input-focus"
+                    style={inputStyle(colors)}
+                    placeholder="seu@email.com"
+                    required
+                  />
+                </div>
+                <div style={formGroupStyle}>
+                  <label style={labelStyle(colors)}>Palavra-passe</label>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="input-focus"
+                    style={inputStyle(colors)}
+                    required
+                  />
+                </div>
+                <button type="submit" className="btn-hover" style={buttonStyle}>Entrar</button>
+              </form>
+
+              {activeTab === 'patient' && (
+                <p style={registerLinkStyle(colors)}>
+                  Não tem conta?{' '}
+                  <button
+                    onClick={() => { setIsRegistering(true); setError(''); setName(''); setConfirmPassword(''); setBirthDate(''); setEmail(''); setPassword(''); }}
+                    style={linkBtnStyle}
+                  >
+                    Registre-se
+                  </button>
+                </p>
+              )}
+
+              <p style={hintStyle(colors)}>
+                {activeTab === 'staff'
+                  ? 'Médico: admin@saudeviva.com / admin123  |  Secretária: secretaria@saudeviva.com / admin123'
+                  : 'Use o email do paciente e palavra-passe: paciente123'}
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -256,5 +370,23 @@ const hintStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
   textAlign: 'center',
   marginTop: '20px',
 });
+
+const registerLinkStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
+  color: colors.textSecondary,
+  fontSize: '14px',
+  textAlign: 'center',
+  marginTop: '24px',
+});
+
+const linkBtnStyle: React.CSSProperties = {
+  background: 'none',
+  border: 'none',
+  color: '#3498db',
+  cursor: 'pointer',
+  fontWeight: 600,
+  fontSize: '14px',
+  textDecoration: 'underline',
+  padding: 0,
+};
 
 export default Login;
