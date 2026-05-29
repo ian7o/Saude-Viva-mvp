@@ -39,6 +39,7 @@ const Calendar: React.FC = () => {
   
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const isSecretary = user.role === 'secretary';
+  const isPatient = user.role === 'patient';
 
   const { theme, colors } = useTheme();
   const titleStyles = getTitleStyles(colors);
@@ -269,7 +270,7 @@ const Calendar: React.FC = () => {
             <button onClick={() => setViewMode('day')} style={viewBtnStyle(viewMode === 'day', theme)}>Dia</button>
             <button onClick={() => setViewMode('week')} style={viewBtnStyle(viewMode === 'week', theme)}>Semana</button>
           </div>
-          <button onClick={() => setShowAddModal(true)} className="btn-hover" style={addBtnStyle}>+ Nova Consulta</button>
+          {!isPatient && <button onClick={() => setShowAddModal(true)} className="btn-hover" style={addBtnStyle}>+ Nova Consulta</button>}
         </div>
       </div>
 
@@ -372,8 +373,8 @@ const Calendar: React.FC = () => {
               <p style={{ ...detailRowStyle, color: colors.text, background: colors.surfaceHover, borderColor: colors.border }}><strong>Estado:</strong> <span style={statusBadgeStyle(selectedAppointment.status || 'scheduled')}>{statusLabel(selectedAppointment.status || 'scheduled')}</span></p>
             </div>
             <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-              <button onClick={() => startEditAppointment()} className="btn-hover" style={editBtnStyle}>Editar</button>
-              <button onClick={handleDeleteAppointment} className="btn-danger-hover" style={deleteBtnStyle}>Eliminar</button>
+              {!isPatient && <button onClick={() => startEditAppointment()} className="btn-hover" style={editBtnStyle}>Editar</button>}
+              {!isPatient && <button onClick={handleDeleteAppointment} className="btn-danger-hover" style={deleteBtnStyle}>Eliminar</button>}
               <button onClick={() => setSelectedAppointment(null)} className="btn-hover" style={{ ...cancelBtnStyle, background: colors.surfaceHover, color: colors.textSecondary, borderColor: colors.border }}>Fechar</button>
             </div>
           </div>

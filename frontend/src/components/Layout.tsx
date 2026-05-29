@@ -13,6 +13,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     navigate('/login');
   };
 
+  const isPatient = user.role === 'patient';
+
   return (
     <div style={containerStyle}>
       <aside style={sidebarStyle}>
@@ -25,7 +27,22 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
         
         <nav style={navStyle}>
-          {user.role !== 'secretary' && (
+          {isPatient ? (
+            <>
+              <NavLink to="/calendar" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+                <span style={navIconStyle}>📅</span>
+                Consultas
+              </NavLink>
+              <NavLink to="/documents" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+                <span style={navIconStyle}>📁</span>
+                Documentos
+              </NavLink>
+              <NavLink to="/messages" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+                <span style={navIconStyle}>💬</span>
+                Mensagens
+              </NavLink>
+            </>
+          ) : user.role !== 'secretary' ? (
             <>
               <NavLink to="/dashboard" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
                 <span style={navIconStyle}>📊</span>
@@ -44,8 +61,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 Mensagens
               </NavLink>
             </>
-          )}
-          {user.role === 'secretary' && (
+          ) : (
             <>
               <NavLink to="/patients" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
                 <span style={navIconStyle}>👤</span>
@@ -68,7 +84,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <div style={userAvatarStyle}>{user.name?.[0] || 'U'}</div>
             <div>
               <p style={userNameStyle}>{user.name || 'Usuário'}</p>
-              <p style={userRoleStyle}>{user.role === 'secretary' ? 'Secretária' : 'Médico'}</p>
+              <p style={userRoleStyle}>{user.role === 'patient' ? 'Paciente' : user.role === 'secretary' ? 'Secretária' : 'Médico'}</p>
             </div>
           </div>
           <button onClick={handleLogout} className="btn-hover" style={logoutBtnStyle}>

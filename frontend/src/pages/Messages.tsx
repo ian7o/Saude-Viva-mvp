@@ -26,17 +26,20 @@ interface Message {
 const Messages: React.FC = () => {
   const { theme, colors } = useTheme();
   const titleStyles = getTitleStyles(colors);
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const isPatient = user.role === 'patient';
   
   const [patients, setPatients] = useState<Patient[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  const [activeTab, setActiveTab] = useState<'patient' | 'professional'>('patient');
+  const [activeTab, setActiveTab] = useState<'patient' | 'professional'>(isPatient ? 'professional' : 'patient');
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    loadPatients();
+    if (!isPatient) loadPatients();
     loadContacts();
   }, []);
 
@@ -85,7 +88,7 @@ const Messages: React.FC = () => {
   };
 
   const getAllContacts = useMemo(() => {
-    if (activeTab === 'professional') {
+    if (isPatient || activeTab === 'professional') {
       return contacts.filter(c => c.type === 'professional');
     }
     
@@ -102,7 +105,7 @@ const Messages: React.FC = () => {
       }));
     
     return [...patientContacts, ...patientsWithoutMessages];
-  }, [activeTab, contacts, patients]);
+  }, [activeTab, contacts, patients, isPatient]);
 
   const filteredContacts = useMemo(() => {
     if (!searchTerm) return getAllContacts;
@@ -149,22 +152,24 @@ const Messages: React.FC = () => {
 
       <div style={containerStyle(colors)}>
         <div style={sidebarStyle(colors)}>
-          <div style={tabContainerStyle(colors)}>
-            <button 
-              className="btn-hover"
-              style={tabStyle(colors, activeTab === 'patient')} 
-              onClick={() => { setActiveTab('patient'); setSelectedContact(null); }}
-            >
-              👥 Pacientes
-            </button>
-            <button 
-              className="btn-hover"
-              style={tabStyle(colors, activeTab === 'professional')} 
-              onClick={() => { setActiveTab('professional'); setSelectedContact(null); }}
-            >
-              👨‍⚕️ Profissionais
-            </button>
-          </div>
+          {!isPatient && (
+            <div style={tabContainerStyle(colors)}>
+              <button 
+                className="btn-hover"
+                style={tabStyle(colors, activeTab === 'patient')} 
+                onClick={() => { setActiveTab('patient'); setSelectedContact(null); }}
+              >
+                👥 Pacientes
+              </button>
+              <button 
+                className="btn-hover"
+                style={tabStyle(colors, activeTab === 'professional')} 
+                onClick={() => { setActiveTab('professional'); setSelectedContact(null); }}
+              >
+                👨‍⚕️ Profissionais
+              </button>
+            </div>
+          )}
 
           <div style={searchWrapperStyle(colors)}>
             <div style={searchBarStyle(colors)}>

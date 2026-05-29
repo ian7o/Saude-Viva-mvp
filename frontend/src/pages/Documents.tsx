@@ -8,6 +8,9 @@ import { getTitleStyles } from '../styles/theme';
 const Documents: React.FC = () => {
   const { colors } = useTheme();
   const titleStyles = getTitleStyles(colors);
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const isPatient = user.role === 'patient';
   
   const [documents, setDocuments] = useState<ClinicalDocument[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -24,7 +27,7 @@ const Documents: React.FC = () => {
 
   useEffect(() => {
     loadDocuments();
-    loadPatients();
+    if (!isPatient) loadPatients();
   }, []);
 
   const loadDocuments = async () => {
@@ -102,9 +105,9 @@ const Documents: React.FC = () => {
           <h1 style={titleStyles.pageTitle}>Documentos Clínicos</h1>
           <p style={titleStyles.pageSubtitle}>Gerencie arquivos e documentos dos pacientes</p>
         </div>
-        <button onClick={() => setShowUpload(!showUpload)} className="btn-hover" style={uploadBtnStyle}>
+        {!isPatient && <button onClick={() => setShowUpload(!showUpload)} className="btn-hover" style={uploadBtnStyle}>
           {showUpload ? '✕ Cancelar' : '+ Novo Documento'}
-        </button>
+        </button>}
       </div>
 
       {showUpload && (
