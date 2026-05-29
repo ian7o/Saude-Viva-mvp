@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { appointmentsService, documentsService } from '../services/api';
 import type { Appointment } from '../types';
 import Layout from '../components/Layout';
+import { useTheme, ThemeColorPalette } from '../context/ThemeContext';
 
 const Dashboard: React.FC = () => {
+  const { colors } = useTheme();
   const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([]);
   const [documentsCount, setDocumentsCount] = useState(0);
   const [userName, setUserName] = useState('Dr. Admin');
@@ -47,61 +49,61 @@ const Dashboard: React.FC = () => {
 
   return (
     <Layout>
-      <div style={headerStyle}>
+      <div style={headerStyle(colors)}>
         <div>
-          <h1 style={greetingStyle}>{getGreeting()}, {userName}!</h1>
-          <p style={subtitleStyle}>Aqui está o resumo do seu dia</p>
+          <h1 style={greetingStyle(colors)}>{getGreeting()}, {userName}!</h1>
+          <p style={subtitleStyle(colors)}>Aqui está o resumo do seu dia</p>
         </div>
-        <div style={dateDisplayStyle}>
+        <div style={dateDisplayStyle(colors)}>
           <span style={dateIconStyle}>📅</span>
           <span>{new Date().toLocaleDateString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
         </div>
       </div>
       
       <div style={statsGridStyle}>
-          <div className="card-hover" style={statCardStyle}>
+          <div className="card-hover" style={statCardStyle(colors)}>
             <div style={statIconStyle}>📅</div>
             <div>
-              <h3 style={statLabelStyle}>Consultas de Hoje</h3>
-              <p style={statValueStyle}>{todayAppointments.length}</p>
+              <h3 style={statLabelStyle(colors)}>Consultas de Hoje</h3>
+              <p style={statValueStyle(colors)}>{todayAppointments.length}</p>
             </div>
           </div>
-          <div className="card-hover" style={statCardStyle}>
+          <div className="card-hover" style={statCardStyle(colors)}>
             <div style={statIconStyle}>👥</div>
             <div>
-              <h3 style={statLabelStyle}>Pacientes Atendidos</h3>
-              <p style={statValueStyle}>0</p>
+              <h3 style={statLabelStyle(colors)}>Pacientes Atendidos</h3>
+              <p style={statValueStyle(colors)}>0</p>
             </div>
           </div>
-          <div className="card-hover" style={statCardStyle}>
+          <div className="card-hover" style={statCardStyle(colors)}>
             <div style={statIconStyle}>📄</div>
             <div>
-              <h3 style={statLabelStyle}>Documentos</h3>
-              <p style={statValueStyle}>{documentsCount}</p>
+              <h3 style={statLabelStyle(colors)}>Documentos</h3>
+              <p style={statValueStyle(colors)}>{documentsCount}</p>
             </div>
           </div>
       </div>
 
       <div style={sectionStyle}>
-        <h2 style={sectionTitleStyle}>Próximas Consultas</h2>
+        <h2 style={sectionTitleStyle(colors)}>Próximas Consultas</h2>
         {todayAppointments.length === 0 ? (
-          <div style={emptyStateStyle}>
+          <div style={emptyStateStyle(colors)}>
             <span style={emptyIconStyle}>📭</span>
             <p>Nenhuma consulta agendada para hoje</p>
           </div>
         ) : (
           <div style={listStyle}>
             {todayAppointments.map((apt) => (
-              <div key={apt.id} className="card-hover" style={itemStyle}>
+              <div key={apt.id} className="card-hover" style={itemStyle(colors)}>
                 <div style={itemLeftStyle}>
                   <div style={patientAvatarStyle}>{apt.patient?.name?.[0] || 'P'}</div>
                   <div>
-                    <strong style={patientNameStyle}>{apt.patient?.name || 'Paciente'}</strong>
-                    <p style={descriptionStyle}>{apt.description}</p>
+                    <strong style={patientNameStyle(colors)}>{apt.patient?.name || 'Paciente'}</strong>
+                    <p style={descriptionStyle(colors)}>{apt.description}</p>
                   </div>
                 </div>
                 <div style={itemRightStyle}>
-                  <span style={timeStyle}>
+                  <span style={timeStyle(colors)}>
                     {new Date(apt.date).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })}
                   </span>
                   <span style={specialtyTagStyle}>{apt.specialty}</span>
@@ -115,43 +117,43 @@ const Dashboard: React.FC = () => {
   );
 };
 
-const headerStyle: React.CSSProperties = {
+const headerStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
   marginBottom: '32px',
   paddingBottom: '24px',
-  borderBottom: '1px solid #e2e8f0',
+  borderBottom: `1px solid ${colors.border}`,
   flexWrap: 'wrap',
   gap: '16px',
-};
+});
 
-const greetingStyle: React.CSSProperties = {
-  color: '#ffffff',
+const greetingStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
+  color: colors.text,
   fontSize: '32px',
   fontWeight: 700,
   margin: 0,
-};
+});
 
-const subtitleStyle: React.CSSProperties = {
-  color: '#fffff',
+const subtitleStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
+  color: colors.textSecondary,
   fontSize: '15px',
   margin: '8px 0 0 0',
-};
+});
 
-const dateDisplayStyle: React.CSSProperties = {
+const dateDisplayStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
   display: 'flex',
   alignItems: 'center',
   gap: '10px',
   padding: '12px 20px',
-  background: 'white',
+  background: colors.surface,
   borderRadius: '12px',
-  border: '1px solid #e2e8f0',
-  color: '#475569',
+  border: `1px solid ${colors.border}`,
+  color: colors.text,
   fontSize: '14px',
   fontWeight: 500,
-  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-};
+  boxShadow: `0 1px 3px ${colors.shadow}`,
+});
 
 const dateIconStyle: React.CSSProperties = {
   fontSize: '18px',
@@ -164,16 +166,16 @@ const statsGridStyle: React.CSSProperties = {
   marginBottom: '32px',
 };
 
-const statCardStyle: React.CSSProperties = {
-  background: 'white',
+const statCardStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
+  background: colors.surface,
   padding: '24px',
   borderRadius: '16px',
-  boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03)',
+  boxShadow: `0 1px 3px ${colors.shadow}, 0 1px 2px ${colors.shadow}`,
   display: 'flex',
   alignItems: 'center',
   gap: '20px',
-  border: '1px solid #e2e8f0',
-};
+  border: `1px solid ${colors.border}`,
+});
 
 const statIconStyle: React.CSSProperties = {
   fontSize: '28px',
@@ -182,44 +184,44 @@ const statIconStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  background: 'linear-gradient(135deg, #e0f2fe, #bae6fd)',
+  background: 'linear-gradient(135deg, #4b6677, #205572)',
   borderRadius: '14px',
 };
 
-const statLabelStyle: React.CSSProperties = {
-  color: '#64748b',
+const statLabelStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
+  color: colors.textSecondary,
   marginBottom: '4px',
   fontSize: '13px',
   fontWeight: 500,
-};
+});
 
-const statValueStyle: React.CSSProperties = {
+const statValueStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
   fontSize: '32px',
   fontWeight: 700,
-  color: '#1e293b',
+  color: colors.text,
   margin: 0,
   lineHeight: 1.2,
-};
+});
 
 const sectionStyle: React.CSSProperties = {
   marginTop: '32px',
 };
 
-const sectionTitleStyle: React.CSSProperties = {
-  color: '#ffffff',
+const sectionTitleStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
+  color: colors.text,
   fontSize: '20px',
   fontWeight: 600,
   marginBottom: '20px',
-};
+});
 
-const emptyStateStyle: React.CSSProperties = {
+const emptyStateStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
   textAlign: 'center',
   padding: '60px 40px',
-  color: '#94a3b8',
-  background: 'white',
+  color: colors.textSecondary,
+  background: colors.surface,
   borderRadius: '16px',
-  border: '2px dashed #e2e8f0',
-};
+  border: `2px dashed ${colors.border}`,
+});
 
 const emptyIconStyle: React.CSSProperties = {
   fontSize: '40px',
@@ -233,16 +235,16 @@ const listStyle: React.CSSProperties = {
   gap: '12px',
 };
 
-const itemStyle: React.CSSProperties = {
-  background: 'white',
+const itemStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
+  background: colors.surface,
   padding: '20px 24px',
   borderRadius: '14px',
-  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+  boxShadow: `0 1px 3px ${colors.shadow}`,
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  border: '1px solid #e2e8f0',
-};
+  border: `1px solid ${colors.border}`,
+});
 
 const itemLeftStyle: React.CSSProperties = {
   display: 'flex',
@@ -263,29 +265,29 @@ const patientAvatarStyle: React.CSSProperties = {
   fontWeight: 600,
 };
 
-const patientNameStyle: React.CSSProperties = {
-  color: '#1e293b',
+const patientNameStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
+  color: colors.text,
   fontSize: '15px',
   fontWeight: 600,
   display: 'block',
-};
+});
 
-const descriptionStyle: React.CSSProperties = {
-  color: '#64748b',
+const descriptionStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
+  color: colors.textSecondary,
   margin: '4px 0 0 0',
   fontSize: '13px',
-};
+});
 
 const itemRightStyle: React.CSSProperties = {
   textAlign: 'right',
 };
 
-const timeStyle: React.CSSProperties = {
+const timeStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
   display: 'block',
   fontSize: '18px',
   fontWeight: 700,
-  color: '#1e293b',
-};
+  color: colors.text,
+});
 
 const specialtyTagStyle: React.CSSProperties = {
   display: 'inline-block',

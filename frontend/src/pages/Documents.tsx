@@ -2,13 +2,12 @@ import React, { useEffect, useState, useRef } from 'react';
 import { documentsService, patientsService } from '../services/api';
 import type { ClinicalDocument, Patient } from '../types';
 import Layout from '../components/Layout';
-import { useTheme } from '../context/ThemeContext';
-import { getTitleStyles, getCommonStyles } from '../styles/theme';
+import { useTheme, ThemeColorPalette } from '../context/ThemeContext';
+import { getTitleStyles } from '../styles/theme';
 
 const Documents: React.FC = () => {
   const { colors } = useTheme();
   const titleStyles = getTitleStyles(colors);
-  const common = getCommonStyles(colors);
   
   const [documents, setDocuments] = useState<ClinicalDocument[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -109,50 +108,50 @@ const Documents: React.FC = () => {
       </div>
 
       {showUpload && (
-        <div style={uploadFormStyle}>
-          <h3 style={{ marginBottom: '20px' }}>Carregar Documento</h3>
+        <div style={uploadFormStyle(colors)}>
+          <h3 style={{ marginBottom: '20px', color: colors.text }}>Carregar Documento</h3>
           <form onSubmit={handleUpload}>
             <div style={formColumnStyle}>
               <div style={formGroupStyle}>
-                <label>Arquivo</label>
-                <input type="file" ref={fileInputRef} required style={inputStyle} />
+                <label style={{ color: colors.textSecondary }}>Arquivo</label>
+                <input type="file" ref={fileInputRef} required style={inputStyle(colors)} />
               </div>
               <div style={formGroupStyle}>
-                <label>Descrição</label>
+                <label style={{ color: colors.textSecondary }}>Descrição</label>
                 <input
                   type="text"
                   value={uploadData.description}
                   onChange={(e) => setUploadData({ ...uploadData, description: e.target.value })}
-                  style={inputStyle}
+                  style={inputStyle(colors)}
                   placeholder="Ex: Relatório médico"
                 />
               </div>
               <div style={formGroupStyle}>
-                <label>Sala</label>
+                <label style={{ color: colors.textSecondary }}>Sala</label>
                 <input
                   type="text"
                   value={uploadData.room}
                   onChange={(e) => setUploadData({ ...uploadData, room: e.target.value })}
-                  style={inputStyle}
+                  style={inputStyle(colors)}
                   placeholder="Ex: Sala 101"
                 />
               </div>
               <div style={formGroupStyle}>
-                <label>Localização</label>
+                <label style={{ color: colors.textSecondary }}>Localização</label>
                 <input
                   type="text"
                   value={uploadData.location}
                   onChange={(e) => setUploadData({ ...uploadData, location: e.target.value })}
-                  style={inputStyle}
+                  style={inputStyle(colors)}
                   placeholder="Ex: Lisboa"
                 />
               </div>
               <div style={formGroupStyle}>
-                <label>Paciente</label>
+                <label style={{ color: colors.textSecondary }}>Paciente</label>
                 <select
                   value={uploadData.patientId}
                   onChange={(e) => setUploadData({ ...uploadData, patientId: e.target.value })}
-                  style={inputStyle}
+                  style={inputStyle(colors)}
                 >
                   <option value="">Selecione...</option>
                   {patients.map((p) => (
@@ -168,13 +167,15 @@ const Documents: React.FC = () => {
 
       {selectedDoc && (
         <div style={modalOverlayStyle} onClick={() => setSelectedDoc(null)}>
-          <div className="modal-animate" style={modalContentStyle} onClick={(e) => e.stopPropagation()}>
-            <h3>{selectedDoc.originalName}</h3>
-            <p><strong>Descrição:</strong> {selectedDoc.description || 'N/A'}</p>
-            <p><strong>Sala:</strong> {selectedDoc.room || 'N/A'}</p>
-            <p><strong>Localização:</strong> {selectedDoc.location || 'N/A'}</p>
-            <p><strong>Paciente:</strong> {selectedDoc.patient?.name || 'N/A'}</p>
-            <p><strong>Data:</strong> {new Date(selectedDoc.uploadDate).toLocaleDateString('pt-PT')}</p>
+          <div className="modal-animate" style={modalContentStyle(colors)} onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ color: colors.text, margin: 0 }}>{selectedDoc.originalName}</h3>
+            <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '10px', color: colors.text }}>
+              <p style={{ margin: 0 }}><strong>Descrição:</strong> {selectedDoc.description || 'N/A'}</p>
+              <p style={{ margin: 0 }}><strong>Sala:</strong> {selectedDoc.room || 'N/A'}</p>
+              <p style={{ margin: 0 }}><strong>Localização:</strong> {selectedDoc.location || 'N/A'}</p>
+              <p style={{ margin: 0 }}><strong>Paciente:</strong> {selectedDoc.patient?.name || 'N/A'}</p>
+              <p style={{ margin: 0 }}><strong>Data:</strong> {new Date(selectedDoc.uploadDate).toLocaleDateString('pt-PT')}</p>
+            </div>
             <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
               {canView(selectedDoc) && (
                 <a href={documentsService.view(selectedDoc.id)} target="_blank" rel="noopener noreferrer" className="btn-hover" style={actionBtnStyle('#27ae60')}>
@@ -193,18 +194,18 @@ const Documents: React.FC = () => {
       )}
 
       {documents.length === 0 ? (
-        <div style={emptyStyle}>Nenhum documento disponível</div>
+        <div style={emptyStyle(colors)}>Nenhum documento disponível</div>
       ) : (
         <div style={gridStyle}>
           {documents.map((doc) => (
-            <div key={doc.id} className="card-hover" style={docCardStyle}>
+            <div key={doc.id} className="card-hover" style={docCardStyle(colors)}>
               <div style={docIconStyle}>
                 {doc.mimetype.includes('pdf') ? '📄' : '📎'}
               </div>
               <div style={docInfoStyle}>
-                <strong>{doc.originalName}</strong>
-                <p>{doc.description || 'Sem descrição'}</p>
-                <div style={docMetaStyle}>
+                <strong style={{ color: colors.text }}>{doc.originalName}</strong>
+                <p style={{ color: colors.textSecondary, margin: '6px 0 0 0', fontSize: '13px' }}>{doc.description || 'Sem descrição'}</p>
+                <div style={docMetaStyle(colors)}>
                   <span>{doc.room || 'N/A'}</span>
                   <span>{new Date(doc.uploadDate).toLocaleDateString('pt-PT')}</span>
                 </div>
@@ -240,20 +241,14 @@ const uploadBtnStyle: React.CSSProperties = {
   gap: '8px',
 };
 
-const uploadFormStyle: React.CSSProperties = {
-  background: 'white',
+const uploadFormStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
+  background: colors.surface,
   padding: '28px',
   borderRadius: '16px',
   marginBottom: '28px',
-  boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03)',
-  border: '1px solid #e2e8f0',
-};
-
-const formGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-  gap: '20px',
-};
+  boxShadow: `0 1px 3px ${colors.shadow}, 0 1px 2px ${colors.shadow}`,
+  border: `1px solid ${colors.border}`,
+});
 
 const formColumnStyle: React.CSSProperties = {
   display: 'flex',
@@ -263,17 +258,18 @@ const formColumnStyle: React.CSSProperties = {
 
 const formGroupStyle: React.CSSProperties = {};
 
-const inputStyle: React.CSSProperties = {
+const inputStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
   width: '100%',
   padding: '12px 14px',
   marginTop: '8px',
-  border: '1px solid #e2e8f0',
+  border: `1px solid ${colors.border}`,
   borderRadius: '10px',
   fontSize: '14px',
-  color: '#334155',
-  background: '#f8fafc',
+  color: colors.text,
+  background: colors.surfaceHover,
   transition: 'all 0.2s ease',
-};
+  boxSizing: 'border-box',
+});
 
 const submitBtnStyle: React.CSSProperties = {
   marginTop: '20px',
@@ -288,15 +284,15 @@ const submitBtnStyle: React.CSSProperties = {
   boxShadow: '0 4px 12px rgba(39, 174, 96, 0.3)',
 };
 
-const emptyStyle: React.CSSProperties = {
+const emptyStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
   textAlign: 'center',
   padding: '60px 40px',
-  color: '#94a3b8',
-  background: 'white',
+  color: colors.textSecondary,
+  background: colors.surface,
   borderRadius: '12px',
-  border: '2px dashed #e2e8f0',
+  border: `2px dashed ${colors.border}`,
   fontSize: '15px',
-};
+});
 
 const gridStyle: React.CSSProperties = {
   display: 'grid',
@@ -304,16 +300,16 @@ const gridStyle: React.CSSProperties = {
   gap: '20px',
 };
 
-const docCardStyle: React.CSSProperties = {
-  background: 'white',
+const docCardStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
+  background: colors.surface,
   padding: '24px',
   borderRadius: '14px',
-  boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+  boxShadow: `0 1px 3px ${colors.shadow}`,
   display: 'flex',
   flexDirection: 'column',
   gap: '16px',
-  border: '1px solid #e2e8f0',
-};
+  border: `1px solid ${colors.border}`,
+});
 
 const docIconStyle: React.CSSProperties = {
   fontSize: '36px',
@@ -327,15 +323,15 @@ const docInfoStyle: React.CSSProperties = {
   flex: 1,
 };
 
-const docMetaStyle: React.CSSProperties = {
+const docMetaStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
   display: 'flex',
   justifyContent: 'space-between',
-  color: '#64748b',
+  color: colors.textSecondary,
   fontSize: '13px',
   marginTop: '12px',
   paddingTop: '12px',
-  borderTop: '1px solid #f1f5f9',
-};
+  borderTop: `1px solid ${colors.border}`,
+});
 
 const patientStyle: React.CSSProperties = {
   color: '#3498db',
@@ -387,14 +383,14 @@ const modalOverlayStyle: React.CSSProperties = {
   zIndex: 1000,
 };
 
-const modalContentStyle: React.CSSProperties = {
-  background: 'white',
+const modalContentStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
+  background: colors.surface,
   padding: '32px',
   borderRadius: '16px',
   maxWidth: '520px',
   width: '90%',
   boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
-};
+});
 
 const actionBtnStyle = (color: string): React.CSSProperties => ({
   padding: '12px 24px',

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/api';
+import { useTheme, ThemeColorPalette } from '../context/ThemeContext';
 
 const Login: React.FC = () => {
+  const { colors } = useTheme();
   const [email, setEmail] = useState('admin@saudeviva.com');
   const [password, setPassword] = useState('admin123');
   const [error, setError] = useState('');
@@ -22,7 +24,7 @@ const Login: React.FC = () => {
 
   return (
     <div style={containerStyle}>
-      <div style={loginBoxStyle}>
+      <div style={loginBoxStyle(colors)}>
         <div style={logoSectionStyle}>
           <div style={logoIconStyle}>+</div>
           <h1 style={logoTitleStyle}>Saude Viva</h1>
@@ -30,38 +32,38 @@ const Login: React.FC = () => {
         </div>
         
         <div style={formSectionStyle}>
-          <h2 style={formTitleStyle}>Entrar</h2>
-          <p style={formSubtitleStyle}>Aceda à sua conta</p>
+          <h2 style={formTitleStyle(colors)}>Entrar</h2>
+          <p style={formSubtitleStyle(colors)}>Aceda à sua conta</p>
           
           {error && <div style={errorStyle}>{error}</div>}
           
           <form onSubmit={handleSubmit}>
             <div style={formGroupStyle}>
-              <label style={labelStyle}>Email</label>
+              <label style={labelStyle(colors)}>Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="input-focus"
-                style={inputStyle}
+                style={inputStyle(colors)}
                 required
               />
             </div>
             <div style={formGroupStyle}>
-              <label style={labelStyle}>Palavra-passe</label>
+              <label style={labelStyle(colors)}>Palavra-passe</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input-focus"
-                style={inputStyle}
+                style={inputStyle(colors)}
                 required
               />
             </div>
             <button type="submit" className="btn-hover" style={buttonStyle}>Entrar</button>
           </form>
           
-          <p style={hintStyle}>Médico: admin@saudeviva.com / admin123  |  Secretária: secretaria@saudeviva.com / admin123</p>
+          <p style={hintStyle(colors)}>Médico: admin@saudeviva.com / admin123  |  Secretária: secretaria@saudeviva.com / admin123</p>
         </div>
       </div>
     </div>
@@ -77,14 +79,14 @@ const containerStyle: React.CSSProperties = {
   padding: '24px',
 };
 
-const loginBoxStyle: React.CSSProperties = {
-  background: 'white',
+const loginBoxStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
+  background: colors.surface,
   borderRadius: '24px',
   boxShadow: '0 25px 60px rgba(0,0,0,0.35)',
   width: '100%',
   maxWidth: '440px',
   overflow: 'hidden',
-};
+});
 
 const logoSectionStyle: React.CSSProperties = {
   background: 'linear-gradient(135deg, #1a3a5c 0%, #0d2137 100%)',
@@ -126,44 +128,44 @@ const formSectionStyle: React.CSSProperties = {
   padding: '40px',
 };
 
-const formTitleStyle: React.CSSProperties = {
-  color: '#1e293b',
+const formTitleStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
+  color: colors.text,
   fontSize: '22px',
   fontWeight: 700,
   margin: '0 0 8px 0',
   textAlign: 'center',
-};
+});
 
-const formSubtitleStyle: React.CSSProperties = {
-  color: '#64748b',
+const formSubtitleStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
+  color: colors.textSecondary,
   fontSize: '14px',
   margin: '0 0 28px 0',
   textAlign: 'center',
-};
+});
 
 const formGroupStyle: React.CSSProperties = {
   marginBottom: '20px',
 };
 
-const labelStyle: React.CSSProperties = {
+const labelStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
   display: 'block',
-  color: '#475569',
+  color: colors.textSecondary,
   fontSize: '13px',
   fontWeight: 600,
   marginBottom: '8px',
-};
+});
 
-const inputStyle: React.CSSProperties = {
+const inputStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
   width: '100%',
   padding: '14px 16px',
-  border: '1.5px solid #e2e8f0',
+  border: `1.5px solid ${colors.border}`,
   borderRadius: '12px',
   fontSize: '15px',
-  color: '#334155',
-  background: '#f8fafc',
+  color: colors.text,
+  background: colors.surfaceHover,
   outline: 'none',
   boxSizing: 'border-box',
-};
+});
 
 const buttonStyle: React.CSSProperties = {
   width: '100%',
@@ -190,11 +192,11 @@ const errorStyle: React.CSSProperties = {
   border: '1px solid #fecaca',
 };
 
-const hintStyle: React.CSSProperties = {
-  color: '#94a3b8',
+const hintStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
+  color: colors.textSecondary,
   fontSize: '12px',
   textAlign: 'center',
   marginTop: '20px',
-};
+});
 
 export default Login;
