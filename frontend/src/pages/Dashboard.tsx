@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { appointmentsService, documentsService } from '../services/api';
 import type { Appointment } from '../types';
 import Layout from '../components/Layout';
-import { useTheme, ThemeColorPalette } from '../context/ThemeContext';
+import { useTheme } from '../context/useTheme';
+import { ThemeColorPalette } from '../context/themeTypes';
 
 const Dashboard: React.FC = () => {
   const { colors } = useTheme();

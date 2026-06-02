@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { appointmentsService, patientsService, doctorsService } from '../services/api';
 import type { Appointment, Patient } from '../types';
 import Layout from '../components/Layout';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '../context/useTheme';
 import { getTitleStyles } from '../styles/theme';
 import api from '../services/api';
 

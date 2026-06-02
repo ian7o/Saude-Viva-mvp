@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '../context/useTheme';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
@@ -29,49 +29,49 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <nav style={navStyle}>
           {isPatient ? (
             <>
-              <NavLink to="/calendar" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+              <NavLink to="/calendar" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
                 <span style={navIconStyle}>📅</span>
                 Consultas
               </NavLink>
-              <NavLink to="/documents" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+              <NavLink to="/documents" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
                 <span style={navIconStyle}>📁</span>
                 Documentos
               </NavLink>
-              <NavLink to="/messages" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+              <NavLink to="/messages" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
                 <span style={navIconStyle}>💬</span>
                 Mensagens
               </NavLink>
             </>
           ) : user.role !== 'secretary' ? (
             <>
-              <NavLink to="/dashboard" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+              <NavLink to="/dashboard" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
                 <span style={navIconStyle}>📊</span>
                 Dashboard
               </NavLink>
-              <NavLink to="/calendar" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+              <NavLink to="/calendar" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
                 <span style={navIconStyle}>📅</span>
                 Calendário
               </NavLink>
-              <NavLink to="/documents" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+              <NavLink to="/documents" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
                 <span style={navIconStyle}>📁</span>
                 Documentos
               </NavLink>
-              <NavLink to="/messages" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+              <NavLink to="/messages" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
                 <span style={navIconStyle}>💬</span>
                 Mensagens
               </NavLink>
             </>
           ) : (
             <>
-              <NavLink to="/patients" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+              <NavLink to="/patients" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
                 <span style={navIconStyle}>👤</span>
                 Pacientes
               </NavLink>
-              <NavLink to="/calendar" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+              <NavLink to="/calendar" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
                 <span style={navIconStyle}>📅</span>
                 Calendário
               </NavLink>
-              <NavLink to="/messages" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive, colors)}>
+              <NavLink to="/messages" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
                 <span style={navIconStyle}>💬</span>
                 Mensagens
               </NavLink>
@@ -167,7 +167,7 @@ const navStyle: React.CSSProperties = {
   gap: '4px',
 };
 
-const navLinkStyle = (isActive: boolean, colors: any): React.CSSProperties => ({
+const navLinkStyle = (isActive: boolean): React.CSSProperties => ({
   display: 'flex',
   alignItems: 'center',
   gap: '12px',

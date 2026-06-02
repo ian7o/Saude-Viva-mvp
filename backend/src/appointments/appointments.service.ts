@@ -5,7 +5,7 @@ import {
   BadRequestException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, Between } from "typeorm";
+import { Repository, Between, FindOptionsWhere } from "typeorm";
 import { Appointment } from "src/entities/appointment.entity";
 
 @Injectable()
@@ -36,7 +36,7 @@ export class AppointmentsService {
     doctorId?: number,
     specialty?: string,
   ): Promise<Appointment[]> {
-    const where: any = {
+    const where: FindOptionsWhere<Appointment> = {
       date: Between(startDate, endDate),
     };
     if (doctorId) where.doctorId = doctorId;

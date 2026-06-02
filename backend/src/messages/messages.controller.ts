@@ -13,7 +13,9 @@ export class MessagesController {
 
   @Get("contacts")
   @ApiOperation({ summary: "Get all contacts with messages" })
-  getContacts(@CurrentUser() user: { id: number; role: string; patientId?: number }) {
+  getContacts(
+    @CurrentUser() user: { id: number; role: string; patientId?: number },
+  ) {
     if (user.role === "patient") {
       return this.messagesService.getProfessionalContacts(user.patientId!);
     }
@@ -24,7 +26,8 @@ export class MessagesController {
   @Post()
   @ApiOperation({ summary: "Send a message" })
   send(
-    @CurrentUser() user: { id: number; name: string; role: string; patientId?: number },
+    @CurrentUser()
+    user: { id: number; name: string; role: string; patientId?: number },
     @Body()
     body: {
       content: string;

@@ -2,7 +2,8 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { messagesService, patientsService } from '../services/api';
 import type { Patient } from '../types';
 import Layout from '../components/Layout';
-import { useTheme, ThemeColorPalette } from '../context/ThemeContext';
+import { useTheme } from '../context/useTheme';
+import { ThemeColorPalette } from '../context/themeTypes';
 import { getTitleStyles } from '../styles/theme';
 
 interface Contact {
@@ -24,7 +25,7 @@ interface Message {
 }
 
 const Messages: React.FC = () => {
-  const { theme, colors } = useTheme();
+  const { colors } = useTheme();
   const titleStyles = getTitleStyles(colors);
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -41,7 +42,7 @@ const Messages: React.FC = () => {
   useEffect(() => {
     if (!isPatient) loadPatients();
     loadContacts();
-  }, []);
+  }, [isPatient]);
 
   const loadPatients = async () => {
     try {

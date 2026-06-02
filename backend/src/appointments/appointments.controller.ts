@@ -26,7 +26,9 @@ export class AppointmentsController {
 
   @Get()
   @ApiOperation({ summary: "Get all appointments for current user" })
-  findAll(@CurrentUser() user: { id: number; role: string; patientId?: number }) {
+  findAll(
+    @CurrentUser() user: { id: number; role: string; patientId?: number },
+  ) {
     if (user.role === "patient") {
       return this.appointmentsService.findByPatient(user.patientId!);
     }
@@ -35,16 +37,23 @@ export class AppointmentsController {
 
   @Get("today")
   @ApiOperation({ summary: "Get today appointments for current user" })
-  findToday(@CurrentUser() user: { id: number; role: string; patientId?: number }) {
+  findToday(
+    @CurrentUser() user: { id: number; role: string; patientId?: number },
+  ) {
     const today = new Date();
     if (user.role === "patient") {
-      return this.appointmentsService.findByPatientAndDate(user.patientId!, today);
+      return this.appointmentsService.findByPatientAndDate(
+        user.patientId!,
+        today,
+      );
     }
     return this.appointmentsService.findByDoctorAndDate(user.id, today);
   }
 
   @Get("range")
-  @ApiOperation({ summary: "Get appointments by date range with optional filters" })
+  @ApiOperation({
+    summary: "Get appointments by date range with optional filters",
+  })
   findByRange(
     @CurrentUser() user: { id: number; role: string; patientId?: number },
     @Query("startDate") startDate: string,
@@ -89,9 +98,12 @@ export class AppointmentsController {
     const data = {
       ...createDto,
       date: new Date(createDto.date),
-      patientId: user.role === "patient" ? user.patientId : createDto.patientId
-        ? Number(createDto.patientId)
-        : undefined,
+      patientId:
+        user.role === "patient"
+          ? user.patientId
+          : createDto.patientId
+            ? Number(createDto.patientId)
+            : undefined,
     };
     return this.appointmentsService.create(data);
   }

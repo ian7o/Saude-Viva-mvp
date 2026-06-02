@@ -35,7 +35,9 @@ export class DocumentsController {
 
   @Get()
   @ApiOperation({ summary: "Get all documents for current user" })
-  findAll(@CurrentUser() user: { id: number; role: string; patientId?: number }) {
+  findAll(
+    @CurrentUser() user: { id: number; role: string; patientId?: number },
+  ) {
     if (user.role === "patient") {
       return this.documentsService.findByPatient(user.patientId!);
     }

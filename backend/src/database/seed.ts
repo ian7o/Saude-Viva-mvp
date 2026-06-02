@@ -8,13 +8,39 @@ import { Message } from "src/entities/message.entity";
 import { User } from "src/users/entities/user.entity";
 
 const DOCTORS = [
-  { name: "Dr. gui", email: "admin@saudeviva.com", specialty: "General Medicine", age: 35, sex: "male" },
-  { name: "Dr. nair", email: "admin@saudevivax.com", specialty: "General Medicinez", age: 35, sex: "male" },
+  {
+    name: "Dr. gui",
+    email: "admin@saudeviva.com",
+    specialty: "General Medicine",
+    age: 35,
+    sex: "male",
+  },
+  {
+    name: "Dr. nair",
+    email: "admin@saudevivax.com",
+    specialty: "General Medicinez",
+    age: 35,
+    sex: "male",
+  },
 ];
 
 const PATIENTS = [
-  { name: "João Silva", birthDate: new Date("1985-06-15"), identificationNumber: "12345678", phone: "+351912345678", email: "joao.silva@example.com", sex: "male" as const },
-  { name: "Maria Santos", birthDate: new Date("1990-03-22"), identificationNumber: "87654321", phone: "+351987654321", email: "maria.santos@example.com", sex: "female" as const },
+  {
+    name: "João Silva",
+    birthDate: new Date("1985-06-15"),
+    identificationNumber: "12345678",
+    phone: "+351912345678",
+    email: "joao.silva@example.com",
+    sex: "male" as const,
+  },
+  {
+    name: "Maria Santos",
+    birthDate: new Date("1990-03-22"),
+    identificationNumber: "87654321",
+    phone: "+351987654321",
+    email: "maria.santos@example.com",
+    sex: "female" as const,
+  },
   {
     name: "Pedro Almeida",
     birthDate: new Date("1978-11-08"),
@@ -23,21 +49,105 @@ const PATIENTS = [
     email: "pedro.almeida@example.com",
     sex: "male" as const,
   },
-  { name: "Sofia Costa", birthDate: new Date("1995-05-20"), identificationNumber: "55667788", phone: "+351944555666", email: "sofia.costa@example.com", sex: "female" as const },
-  { name: "Miguel Rodrigues", birthDate: new Date("1982-08-14"), identificationNumber: "99887766", phone: "+351955666777", email: "miguel.rodrigues@example.com", sex: "male" as const },
+  {
+    name: "Sofia Costa",
+    birthDate: new Date("1995-05-20"),
+    identificationNumber: "55667788",
+    phone: "+351944555666",
+    email: "sofia.costa@example.com",
+    sex: "female" as const,
+  },
+  {
+    name: "Miguel Rodrigues",
+    birthDate: new Date("1982-08-14"),
+    identificationNumber: "99887766",
+    phone: "+351955666777",
+    email: "miguel.rodrigues@example.com",
+    sex: "male" as const,
+  },
 ];
 
 const APPOINTMENTS_DATA = [
-  { description: "Check-up anual", specialty: "Medicina Geral", daysFromToday: 0, hour: 9, minute: 0, patientIndex: 0 },
-  { description: "Seguimento de análises", specialty: "Laboratório", daysFromToday: 0, hour: 10, minute: 30, patientIndex: 1 },
-  { description: "Consulta de cardiologia", specialty: "Cardiologia", daysFromToday: 1, hour: 14, minute: 0, patientIndex: 0 },
-  { description: "Consulta de rotina", specialty: "Medicina Geral", daysFromToday: 0, hour: 9, minute: 0, patientIndex: 2 },
-  { description: "Revisão de tensão arterial", specialty: "Cardiologia", daysFromToday: 1, hour: 10, minute: 0, patientIndex: 3 },
-  { description: "Vacinação", specialty: "Medicina Geral", daysFromToday: 2, hour: 11, minute: 0, patientIndex: 4 },
-  { description: "Revisão de resultados laboratoriais", specialty: "Laboratório", daysFromToday: 3, hour: 14, minute: 0, patientIndex: 0 },
-  { description: "Consulta de medicina dentária", specialty: "Medicina Dentária", daysFromToday: 4, hour: 9, minute: 30, patientIndex: 1 },
-  { description: "Consulta de urgência", specialty: "Medicina Geral", daysFromToday: 5, hour: 10, minute: 0, patientIndex: 2 },
-  { description: "Consulta de seguimento", specialty: "Medicina Geral", daysFromToday: 6, hour: 11, minute: 0, patientIndex: 3 },
+  {
+    description: "Check-up anual",
+    specialty: "Medicina Geral",
+    daysFromToday: 0,
+    hour: 9,
+    minute: 0,
+    patientIndex: 0,
+  },
+  {
+    description: "Seguimento de análises",
+    specialty: "Laboratório",
+    daysFromToday: 0,
+    hour: 10,
+    minute: 30,
+    patientIndex: 1,
+  },
+  {
+    description: "Consulta de cardiologia",
+    specialty: "Cardiologia",
+    daysFromToday: 1,
+    hour: 14,
+    minute: 0,
+    patientIndex: 0,
+  },
+  {
+    description: "Consulta de rotina",
+    specialty: "Medicina Geral",
+    daysFromToday: 0,
+    hour: 9,
+    minute: 0,
+    patientIndex: 2,
+  },
+  {
+    description: "Revisão de tensão arterial",
+    specialty: "Cardiologia",
+    daysFromToday: 1,
+    hour: 10,
+    minute: 0,
+    patientIndex: 3,
+  },
+  {
+    description: "Vacinação",
+    specialty: "Medicina Geral",
+    daysFromToday: 2,
+    hour: 11,
+    minute: 0,
+    patientIndex: 4,
+  },
+  {
+    description: "Revisão de resultados laboratoriais",
+    specialty: "Laboratório",
+    daysFromToday: 3,
+    hour: 14,
+    minute: 0,
+    patientIndex: 0,
+  },
+  {
+    description: "Consulta de medicina dentária",
+    specialty: "Medicina Dentária",
+    daysFromToday: 4,
+    hour: 9,
+    minute: 30,
+    patientIndex: 1,
+  },
+  {
+    description: "Consulta de urgência",
+    specialty: "Medicina Geral",
+    daysFromToday: 5,
+    hour: 10,
+    minute: 0,
+    patientIndex: 2,
+  },
+  {
+    description: "Consulta de seguimento",
+    specialty: "Medicina Geral",
+    daysFromToday: 6,
+    hour: 11,
+    minute: 0,
+    patientIndex: 3,
+  },
 ];
 
 type MessageSeed = {
@@ -51,11 +161,43 @@ type MessageSeed = {
 };
 
 const MESSAGES_DATA: MessageSeed[] = [
-  { content: "Olá Dr., gostaria de saber os resultados das análises.", senderType: "patient", senderPatientIndex: 0, receiverType: "professional", receiverDoctorIndex: 0 },
-  { content: "Olá João, os resultados estão prontos. Pode passar amanhã às 10h.", senderType: "professional", senderDoctorIndex: 0, receiverType: "patient", receiverPatientIndex: 0 },
-  { content: "Dr., preciso remarcar a consulta de amanhã.", senderType: "patient", senderPatientIndex: 1, receiverType: "professional", receiverDoctorIndex: 0 },
-  { content: "Bom dia Dr. Administrador! Tem disponíveis algum horário para reunião esta semana?", senderType: "professional", senderDoctorIndex: 1, receiverType: "professional", receiverDoctorIndex: 0 },
-  { content: "Olá Dr. Gui, amanhã às 14h está disponível na minha sala.", senderType: "professional", senderDoctorIndex: 0, receiverType: "professional", receiverDoctorIndex: 1 },
+  {
+    content: "Olá Dr., gostaria de saber os resultados das análises.",
+    senderType: "patient",
+    senderPatientIndex: 0,
+    receiverType: "professional",
+    receiverDoctorIndex: 0,
+  },
+  {
+    content:
+      "Olá João, os resultados estão prontos. Pode passar amanhã às 10h.",
+    senderType: "professional",
+    senderDoctorIndex: 0,
+    receiverType: "patient",
+    receiverPatientIndex: 0,
+  },
+  {
+    content: "Dr., preciso remarcar a consulta de amanhã.",
+    senderType: "patient",
+    senderPatientIndex: 1,
+    receiverType: "professional",
+    receiverDoctorIndex: 0,
+  },
+  {
+    content:
+      "Bom dia Dr. Administrador! Tem disponíveis algum horário para reunião esta semana?",
+    senderType: "professional",
+    senderDoctorIndex: 1,
+    receiverType: "professional",
+    receiverDoctorIndex: 0,
+  },
+  {
+    content: "Olá Dr. Gui, amanhã às 14h está disponível na minha sala.",
+    senderType: "professional",
+    senderDoctorIndex: 0,
+    receiverType: "professional",
+    receiverDoctorIndex: 1,
+  },
 ];
 
 function getDayDate(daysFromToday: number, hour: number, minute = 0): Date {
@@ -72,7 +214,13 @@ async function seedUsers(
   const users = [
     { email: "admin@saudeviva.com", name: "Dr. gui", age: 35, sex: "male" },
     { email: "admin@saudevivax.com", name: "Dr. nair", age: 35, sex: "male" },
-    { email: "secretaria@saudeviva.com", name: "Maria Secretária", age: 28, sex: "female", role: "secretary" },
+    {
+      email: "secretaria@saudeviva.com",
+      name: "Maria Secretária",
+      age: 28,
+      sex: "female",
+      role: "secretary",
+    },
   ];
 
   for (const u of users) {
@@ -80,7 +228,10 @@ async function seedUsers(
   }
 }
 
-async function seedDoctors(doctorRepo: Repository<Doctor>, hashedPassword: string): Promise<Doctor[]> {
+async function seedDoctors(
+  doctorRepo: Repository<Doctor>,
+  hashedPassword: string,
+): Promise<Doctor[]> {
   const doctors: Doctor[] = [];
 
   for (const d of DOCTORS) {
@@ -167,7 +318,9 @@ async function seedDocument(
   doctor: Doctor,
   appointment: Appointment,
 ): Promise<void> {
-  const existing = await documentRepo.findOne({ where: { patientId: patient.id } });
+  const existing = await documentRepo.findOne({
+    where: { patientId: patient.id },
+  });
   if (!existing) {
     const document = documentRepo.create({
       filename: "relatorio-medico.pdf",
@@ -251,8 +404,16 @@ export async function seed(dataSource: DataSource) {
 
   await seedUsers(userRepo, hashedPassword);
   const doctors = await seedDoctors(doctorRepo, hashedPassword);
-  const patients = await seedPatients(patientRepo, userRepo, patientPasswordHash);
-  const appointments = await seedAppointments(appointmentRepo, doctors[0], patients);
+  const patients = await seedPatients(
+    patientRepo,
+    userRepo,
+    patientPasswordHash,
+  );
+  const appointments = await seedAppointments(
+    appointmentRepo,
+    doctors[0],
+    patients,
+  );
   await seedDocument(documentRepo, patients[0], doctors[0], appointments[0]);
   await seedMessages(messageRepo, patients, doctors);
 

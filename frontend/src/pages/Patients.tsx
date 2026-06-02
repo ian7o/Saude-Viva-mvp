@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { patientsService } from '../services/api';
 import type { Patient } from '../types';
 import Layout from '../components/Layout';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '../context/useTheme';
 import { getTitleStyles } from '../styles/theme';
 
 const Patients: React.FC = () => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Theme, ThemeColorPalette } from '../context/ThemeContext';
+import { ThemeColorPalette } from '../context/themeTypes';
 
 export interface TitleStyles {
   pageTitle: React.CSSProperties;

@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { documentsService, patientsService } from '../services/api';
 import type { ClinicalDocument, Patient } from '../types';
 import Layout from '../components/Layout';
-import { useTheme, ThemeColorPalette } from '../context/ThemeContext';
+import { useTheme } from '../context/useTheme';
+import { ThemeColorPalette } from '../context/themeTypes';
 import { getTitleStyles } from '../styles/theme';
 
 const Documents: React.FC = () => {
@@ -28,7 +29,7 @@ const Documents: React.FC = () => {
   useEffect(() => {
     loadDocuments();
     if (!isPatient) loadPatients();
-  }, []);
+  }, [isPatient]);
 
   const loadDocuments = async () => {
     try {
