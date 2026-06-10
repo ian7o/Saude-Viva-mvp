@@ -12,36 +12,50 @@ services:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
     restart: unless-stopped
     networks:
       - app-network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "1.0"
 
   backend:
     build:
       context: ./backend
       dockerfile: config/Dockerfile
     container_name: saudeviva-backend
+    init: true
     ports:
       - "4000:4000"
     environment:
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/saudeviva
       JWT_SECRET: saudeviva-secret-key-2024
       app_port: 4000
+      NODE_ENV: production
     depends_on:
       postgres:
         condition: service_healthy
     restart: unless-stopped
     networks:
       - app-network
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "1.0"
 
   frontend:
     build:
       context: ./frontend
       dockerfile: config/Dockerfile
     container_name: saudeviva-frontend
+    init: true
     ports:
       - "3000:80"
     depends_on:
@@ -49,6 +63,11 @@ services:
     restart: unless-stopped
     networks:
       - app-network
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: "0.5"
 
 networks:
   app-network:

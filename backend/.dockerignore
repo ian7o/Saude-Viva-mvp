@@ -1,0 +1,9 @@
+node_modules
+dist
+test
+uploads
+.eslintrc.*
+.prettierrc
+config/.env*
+config/eslint.config.mjs
+config/.prettierrc

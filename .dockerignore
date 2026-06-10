@@ -1,2 +1,6 @@
-backend/node_modules
-backend/dist
+.git
+.gitignore
+.env
+documentation
+**/node_modules
+**/dist
