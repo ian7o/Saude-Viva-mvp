@@ -88,7 +88,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </div>
           </div>
           <button onClick={handleLogout} className="btn-hover" style={logoutBtnStyle}>
-            <span>🚪</span> Sair
+            Sair
           </button>
         </div>
       </aside>

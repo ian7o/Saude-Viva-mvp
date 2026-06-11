@@ -79,18 +79,16 @@ const Calendar: React.FC = () => {
           spec
         );
       } else {
-        const startOfWeek = new Date(currentDate);
-        const day = currentDate.getDay();
-        startOfWeek.setDate(currentDate.getDate() - day);
-        startOfWeek.setHours(0, 0, 0, 0);
+        const startRange = new Date(currentDate);
+        startRange.setHours(0, 0, 0, 0);
         
-        const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 6);
-        endOfWeek.setHours(23, 59, 59, 999);
+        const endRange = new Date(startRange);
+        endRange.setDate(startRange.getDate() + 29);
+        endRange.setHours(23, 59, 59, 999);
         
         data = await appointmentsService.getByRange(
-          startOfWeek.toISOString(),
-          endOfWeek.toISOString(),
+          startRange.toISOString(),
+          endRange.toISOString(),
           docId,
           spec
         );
@@ -130,16 +128,14 @@ const Calendar: React.FC = () => {
     loadDoctors();
   }, []);
 
-  const getDaysOfWeek = () => {
+  const get30Days = () => {
     const days = [];
-    const startOfWeek = new Date(currentDate);
-    const day = currentDate.getDay();
-    startOfWeek.setDate(currentDate.getDate() - day);
-    startOfWeek.setHours(0, 0, 0, 0);
+    const start = new Date(currentDate);
+    start.setHours(0, 0, 0, 0);
     
-    for (let i = 0; i < 7; i++) {
-      const day = new Date(startOfWeek);
-      day.setDate(startOfWeek.getDate() + i);
+    for (let i = 0; i < 30; i++) {
+      const day = new Date(start);
+      day.setDate(start.getDate() + i);
       day.setHours(0, 0, 0, 0);
       days.push(day);
     }
@@ -268,7 +264,7 @@ const Calendar: React.FC = () => {
           </div>
           <div style={{ ...viewToggleStyle, background: colors.surface }}>
             <button onClick={() => setViewMode('day')} style={viewBtnStyle(viewMode === 'day', theme)}>Dia</button>
-            <button onClick={() => setViewMode('week')} style={viewBtnStyle(viewMode === 'week', theme)}>Semana</button>
+            <button onClick={() => setViewMode('week')} style={viewBtnStyle(viewMode === 'week', theme)}>30 Dias</button>
           </div>
           {!isPatient && <button onClick={() => setShowAddModal(true)} className="btn-hover" style={addBtnStyle}>+ Nova Consulta</button>}
         </div>
@@ -460,10 +456,10 @@ const Calendar: React.FC = () => {
           )}
         </div>
       ) : (
-        <div style={weekGridStyle}>
-          {getDaysOfWeek().map((day) => (
-            <div key={day.toISOString()} style={dayColumnStyle(isToday(day), isWeekend(day), theme)}>
-              <div style={dayHeaderStyle(isToday(day), isWeekend(day))}>
+        <div style={monthGridStyle}>
+          {get30Days().map((day) => (
+            <div key={day.toISOString()} style={dayColumnStyle(isToday(day), theme)}>
+              <div style={dayHeaderStyle(isToday(day))}>
                 <div style={{ fontSize: '12px', textTransform: 'uppercase', color: 'white' }}>
                   {day.toLocaleDateString('pt-PT', { weekday: 'long' })}
                 </div>
@@ -473,9 +469,7 @@ const Calendar: React.FC = () => {
               </div>
               <div style={{ 
                 ...dayContentStyle, 
-                background: isWeekend(day) 
-                  ? (theme === 'dark' ? '#1c2a1c' : '#fef9e7') 
-                  : (theme === 'dark' ? '#1e293b' : 'white')
+                background: theme === 'dark' ? '#1e293b' : 'white'
               }}>
                 {getAppointmentsForDay(day).map((apt) => (
                   <div key={apt.id} style={weekAppointmentStyle} onClick={() => setSelectedAppointment(apt)}>
@@ -558,22 +552,22 @@ const specialtyTagStyle: React.CSSProperties = {
   marginTop: '10px',
 };
 
-const weekGridStyle: React.CSSProperties = {
+const monthGridStyle: React.CSSProperties = {
   display: 'grid',
   gridTemplateColumns: 'repeat(7, 1fr)',
   gap: '12px',
 };
 
-const dayColumnStyle = (isToday: boolean, isWeekend: boolean, theme: string): React.CSSProperties => ({
-  background: isToday ? (theme === 'dark' ? '#1e3a5f' : '#eff6ff') : (isWeekend ? (theme === 'dark' ? '#1c2a1c' : '#fffbeb') : (theme === 'dark' ? '#1e293b' : 'white')),
+const dayColumnStyle = (isToday: boolean, theme: string): React.CSSProperties => ({
+  background: isToday ? (theme === 'dark' ? '#1e3a5f' : '#eff6ff') : (theme === 'dark' ? '#1e293b' : 'white'),
   borderRadius: '12px',
   overflow: 'hidden',
   boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-  border: `1px solid ${isToday ? (theme === 'dark' ? '#3b82f6' : '#bfdbfe') : (isWeekend ? (theme === 'dark' ? '#475569' : '#fef3c7') : (theme === 'dark' ? '#334155' : '#e2e8f0'))}`,
+  border: `1px solid ${isToday ? (theme === 'dark' ? '#3b82f6' : '#bfdbfe') : (theme === 'dark' ? '#334155' : '#e2e8f0')}`,
 });
 
-const dayHeaderStyle = (isToday: boolean, isWeekend: boolean): React.CSSProperties => ({
-  background: isToday ? 'linear-gradient(135deg, #3498db, #2980b9)' : (isWeekend ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'linear-gradient(135deg, #64748b, #475569)'),
+const dayHeaderStyle = (isToday: boolean): React.CSSProperties => ({
+  background: isToday ? 'linear-gradient(135deg, #3498db, #2980b9)' : 'linear-gradient(135deg, #64748b, #475569)',
   color: 'white',
   padding: '14px 10px',
   textAlign: 'center',
