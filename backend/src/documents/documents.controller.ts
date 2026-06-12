@@ -41,6 +41,9 @@ export class DocumentsController {
     if (user.role === "patient") {
       return this.documentsService.findByPatient(user.patientId!);
     }
+    if (user.role === "admin") {
+      return this.documentsService.findAll();
+    }
     return this.documentsService.findByDoctor(user.id);
   }
 

@@ -19,6 +19,10 @@ export class MessagesController {
     if (user.role === "patient") {
       return this.messagesService.getProfessionalContacts(user.patientId!);
     }
+    if (user.role === "admin") {
+      const userType = "professional";
+      return this.messagesService.getContacts(user.id, userType);
+    }
     const userType = user.role === "doctor" ? "professional" : "patient";
     return this.messagesService.getContacts(user.id, userType);
   }
@@ -45,7 +49,10 @@ export class MessagesController {
         receiverType: body.receiverType,
       });
     }
-    const senderType = user.role === "doctor" ? "professional" : "patient";
+    const senderType =
+      user.role === "doctor" || user.role === "admin"
+        ? "professional"
+        : "patient";
     return this.messagesService.send({
       content: body.content,
       senderId: user.id,
@@ -71,7 +78,10 @@ export class MessagesController {
         "patient",
       );
     }
-    const userType = user.role === "doctor" ? "professional" : "patient";
+    const userType =
+      user.role === "doctor" || user.role === "admin"
+        ? "professional"
+        : "patient";
     return this.messagesService.getHistory(
       user.id,
       contactId,

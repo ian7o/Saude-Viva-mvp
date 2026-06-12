@@ -11,6 +11,7 @@ import {
 import { Doctor } from "./doctor.entity";
 import { Patient } from "./patient.entity";
 import { ClinicalDocument } from "./clinical-document.entity";
+import { Clinic } from "./clinic.entity";
 
 @Entity("appointments")
 export class Appointment {
@@ -48,6 +49,13 @@ export class Appointment {
 
   @Column()
   patientId: number;
+
+  @ManyToOne(() => Clinic, (clinic) => clinic.appointments)
+  @JoinColumn({ name: "clinicId" })
+  clinic: Clinic;
+
+  @Column({ nullable: true })
+  clinicId: number;
 
   @OneToMany(() => ClinicalDocument, (document) => document.appointment)
   documents: ClinicalDocument[];

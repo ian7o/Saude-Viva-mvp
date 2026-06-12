@@ -27,10 +27,13 @@ export class AppointmentsController {
   @Get()
   @ApiOperation({ summary: "Get all appointments for current user" })
   findAll(
-    @CurrentUser() user: { id: number; role: string; patientId?: number },
+    @CurrentUser() user: { id: number; role: string; patientId?: number; clinicId?: number },
   ) {
     if (user.role === "patient") {
       return this.appointmentsService.findByPatient(user.patientId!);
+    }
+    if (user.role === "admin") {
+      return this.appointmentsService.findAll();
     }
     return this.appointmentsService.findByDoctor(user.id);
   }
@@ -55,11 +58,12 @@ export class AppointmentsController {
     summary: "Get appointments by date range with optional filters",
   })
   findByRange(
-    @CurrentUser() user: { id: number; role: string; patientId?: number },
+    @CurrentUser() user: { id: number; role: string; patientId?: number; clinicId?: number },
     @Query("startDate") startDate: string,
     @Query("endDate") endDate: string,
     @Query("doctorId") doctorId?: string,
     @Query("specialty") specialty?: string,
+    @Query("clinicId") clinicId?: string,
   ) {
     if (user.role === "patient") {
       return this.appointmentsService.findByPatientAndDateRange(
@@ -68,12 +72,13 @@ export class AppointmentsController {
         new Date(endDate),
       );
     }
-    if (user.role === "secretary" || doctorId) {
+    if (user.role === "secretary" || user.role === "admin" || doctorId) {
       return this.appointmentsService.findByDateRange(
         new Date(startDate),
         new Date(endDate),
         doctorId ? parseInt(doctorId) : undefined,
         specialty,
+        clinicId ? parseInt(clinicId) : user.clinicId,
       );
     }
     return this.appointmentsService.findByDoctorAndDateRange(
@@ -93,7 +98,7 @@ export class AppointmentsController {
   @ApiOperation({ summary: "Create appointment" })
   create(
     @Body() createDto: CreateAppointmentDto,
-    @CurrentUser() user: { id: number; role: string; patientId?: number },
+    @CurrentUser() user: { id: number; role: string; patientId?: number; clinicId?: number },
   ) {
     const data = {
       ...createDto,
@@ -104,6 +109,7 @@ export class AppointmentsController {
           : createDto.patientId
             ? Number(createDto.patientId)
             : undefined,
+      clinicId: createDto.clinicId ?? user.clinicId,
     };
     return this.appointmentsService.create(data);
   }
@@ -115,7 +121,7 @@ export class AppointmentsController {
     @Body() updateDto: UpdateAppointmentDto,
     @CurrentUser() user: { id: number; role: string },
   ) {
-    if (user.role !== "doctor") {
+    if (user.role !== "doctor" && user.role !== "admin") {
       throw new ForbiddenException("Apenas médicos podem editar consultas");
     }
     const data = {

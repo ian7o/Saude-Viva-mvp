@@ -6,11 +6,12 @@ import { Appointment } from "src/entities/appointment.entity";
 import { ClinicalDocument } from "src/entities/clinical-document.entity";
 import { Message } from "src/entities/message.entity";
 import { User } from "src/users/entities/user.entity";
+import { Clinic } from "src/entities/clinic.entity";
 
 const DOCTORS = [
   {
     name: "Dr. gui",
-    email: "admin@saudeviva.com",
+    email: "doutor.gui@saudeviva.com",
     specialty: "General Medicine",
     age: 35,
     sex: "male",
@@ -210,16 +211,18 @@ function getDayDate(daysFromToday: number, hour: number, minute = 0): Date {
 async function seedUsers(
   userRepo: Repository<User>,
   hashedPassword: string,
+  clinicId?: number,
 ): Promise<void> {
   const users = [
-    { email: "admin@saudeviva.com", name: "Dr. gui", age: 35, sex: "male" },
-    { email: "admin@saudevivax.com", name: "Dr. nair", age: 35, sex: "male" },
+    { email: "doutor.gui@saudeviva.com", name: "Dr. gui", age: 35, sex: "male", department: "General Medicine", clinicId },
+    { email: "admin@saudevivax.com", name: "Dr. nair", age: 35, sex: "male", department: "General Medicinez", clinicId },
     {
       email: "secretaria@saudeviva.com",
       name: "Maria Secretária",
       age: 28,
       sex: "female",
       role: "secretary",
+      clinicId,
     },
   ];
 
@@ -231,6 +234,7 @@ async function seedUsers(
 async function seedDoctors(
   doctorRepo: Repository<Doctor>,
   hashedPassword: string,
+  clinicId?: number,
 ): Promise<Doctor[]> {
   const doctors: Doctor[] = [];
 
@@ -242,6 +246,7 @@ async function seedDoctors(
         email: d.email,
         password: hashedPassword,
         specialty: d.specialty,
+        clinicId,
       });
       doctor = await doctorRepo.save(doctor);
     }
@@ -295,6 +300,7 @@ async function seedAppointments(
   appointmentRepo: Repository<Appointment>,
   doctor: Doctor,
   patients: Patient[],
+  clinicId?: number,
 ): Promise<Appointment[]> {
   const appointments: Appointment[] = [];
 
@@ -305,6 +311,7 @@ async function seedAppointments(
       date: getDayDate(a.daysFromToday, a.hour, a.minute),
       doctorId: doctor.id,
       patientId: patients[a.patientIndex].id,
+      clinicId,
     });
     appointments.push(await appointmentRepo.save(appointment));
   }
@@ -381,6 +388,7 @@ async function findOrCreateUser(
     age: number;
     sex: string;
     role?: string;
+    clinicId?: number;
   },
 ): Promise<User> {
   let user = await userRepo.findOne({ where: { email: data.email } });
@@ -398,12 +406,38 @@ export async function seed(dataSource: DataSource) {
   const documentRepo = dataSource.getRepository(ClinicalDocument);
   const messageRepo = dataSource.getRepository(Message);
   const userRepo = dataSource.getRepository(User);
+  const clinicRepo = dataSource.getRepository(Clinic);
 
   const hashedPassword = await bcrypt.hash("admin123", 10);
   const patientPasswordHash = await bcrypt.hash("paciente123", 10);
 
-  await seedUsers(userRepo, hashedPassword);
-  const doctors = await seedDoctors(doctorRepo, hashedPassword);
+  const adminUser = await userRepo.findOne({ where: { email: "admin@admin.com" } });
+  if (!adminUser) {
+    await userRepo.save(
+      userRepo.create({
+        email: "admin@admin.com",
+        name: "Admin Sistema",
+        password: hashedPassword,
+        age: 30,
+        sex: "male",
+        role: "admin",
+      }),
+    );
+  }
+
+  let clinic = await clinicRepo.findOne({ where: { name: "Clínica Central" } });
+  if (!clinic) {
+    clinic = clinicRepo.create({
+      name: "Clínica Central",
+      address: "Rua Principal, 123, Lisboa",
+      phone: "+351210000000",
+      email: "central@saudeviva.com",
+    });
+    clinic = await clinicRepo.save(clinic);
+  }
+
+  await seedUsers(userRepo, hashedPassword, clinic.id);
+  const doctors = await seedDoctors(doctorRepo, hashedPassword, clinic.id);
   const patients = await seedPatients(
     patientRepo,
     userRepo,
@@ -413,6 +447,7 @@ export async function seed(dataSource: DataSource) {
     appointmentRepo,
     doctors[0],
     patients,
+    clinic.id,
   );
   await seedDocument(documentRepo, patients[0], doctors[0], appointments[0]);
   await seedMessages(messageRepo, patients, doctors);

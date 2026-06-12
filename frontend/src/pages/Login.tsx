@@ -9,7 +9,7 @@ type LoginTab = 'staff' | 'patient';
 const Login: React.FC = () => {
   const { colors } = useTheme();
   const [activeTab, setActiveTab] = useState<LoginTab>('staff');
-  const [email, setEmail] = useState('admin@saudeviva.com');
+  const [email, setEmail] = useState('admin@admin.com');
   const [password, setPassword] = useState('admin123');
   const [error, setError] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
@@ -24,7 +24,7 @@ const Login: React.FC = () => {
       const data = await authService.login(email, password);
       localStorage.setItem('token', data.access_token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      navigate(data.user.role === 'patient' ? '/calendar' : '/dashboard');
+      navigate(data.user.role === 'patient' ? '/calendar' : data.user.role === 'admin' ? '/admin/employees' : '/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed');
     }
@@ -51,7 +51,7 @@ const Login: React.FC = () => {
     setIsRegistering(false);
     setError('');
     if (tab === 'staff') {
-      setEmail('admin@saudeviva.com');
+      setEmail('admin@admin.com');
       setPassword('admin123');
     } else {
       setEmail('joao.silva@example.com');
@@ -74,7 +74,7 @@ const Login: React.FC = () => {
               style={loginTabStyle(activeTab === 'staff', colors)}
               onClick={() => handleTabChange('staff')}
             >
-              👨‍⚕️ Médico / Secretária
+              👨‍⚕️ Funcionários
             </button>
             <button
               style={loginTabStyle(activeTab === 'patient', colors)}
@@ -211,7 +211,7 @@ const Login: React.FC = () => {
 
               <p style={hintStyle(colors)}>
                 {activeTab === 'staff'
-                  ? 'Médico: admin@saudeviva.com / admin123  |  Secretária: secretaria@saudeviva.com / admin123'
+                  ? 'Admin: admin@admin.com / admin123  |  Médico: doutor.gui@saudeviva.com / admin123  |  Secretária: secretaria@saudeviva.com / admin123'
                   : 'Use o email do paciente e palavra-passe: paciente123'}
               </p>
             </>

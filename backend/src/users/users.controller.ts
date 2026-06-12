@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { CreateUserReqDto } from "./dto/req/create-user-req-dto";
@@ -16,14 +17,21 @@ import {
   ApiParam,
   ApiBody,
   ApiResponse,
+  ApiBearerAuth,
 } from "@nestjs/swagger";
+import { AuthGuard } from "@nestjs/passport";
+import { RolesGuard } from "src/auth/guards/roles.guard";
+import { Roles } from "src/auth/decorators/roles.decorator";
 
 @ApiTags("users")
 @Controller("users")
+@ApiBearerAuth()
+@UseGuards(AuthGuard("jwt"), RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @Roles("admin")
   @ApiOperation({ summary: "Create a new user" })
   @ApiBody({ type: CreateUserReqDto })
   @ApiResponse({ status: 201, description: "User created successfully" })
@@ -33,6 +41,7 @@ export class UsersController {
   }
 
   @Get()
+  @Roles("admin")
   @ApiOperation({ summary: "Get all users" })
   @ApiResponse({ status: 200, description: "List of users" })
   findAll() {
@@ -40,6 +49,7 @@ export class UsersController {
   }
 
   @Get(":id")
+  @Roles("admin")
   @ApiOperation({ summary: "Get user by ID" })
   @ApiParam({ name: "id", description: "User ID", type: Number })
   @ApiResponse({ status: 200, description: "User found" })
@@ -49,6 +59,7 @@ export class UsersController {
   }
 
   @Patch(":id")
+  @Roles("admin")
   @ApiOperation({ summary: "Update user by ID" })
   @ApiParam({ name: "id", description: "User ID", type: Number })
   @ApiBody({ type: UpdateUserReqDto })
@@ -59,6 +70,7 @@ export class UsersController {
   }
 
   @Delete(":id")
+  @Roles("admin")
   @ApiOperation({ summary: "Delete user by ID" })
   @ApiParam({ name: "id", description: "User ID", type: Number })
   @ApiResponse({ status: 200, description: "User deleted successfully" })

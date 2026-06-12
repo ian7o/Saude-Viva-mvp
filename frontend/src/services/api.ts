@@ -113,4 +113,46 @@ export const messagesService = {
   },
 };
 
+export const usersService = {
+  getAll: async () => {
+    const response = await api.get('/users');
+    return response.data;
+  },
+  create: async (data: { name: string; email: string; password: string; role: string; age?: number; sex?: string }) => {
+    const response = await api.post('/users', data);
+    return response.data;
+  },
+  update: async (id: number, data: { name?: string; email?: string; role?: string }) => {
+    const response = await api.patch(`/users/${id}`, data);
+    return response.data;
+  },
+  delete: async (id: number) => {
+    const response = await api.delete(`/users/${id}`);
+    return response.data;
+  },
+};
+
+export const clinicsService = {
+  getAll: async () => {
+    const response = await api.get('/clinics');
+    return response.data;
+  },
+  create: async (data: { name: string; address?: string; phone?: string; email?: string }) => {
+    const response = await api.post('/clinics', data);
+    return response.data;
+  },
+  update: async (id: number, data: { name?: string; address?: string; phone?: string; email?: string }) => {
+    const response = await api.put(`/clinics/${id}`, data);
+    return response.data;
+  },
+  delete: async (id: number) => {
+    const response = await api.delete(`/clinics/${id}`);
+    return response.data;
+  },
+  getDoctors: async (id: number) => {
+    const response = await api.get(`/clinics/${id}/doctors`);
+    return response.data;
+  },
+};
+
 export default api;

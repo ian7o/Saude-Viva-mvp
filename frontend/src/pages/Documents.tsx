@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { documentsService, patientsService } from '../services/api';
-import type { ClinicalDocument, Patient } from '../types';
+import { documentsService, patientsService, clinicsService } from '../services/api';
+import type { ClinicalDocument, Patient, Clinic } from '../types';
 import Layout from '../components/Layout';
 import { useTheme } from '../context/useTheme';
 import { ThemeColorPalette } from '../context/themeTypes';
@@ -15,6 +15,7 @@ const Documents: React.FC = () => {
   
   const [documents, setDocuments] = useState<ClinicalDocument[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [clinics, setClinics] = useState<Clinic[]>([]);
   const [showUpload, setShowUpload] = useState(false);
   const [selectedDoc, setSelectedDoc] = useState<ClinicalDocument | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -28,7 +29,10 @@ const Documents: React.FC = () => {
 
   useEffect(() => {
     loadDocuments();
-    if (!isPatient) loadPatients();
+    if (!isPatient) {
+      loadPatients();
+      loadClinics();
+    }
   }, [isPatient]);
 
   const loadDocuments = async () => {
@@ -46,6 +50,15 @@ const Documents: React.FC = () => {
       setPatients(data);
     } catch (error) {
       console.error('Error loading patients:', error);
+    }
+  };
+
+  const loadClinics = async () => {
+    try {
+      const data = await clinicsService.getAll();
+      setClinics(data);
+    } catch (error) {
+      console.error('Error loading clinics:', error);
     }
   };
 
@@ -141,14 +154,17 @@ const Documents: React.FC = () => {
                 />
               </div>
               <div style={formGroupStyle}>
-                <label style={{ color: colors.textSecondary }}>Localização</label>
-                <input
-                  type="text"
+                <label style={{ color: colors.textSecondary }}>Localização (Clínica)</label>
+                <select
                   value={uploadData.location}
                   onChange={(e) => setUploadData({ ...uploadData, location: e.target.value })}
                   style={inputStyle(colors)}
-                  placeholder="Ex: Lisboa"
-                />
+                >
+                  <option value="">Selecione uma clínica...</option>
+                  {clinics.map((c) => (
+                    <option key={c.id} value={c.name}>{c.name}{c.address ? ` - ${c.address}` : ''}</option>
+                  ))}
+                </select>
               </div>
               <div style={formGroupStyle}>
                 <label style={{ color: colors.textSecondary }}>Paciente</label>

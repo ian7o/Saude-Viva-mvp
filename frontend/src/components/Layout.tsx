@@ -14,6 +14,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   };
 
   const isPatient = user.role === 'patient';
+  const isAdmin = user.role === 'admin';
 
   return (
     <div style={containerStyle}>
@@ -27,7 +28,40 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
         
         <nav style={navStyle}>
-          {isPatient ? (
+          {isAdmin ? (
+            <>
+              <NavLink to="/dashboard" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
+                <span style={navIconStyle}>📊</span>
+                Dashboard
+              </NavLink>
+              <NavLink to="/calendar" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
+                <span style={navIconStyle}>📅</span>
+                Calendário
+              </NavLink>
+              <NavLink to="/patients" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
+                <span style={navIconStyle}>👤</span>
+                Pacientes
+              </NavLink>
+              <NavLink to="/documents" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
+                <span style={navIconStyle}>📁</span>
+                Documentos
+              </NavLink>
+              <NavLink to="/messages" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
+                <span style={navIconStyle}>💬</span>
+                Mensagens
+              </NavLink>
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', margin: '8px 0', paddingTop: '8px' }}>
+                <NavLink to="/admin/employees" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
+                  <span style={navIconStyle}>⚙️</span>
+                  Funcionários
+                </NavLink>
+                <NavLink to="/admin/clinics" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
+                  <span style={navIconStyle}>🏥</span>
+                  Clínicas
+                </NavLink>
+              </div>
+            </>
+          ) : isPatient ? (
             <>
               <NavLink to="/calendar" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
                 <span style={navIconStyle}>📅</span>
@@ -42,7 +76,22 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 Mensagens
               </NavLink>
             </>
-          ) : user.role !== 'secretary' ? (
+          ) : user.role === 'secretary' ? (
+            <>
+              <NavLink to="/patients" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
+                <span style={navIconStyle}>👤</span>
+                Pacientes
+              </NavLink>
+              <NavLink to="/calendar" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
+                <span style={navIconStyle}>📅</span>
+                Calendário
+              </NavLink>
+              <NavLink to="/messages" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
+                <span style={navIconStyle}>💬</span>
+                Mensagens
+              </NavLink>
+            </>
+          ) : (
             <>
               <NavLink to="/dashboard" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
                 <span style={navIconStyle}>📊</span>
@@ -61,21 +110,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 Mensagens
               </NavLink>
             </>
-          ) : (
-            <>
-              <NavLink to="/patients" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
-                <span style={navIconStyle}>👤</span>
-                Pacientes
-              </NavLink>
-              <NavLink to="/calendar" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
-                <span style={navIconStyle}>📅</span>
-                Calendário
-              </NavLink>
-              <NavLink to="/messages" className="nav-hover" style={({ isActive }) => navLinkStyle(isActive)}>
-                <span style={navIconStyle}>💬</span>
-                Mensagens
-              </NavLink>
-            </>
           )}
         </nav>
 
@@ -84,7 +118,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <div style={userAvatarStyle}>{user.name?.[0] || 'U'}</div>
             <div>
               <p style={userNameStyle}>{user.name || 'Usuário'}</p>
-              <p style={userRoleStyle}>{user.role === 'patient' ? 'Paciente' : user.role === 'secretary' ? 'Secretária' : 'Médico'}</p>
+              <p style={userRoleStyle}>{user.role === 'patient' ? 'Paciente' : user.role === 'secretary' ? 'Secretária' : user.role === 'admin' ? 'Administrador' : 'Médico'}</p>
             </div>
           </div>
           <button onClick={handleLogout} className="btn-hover" style={logoutBtnStyle}>

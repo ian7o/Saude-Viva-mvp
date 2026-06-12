@@ -6,14 +6,12 @@ import Calendar from './pages/Calendar';
 import Documents from './pages/Documents';
 import Messages from './pages/Messages';
 import Patients from './pages/Patients';
+import AdminEmployees from './pages/AdminEmployees';
+import AdminClinics from './pages/AdminClinics';
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const token = localStorage.getItem('token');
   if (!token) return <Navigate to="/login" />;
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  if (user.role === 'secretary') {
-    return <>{children}</>;
-  }
   return <>{children}</>;
 };
 
@@ -21,6 +19,9 @@ const RootRedirect = () => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   if (user.role === 'secretary') {
     return <Navigate to="/patients" />;
+  }
+  if (user.role === 'admin') {
+    return <Navigate to="/admin/employees" />;
   }
   return <Navigate to="/dashboard" />;
 };
@@ -68,6 +69,22 @@ function App() {
           element={
             <PrivateRoute>
               <Messages />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/employees"
+          element={
+            <PrivateRoute>
+              <AdminEmployees />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/clinics"
+          element={
+            <PrivateRoute>
+              <AdminClinics />
             </PrivateRoute>
           }
         />

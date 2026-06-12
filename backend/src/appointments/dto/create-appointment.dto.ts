@@ -49,4 +49,9 @@ export class CreateAppointmentDto {
   @IsOptional()
   @IsIn(["scheduled", "completed", "cancelled", "rescheduled"])
   status?: string;
+
+  @ApiProperty({ example: 1, description: "Clinic ID", required: false })
+  @IsNumber()
+  @IsOptional()
+  clinicId?: number;
 }

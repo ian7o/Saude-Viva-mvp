@@ -25,8 +25,29 @@ export interface Appointment {
   editedAt?: string;
   doctorId: number;
   patientId: number;
+  clinicId?: number;
   patient?: Patient;
   doctor?: User;
+  clinic?: Clinic;
+}
+
+export interface Clinic {
+  id: number;
+  name: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  doctors?: Doctor[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Doctor {
+  id: number;
+  name: string;
+  email: string;
+  specialty?: string;
+  clinicId?: number;
 }
 
 export interface ClinicalDocument {

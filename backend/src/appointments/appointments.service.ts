@@ -17,7 +17,7 @@ export class AppointmentsService {
 
   async findAll(): Promise<Appointment[]> {
     return await this.appointmentRepository.find({
-      relations: ["patient", "doctor"],
+      relations: ["patient", "doctor", "clinic"],
       order: { date: "ASC" },
     });
   }
@@ -25,7 +25,7 @@ export class AppointmentsService {
   async findByDoctor(doctorId: number): Promise<Appointment[]> {
     return await this.appointmentRepository.find({
       where: { doctorId },
-      relations: ["patient", "doctor"],
+      relations: ["patient", "doctor", "clinic"],
       order: { date: "ASC" },
     });
   }
@@ -35,16 +35,18 @@ export class AppointmentsService {
     endDate: Date,
     doctorId?: number,
     specialty?: string,
+    clinicId?: number,
   ): Promise<Appointment[]> {
     const where: FindOptionsWhere<Appointment> = {
       date: Between(startDate, endDate),
     };
     if (doctorId) where.doctorId = doctorId;
     if (specialty) where.specialty = specialty;
+    if (clinicId) where.clinicId = clinicId;
 
     return await this.appointmentRepository.find({
       where,
-      relations: ["patient", "doctor"],
+      relations: ["patient", "doctor", "clinic"],
       order: { date: "ASC" },
     });
   }
@@ -60,7 +62,15 @@ export class AppointmentsService {
   async findByPatient(patientId: number): Promise<Appointment[]> {
     return await this.appointmentRepository.find({
       where: { patientId },
-      relations: ["patient", "doctor"],
+      relations: ["patient", "doctor", "clinic"],
+      order: { date: "ASC" },
+    });
+  }
+
+  async findByClinic(clinicId: number): Promise<Appointment[]> {
+    return await this.appointmentRepository.find({
+      where: { clinicId },
+      relations: ["patient", "doctor", "clinic"],
       order: { date: "ASC" },
     });
   }
@@ -75,7 +85,7 @@ export class AppointmentsService {
         patientId,
         date: Between(startDate, endDate),
       },
-      relations: ["patient", "doctor"],
+      relations: ["patient", "doctor", "clinic"],
       order: { date: "ASC" },
     });
   }
@@ -95,7 +105,7 @@ export class AppointmentsService {
         patientId,
         date: Between(startOfDay, endOfDay),
       },
-      relations: ["patient", "doctor"],
+      relations: ["patient", "doctor", "clinic"],
       order: { date: "ASC" },
     });
   }
@@ -115,7 +125,7 @@ export class AppointmentsService {
         doctorId,
         date: Between(startOfDay, endOfDay),
       },
-      relations: ["patient", "doctor"],
+      relations: ["patient", "doctor", "clinic"],
       order: { date: "ASC" },
     });
   }
@@ -123,7 +133,7 @@ export class AppointmentsService {
   async findById(id: number): Promise<Appointment> {
     const appointment = await this.appointmentRepository.findOne({
       where: { id },
-      relations: ["patient", "doctor"],
+      relations: ["patient", "doctor", "clinic"],
     });
     if (!appointment) {
       throw new NotFoundException("Appointment not found");
