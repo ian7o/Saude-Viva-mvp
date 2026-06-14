@@ -438,6 +438,15 @@ export async function seed(dataSource: DataSource) {
 
   await seedUsers(userRepo, hashedPassword, clinic.id);
   const doctors = await seedDoctors(doctorRepo, hashedPassword, clinic.id);
+
+  for (const doctor of doctors) {
+    const user = await userRepo.findOne({ where: { email: doctor.email } });
+    if (user) {
+      user.doctorId = doctor.id;
+      await userRepo.save(user);
+    }
+  }
+
   const patients = await seedPatients(
     patientRepo,
     userRepo,

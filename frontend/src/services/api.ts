@@ -32,10 +32,11 @@ export const appointmentsService = {
     const response = await api.get('/appointments/today');
     return response.data;
   },
-  getByRange: async (startDate: string, endDate: string, doctorId?: number, specialty?: string) => {
+  getByRange: async (startDate: string, endDate: string, doctorId?: number, specialty?: string, clinicId?: number) => {
     const params: any = { startDate, endDate };
     if (doctorId) params.doctorId = doctorId;
     if (specialty) params.specialty = specialty;
+    if (clinicId) params.clinicId = clinicId;
     const response = await api.get('/appointments/range', { params });
     return response.data;
   },

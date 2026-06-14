@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { appointmentsService, patientsService, doctorsService } from '../services/api';
+import { appointmentsService, patientsService, doctorsService, clinicsService } from '../services/api';
 import type { Appointment, Patient } from '../types';
 import Layout from '../components/Layout';
 import { useTheme } from '../context/useTheme';
@@ -15,10 +15,10 @@ const Calendar: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [showAddModal, setShowAddModal] = useState(false);
   const [createError, setCreateError] = useState('');
-  const [newAppointment, setNewAppointment] = useState({ description: '', specialty: '', date: '', time: '', patientId: '', doctorId: '' });
+  const [newAppointment, setNewAppointment] = useState({ description: '', specialty: '', date: '', time: '', patientId: '', doctorId: '', clinicId: '' });
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [editMode, setEditMode] = useState(false);
-  const [editAppointment, setEditAppointment] = useState({ description: '', specialty: '', date: '', time: '', patientId: '', status: '' });
+  const [editAppointment, setEditAppointment] = useState({ description: '', specialty: '', date: '', time: '', patientId: '', status: '', clinicId: '' });
   const [specialties, setSpecialties] = useState([
     'Medicina Geral',
     'Cardiologia',
@@ -34,8 +34,10 @@ const Calendar: React.FC = () => {
   const [newSpecialty, setNewSpecialty] = useState('');
   const [showSpecialtyInput, setShowSpecialtyInput] = useState(false);
   const [doctors, setDoctors] = useState<any[]>([]);
+  const [clinics, setClinics] = useState<any[]>([]);
   const [filterDoctorId, setFilterDoctorId] = useState('');
   const [filterSpecialty, setFilterSpecialty] = useState('');
+  const [filterClinicId, setFilterClinicId] = useState('');
   
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const isSecretary = user.role === 'secretary';
@@ -65,6 +67,7 @@ const Calendar: React.FC = () => {
       let data: Appointment[];
       const docId = filterDoctorId ? parseInt(filterDoctorId) : undefined;
       const spec = filterSpecialty || undefined;
+      const clinId = filterClinicId ? parseInt(filterClinicId) : undefined;
 
       const startOfDay = new Date(currentDate);
       startOfDay.setHours(0, 0, 0, 0);
@@ -76,7 +79,8 @@ const Calendar: React.FC = () => {
           startOfDay.toISOString(),
           endOfDay.toISOString(),
           docId,
-          spec
+          spec,
+          clinId
         );
       } else {
         const startRange = new Date(currentDate);
@@ -90,14 +94,15 @@ const Calendar: React.FC = () => {
           startRange.toISOString(),
           endRange.toISOString(),
           docId,
-          spec
+          spec,
+          clinId
         );
       }
       setAppointments(data);
     } catch (error) {
       console.error('Erro ao carregar consultas:', error);
     }
-  }, [viewMode, currentDate, filterDoctorId, filterSpecialty]);
+  }, [viewMode, currentDate, filterDoctorId, filterSpecialty, filterClinicId]);
 
   useEffect(() => {
     loadAppointments();
@@ -126,6 +131,18 @@ const Calendar: React.FC = () => {
       }
     };
     loadDoctors();
+  }, []);
+
+  useEffect(() => {
+    const loadClinics = async () => {
+      try {
+        const data = await clinicsService.getAll();
+        setClinics(data);
+      } catch (err) {
+        console.error('Erro ao carregar clínicas:', err);
+      }
+    };
+    loadClinics();
   }, []);
 
   const get30Days = () => {
@@ -171,10 +188,11 @@ const Calendar: React.FC = () => {
         specialty: newAppointment.specialty,
         date: dateTime.toISOString(),
         doctorId: docId,
-        patientId: parseInt(newAppointment.patientId)
+        patientId: parseInt(newAppointment.patientId),
+        clinicId: parseInt(newAppointment.clinicId) || undefined
       });
       setShowAddModal(false);
-      setNewAppointment({ description: '', specialty: '', date: '', time: '', patientId: '', doctorId: '' });
+      setNewAppointment({ description: '', specialty: '', date: '', time: '', patientId: '', doctorId: '', clinicId: '' });
       loadAppointments();
     } catch (error: any) {
       const msg = error.response?.data?.message || 'Erro ao criar consulta';
@@ -219,6 +237,7 @@ const Calendar: React.FC = () => {
       time: timeStr,
       patientId: String(selectedAppointment.patientId),
       status: selectedAppointment.status || 'scheduled',
+      clinicId: String(selectedAppointment.clinicId || ''),
     });
     setEditMode(true);
     setCreateError('');
@@ -235,6 +254,7 @@ const Calendar: React.FC = () => {
         specialty: editAppointment.specialty,
         patientId: parseInt(editAppointment.patientId),
         status: editAppointment.status,
+        clinicId: parseInt(editAppointment.clinicId) || undefined,
       };
       if (editAppointment.date && editAppointment.time) {
         body.date = dateTime.toISOString();
@@ -271,6 +291,12 @@ const Calendar: React.FC = () => {
       </div>
 
       <div style={{ ...filterBarStyle, background: colors.surface, borderColor: colors.border }}>
+        <select value={filterClinicId} onChange={(e) => setFilterClinicId(e.target.value)} style={{ ...filterSelectStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }}>
+          <option value="">Todas as Clínicas</option>
+          {clinics.map((c: any) => (
+            <option key={c.id} value={c.id}>{c.name}</option>
+          ))}
+        </select>
         {isSecretary && (
           <select value={filterDoctorId} onChange={(e) => setFilterDoctorId(e.target.value)} style={{ ...filterSelectStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }}>
             <option value="">Todos os Médicos</option>
@@ -314,6 +340,15 @@ const Calendar: React.FC = () => {
                     <button type="button" onClick={handleAddSpecialty} style={submitBtnStyle}>Adicionar</button>
                   </div>
                 )}
+              </div>
+              <div style={formGroupStyle}>
+                <label style={{ color: colors.textSecondary }}>Clínica</label>
+                <select value={newAppointment.clinicId} onChange={(e) => setNewAppointment({ ...newAppointment, clinicId: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }} required>
+                  <option value="">Selecione...</option>
+                  {clinics.map((c: any) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
               </div>
               {isSecretary && (
                 <div style={formGroupStyle}>
@@ -367,6 +402,7 @@ const Calendar: React.FC = () => {
               </p>
               <p style={{ ...detailRowStyle, color: colors.text, background: colors.surfaceHover, borderColor: colors.border }}><strong>Paciente:</strong> {selectedAppointment.patient?.name || 'N/A'}</p>
               <p style={{ ...detailRowStyle, color: colors.text, background: colors.surfaceHover, borderColor: colors.border }}><strong>Estado:</strong> <span style={statusBadgeStyle(selectedAppointment.status || 'scheduled')}>{statusLabel(selectedAppointment.status || 'scheduled')}</span></p>
+              <p style={{ ...detailRowStyle, color: colors.text, background: colors.surfaceHover, borderColor: colors.border }}><strong>Clínica:</strong> {selectedAppointment.clinic?.name || 'N/A'}</p>
             </div>
             <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
               {!isPatient && <button onClick={() => startEditAppointment()} className="btn-hover" style={editBtnStyle}>Editar</button>}
@@ -402,6 +438,15 @@ const Calendar: React.FC = () => {
                   <option value="">Selecione...</option>
                   {patients.map((p) => (
                     <option key={p.id} value={p.id}>{p.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div style={formGroupStyle}>
+                <label style={{ color: colors.textSecondary }}>Clínica</label>
+                <select value={editAppointment.clinicId} onChange={(e) => setEditAppointment({ ...editAppointment, clinicId: e.target.value })} style={{ ...inputStyle, color: colors.text, background: theme === 'dark' ? '#0f172a' : '#f8fafc', borderColor: colors.border }}>
+                  <option value="">Selecione...</option>
+                  {clinics.map((c: any) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
                 </select>
               </div>

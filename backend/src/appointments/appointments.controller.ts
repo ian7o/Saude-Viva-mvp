@@ -27,7 +27,7 @@ export class AppointmentsController {
   @Get()
   @ApiOperation({ summary: "Get all appointments for current user" })
   findAll(
-    @CurrentUser() user: { id: number; role: string; patientId?: number; clinicId?: number },
+    @CurrentUser() user: { id: number; role: string; patientId?: number; doctorId?: number; clinicId?: number },
   ) {
     if (user.role === "patient") {
       return this.appointmentsService.findByPatient(user.patientId!);
@@ -35,13 +35,13 @@ export class AppointmentsController {
     if (user.role === "admin") {
       return this.appointmentsService.findAll();
     }
-    return this.appointmentsService.findByDoctor(user.id);
+    return this.appointmentsService.findByDoctor(user.doctorId!);
   }
 
   @Get("today")
   @ApiOperation({ summary: "Get today appointments for current user" })
   findToday(
-    @CurrentUser() user: { id: number; role: string; patientId?: number },
+    @CurrentUser() user: { id: number; role: string; patientId?: number; doctorId?: number; clinicId?: number },
   ) {
     const today = new Date();
     if (user.role === "patient") {
@@ -50,7 +50,7 @@ export class AppointmentsController {
         today,
       );
     }
-    return this.appointmentsService.findByDoctorAndDate(user.id, today);
+    return this.appointmentsService.findByDoctorAndDate(user.doctorId!, today);
   }
 
   @Get("range")
@@ -58,7 +58,7 @@ export class AppointmentsController {
     summary: "Get appointments by date range with optional filters",
   })
   findByRange(
-    @CurrentUser() user: { id: number; role: string; patientId?: number; clinicId?: number },
+    @CurrentUser() user: { id: number; role: string; patientId?: number; doctorId?: number; clinicId?: number },
     @Query("startDate") startDate: string,
     @Query("endDate") endDate: string,
     @Query("doctorId") doctorId?: string,
@@ -82,7 +82,7 @@ export class AppointmentsController {
       );
     }
     return this.appointmentsService.findByDoctorAndDateRange(
-      user.id,
+      user.doctorId!,
       new Date(startDate),
       new Date(endDate),
     );

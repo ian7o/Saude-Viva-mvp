@@ -36,6 +36,9 @@ export class User {
   patientId: number;
 
   @Column({ nullable: true })
+  doctorId: number;
+
+  @Column({ nullable: true })
   clinicId: number;
 
   @CreateDateColumn()

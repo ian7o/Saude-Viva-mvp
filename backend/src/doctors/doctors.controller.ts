@@ -67,6 +67,7 @@ export class DoctorsController {
       name: data.name,
       password: hashedPassword,
       role: "doctor",
+      doctorId: doctor.id,
       clinicId: data.clinicId,
     });
     await this.userRepository.save(user);

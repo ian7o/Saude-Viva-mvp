@@ -12,7 +12,8 @@ const Documents: React.FC = () => {
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   const isPatient = user.role === 'patient';
-  
+  const userRole = user.role;
+
   const [documents, setDocuments] = useState<ClinicalDocument[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [clinics, setClinics] = useState<Clinic[]>([]);
@@ -25,6 +26,25 @@ const Documents: React.FC = () => {
     room: '',
     location: '',
     patientId: '',
+  });
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterPatientId, setFilterPatientId] = useState('');
+  const [filterClinicId, setFilterClinicId] = useState('');
+
+  const filteredDocuments = documents.filter((doc) => {
+    if (filterPatientId && doc.patientId !== parseInt(filterPatientId)) return false;
+    if (filterClinicId && doc.location !== filterClinicId) return false;
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      const matchName = doc.originalName.toLowerCase().includes(q);
+      const matchDesc = (doc.description || '').toLowerCase().includes(q);
+      const matchRoom = (doc.room || '').toLowerCase().includes(q);
+      const matchLocation = (doc.location || '').toLowerCase().includes(q);
+      const matchPatient = (doc.patient?.name || '').toLowerCase().includes(q);
+      if (!matchName && !matchDesc && !matchRoom && !matchLocation && !matchPatient) return false;
+    }
+    return true;
   });
 
   useEffect(() => {
@@ -185,6 +205,40 @@ const Documents: React.FC = () => {
         </div>
       )}
 
+      {!isPatient && (
+        <div style={filterBarStyle(colors)}>
+          <input
+            type="text"
+            placeholder="Pesquisar documentos..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={filterInputStyle(colors)}
+          />
+          <select
+            value={filterPatientId}
+            onChange={(e) => setFilterPatientId(e.target.value)}
+            style={filterSelectStyle(colors)}
+          >
+            <option value="">Todos os Pacientes</option>
+            {patients.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
+          {userRole === 'admin' && (
+            <select
+              value={filterClinicId}
+              onChange={(e) => setFilterClinicId(e.target.value)}
+              style={filterSelectStyle(colors)}
+            >
+              <option value="">Todas as Clínicas</option>
+              {clinics.map((c) => (
+                <option key={c.id} value={c.name}>{c.name}</option>
+              ))}
+            </select>
+          )}
+        </div>
+      )}
+
       {selectedDoc && (
         <div style={modalOverlayStyle} onClick={() => setSelectedDoc(null)}>
           <div className="modal-animate" style={modalContentStyle(colors)} onClick={(e) => e.stopPropagation()}>
@@ -213,11 +267,11 @@ const Documents: React.FC = () => {
         </div>
       )}
 
-      {documents.length === 0 ? (
+      {filteredDocuments.length === 0 ? (
         <div style={emptyStyle(colors)}>Nenhum documento disponível</div>
       ) : (
         <div style={gridStyle}>
-          {documents.map((doc) => (
+          {filteredDocuments.map((doc) => (
             <div key={doc.id} className="card-hover" style={docCardStyle(colors)}>
               <div style={docIconStyle}>
                 {doc.mimetype.includes('pdf') ? '📄' : '📎'}
@@ -303,6 +357,39 @@ const submitBtnStyle: React.CSSProperties = {
   fontSize: '14px',
   boxShadow: '0 4px 12px rgba(39, 174, 96, 0.3)',
 };
+
+const filterBarStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
+  display: 'flex',
+  gap: '12px',
+  padding: '16px',
+  borderRadius: '12px',
+  border: `1px solid ${colors.border}`,
+  marginBottom: '24px',
+  alignItems: 'center',
+  background: colors.surface,
+});
+
+const filterInputStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
+  flex: 1,
+  padding: '10px 14px',
+  border: `1px solid ${colors.border}`,
+  borderRadius: '10px',
+  fontSize: '14px',
+  color: colors.text,
+  background: colors.surfaceHover,
+  outline: 'none',
+});
+
+const filterSelectStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
+  padding: '10px 14px',
+  border: `1px solid ${colors.border}`,
+  borderRadius: '10px',
+  fontSize: '14px',
+  color: colors.text,
+  background: colors.surfaceHover,
+  minWidth: '200px',
+  outline: 'none',
+});
 
 const emptyStyle = (colors: ThemeColorPalette): React.CSSProperties => ({
   textAlign: 'center',
