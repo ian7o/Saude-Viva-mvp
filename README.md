@@ -17,7 +17,7 @@ appointment management and clinic operations.
 |-----------|------------------------------------|
 | Backend   | NestJS, TypeORM, PostgreSQL, JWT   |
 | Frontend  | React + Vite, React Router, Axios  |
-| Infra     | Docker, Nginx                      |
+| Infra     | Docker, Docker Compose             |
 
 ---
 
@@ -63,10 +63,23 @@ cd ../frontend && npm install
 docker-compose up --build
 ```
 
-## Default Login
+## Demo Logins
 
-- Email: `admin@saudeviva.com`
-- Password: `admin123`
+All accounts are created automatically by the database seed.
+
+| Role        | Email                        | Password      |
+|-------------|------------------------------|---------------|
+| Admin       | `admin@admin.com`            | `admin123`    |
+| Doctor      | `doutor.gui@saudeviva.com`   | `admin123`    |
+| Doctor      | `admin@saudevivax.com`       | `admin123`    |
+| Secretary   | `secretaria@saudeviva.com`   | `admin123`    |
+| Patient     | `joao.silva@example.com`     | `paciente123` |
+| Patient     | `maria.santos@example.com`   | `paciente123` |
+| Patient     | `pedro.almeida@example.com`  | `paciente123` |
+| Patient     | `sofia.costa@example.com`    | `paciente123` |
+
+> Patients share the same password (`paciente123`); every other demo account uses
+> `admin123`.
 
 ## API
 
@@ -80,13 +93,25 @@ docker-compose up --build
 
 ```bash
 # Backend
-npm run check = npm run lint + npm run typecheck
+npm run lint
+npm run typecheck
 npm run test
-
 
 # Frontend
 npm run check
 ```
+
+## Architecture
+
+Two apps and a database, started together by `docker-compose`.
+
+```text
+backend/        NestJS API (TypeORM, JWT) — port 4000
+frontend/       React + Vite SPA — port 3000
+documentation/  sprint notes
+```
+
+API owns data and auth; frontend calls it over HTTP. PostgreSQL is the only datastore.
 
 ## License
 
